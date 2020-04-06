@@ -1,2 +1,4 @@
-# bleed-orange-measure-purple
-Data and Analysis related to the Bleed Orange, Measure Purple low-cost sensor project on UT's campus
+# Bleed Orange Measure Purple
+The Bleed Orange Measure Project is aimed to learn more about the particulate matter sources, fate, and transport across UT's campus using a low-cost sensor network.
+
+
