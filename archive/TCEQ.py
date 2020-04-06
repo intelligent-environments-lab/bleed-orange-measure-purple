@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 19 01:22:28 2020
+
+@author: CalvinL2
+"""
+
+# %% Imports
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from datetime import datetime, timezone, timedelta
+
+from visualize import plot_timeseries
+# from matplotlib.dates import date2num
+# from datetime import datetime, timezone, tzinfo, timedelta
+
+# %% Read File
+# TODO Turn this file into PAsample class
+class TCEQfile:
+    def __init__(self,filename):
+        raw = pd.read_csv(filename,index_col = False)
+        
+        PMdata = self.findPM2_5(raw)
+        if not PMdata.empty:
+            #TODO change numerical indicies to column names
+            PMdata = self.flatten(PMdata)
+            PMdata[0] = self.str2date(PMdata[0])
+            PMdata[1] = self.str2num(PMdata[1])
+            PMdata.columns = ['Time','PM2.5']
+            plot_timeseries(PMdata['Time'], PMdata['PM2.5'])
+        self.data = PMdata
+        
+    def import_csv(self,filename):
+        '''Imports a TCEQ style csv file.'''
+        return pd.read_csv(filename,index_col = False)
+    
+    
+    def findPM2_5(self,rawdata):
+        # TODO modify method to allow searching of different parameter given different search_values
+        '''
+        Isolates data associated with a particular air quality parameter.
+    
+        Parameters
+        ----------
+        rawdata : DataFrame
+            The unmodified data imported from a CSV filed using pd.read_csv().
+    
+        Returns
+        -------
+        target_data : DataFrame
+            A subset of the input data frame with the value 'Date' in the upper left cell.
+        '''
+        first_column = rawdata.iloc[:,0]
+        search_value = 'PM-2.5 (Local Conditions) (POC 3) measured in micrograms per cubic meter (local conditions)'
+        location = first_column.index[first_column == search_value] #Finds the desired parameter data
+        if location.size > 0: #Verifies that it actually found the data 
+            location = location[0]  #array to single value
+            if first_column[location+3] == 'Date': #Verifies that data structure is as anticipated
+                target_data = rawdata.iloc[location+3:,:]
+                target_data.reset_index(drop=True, inplace=True) #optional, zeros the index column
+                return target_data
+            else:
+                return None
+        else: 
+            return None
+    
+    
+    def flatten(self,data):
+        '''
+        Converts a 2D TCEQ array into a linear array.
+    
+        Parameters
+        ----------
+        data : DataFrame
+            2D TCEQ value array with 'Date' in upper left corner.
+    
+        Returns
+        -------
+        DataFrame
+            Two column DataFrame with time and value.
+    
+        '''
+        values = np.array(data.iloc[1:,1:]).flatten()
+        dates = np.array(data.iloc[1:,0])
+        hours = np.array(data.iloc[0,1:])
+        timestamp = []
+        for date in dates:
+            for hour in hours:
+                timestamp.append(date+' '+hour)
+        timestamp = np.array(timestamp)
+        return pd.DataFrame([timestamp,values]).transpose()
+    
+    
+    def str2num(self,data):
+        '''Converts column of strings to float values'''
+        data = np.array(data.replace('AQI',np.nan).astype(float))
+        return data
+    
+    
+    def str2date(self,timearray):
+        ''' Converts column of strings to datetime objects'''
+        time = []
+        central = timezone(timedelta(hours=-6))
+        for idx,val in enumerate(timearray):
+            value = datetime.strptime(val,'%m/%d/%Y %H:%M')
+            time.append(value.astimezone(tz=central)) 
+        return time
+    
+
+if __name__ == '__main__':
+    sample = TCEQfile('input\\tceq2.csv')
+    
+# # %% Nan remover
+# p2 = pm_vector[~np.isnan(temp_vector)]
+# p2 = p2[~np.isnan(pm_vector)]
+# t2 = temp_vector[~np.isnan(temp_vector)]
+# t2 =  t2[~np.isnan(pm_vector)]
+# pm_vector = p2
+# temp_vector = t2
+
+# # %%
+# plt.figure()
+# t = temp_vector-np.min(temp_vector)
+# p = pm_vector-np.min(pm_vector)
+# plt.plot(abs((t)/np.max(t)),abs(p/np.max(p)),'.')
+# a = np.linspace(0,1,100)
+# plt.plot(a,a)
+
+
+
+# %% Linear Regression
+
+# #https://towardsdatascience.com/simple-and-multiple-linear-regression-in-python-c928425168f9
+# X = temp_vector ## X usually means our input variables (or independent variables)
+# y = pm_vector ## Y usually means our output/dependent variable
+# X = sm.add_constant(X) ## let's add an intercept (beta_0) to our model
+
+# # Note the difference in argument order
+# model = sm.OLS(y, X).fit() ## sm.OLS(output, input)
+# predictions = model.predict(X)
+
+# # Print out the statistics
+# model.summary()
+
+# plt.figure()
+# plt.plot(abs(predictions/np.max(predictions)),abs(pm_vector/np.max(pm_vector)),'.')
+# a = np.linspace(0,1,100)
+# plt.plot(a,a)
+
+
+    
