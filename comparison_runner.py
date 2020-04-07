@@ -33,15 +33,21 @@ PmFile = APSPMfile(f'{relative_path}\\Test_C_0304.csv')
 # %% Plot data
 
 f = plt.figure(figsize=(20,10))
+start_date = PmFile.hourly_time[0]
+end_date =  PmFile.hourly_time[PmFile.hourly_time.size - 1]
 
 for file in PAfiles:
-    plt.plot_date(file.hourly_time, file.hourly_pm,'-',label=file.sensorname)
+    # Match PA time range to APS time range
+    time = file.hourly_time[(file.hourly_time >= start_date)&(file.hourly_time <= end_date)]
+    pm = file.hourly_pm[(file.hourly_time >= start_date) & (file.hourly_time <= end_date)]
+    
+    plt.plot_date(time, pm,'-',label=file.sensorname)
 
 plt.plot_date(PmFile.hourly_time, PmFile.hourly_pm,'-',label='APS')
 plt.legend()
 
 
-plt.savefig('test.svg')
+plt.savefig('output//test.svg')
 
 # %% Unused code
 startdate = '2020-03-03 17:40:13-06:00'
