@@ -27,7 +27,7 @@ for file in PAfiles:
     plt.plot_date(date2num(file.time),file.pm,'.',xdate=True,label=file.sensorname)
     plt.legend()
     time = file.time
-fig.savefig('rawdata.svg')
+fig.savefig('output//rawdata.svg')
 
 fig = plt.figure(figsize=(20,10))
 time =[]  
@@ -35,7 +35,7 @@ for file in PAfiles:
     # file.set_frequency('H')
     plt.plot_date(date2num(file.time),file.pm.rolling(window = 15).mean(),'-',xdate=True,label=file.sensorname)
     plt.legend()
-fig.savefig('rolling.svg')
+fig.savefig('output//rolling.svg')
 
 fig = plt.figure(figsize=(20,10))
 
@@ -47,7 +47,7 @@ for file in PAfiles:
     # file.set_frequency('H')
     plt.plot_date(date2num(file.time),file.pm,'-',xdate=True,label=file.sensorname)
     plt.legend()
-fig.savefig('rolling.svg')
+fig.savefig('output//rolling.svg')
     
 sum_pm = np.zeros(len(PAfiles[0].pm))
 for idx,file in enumerate(PAfiles):
@@ -59,13 +59,13 @@ plt.legend()
 
 
 fig.autofmt_xdate()
-fig.savefig('hourly w avg.svg')
+fig.savefig('output//hourly w avg.svg')
 
 f = plt.figure(figsize=(20,10))
 for file in PAfiles:
     plt.plot_date(date2num(file.time),file.pm,'.',xdate=True,label=file.sensorname)
     plt.legend()
-f.savefig('hourly2.svg')
+f.savefig('output//hourly2.svg')
 
 time =[]  
 
@@ -77,4 +77,4 @@ f = plt.figure(figsize=(20,10))
 for file in PAfiles:
     plt.plot_date(date2num(file.time),file.pm-avg,'-',xdate=True,label=file.sensorname)
     plt.legend()
-f.savefig('error.svg')
+f.savefig('output//error.svg')
