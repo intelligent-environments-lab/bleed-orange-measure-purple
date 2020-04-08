@@ -12,15 +12,17 @@ from common_parent_datafile import commonfile
 class APSPMfile(commonfile):
     def __init__(self,pmfile):
         super()
-        self.raw_data = pd.read_csv(pmfile,index_col =False)
+        raw_data = pd.read_csv(pmfile,index_col=False)
         
         def _isolate_pm(data):
-            start = data.index[data['Sample File'] == 'Date'][0]
-            end = data.index[data['Sample File'] == 'Event 1'][0]
-            data = data.iloc[start:end,:]
+            start = data.index[data.iloc[:,1] == 'Date'][0]
+            data = data.iloc[start:,:]
+            data.rename(columns = data.iloc[0], inplace = True)
+            data = data.iloc[1:,:]
+            data.reset_index(drop = True,inplace = True)
             return data
         
-        pm25data = _isolate_pm(self.raw_data)
+        pm25data = _isolate_pm(raw_data)
         
         self.pm25data = self._parse_pm25(pm25data)
         self.frequency = None
@@ -58,3 +60,6 @@ class APSPMfile(commonfile):
     
     @property 
     def hourly_pm(self): return super().resample(self.pm25data.astype(float),'pmdata','H')
+    
+if __name__ == "__main__":
+    PmFile = APSPMfile('input\\test3\\Test_C_0304.csv')
