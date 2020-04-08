@@ -16,7 +16,7 @@ class APSPMfile(commonfile):
         
         def _isolate_pm(data):
             start_row_index = data.index[data.iloc[:,1] == 'Date'][0]
-            data = data.iloc[start_row_index:,:]
+            data = data.iloc[start_row_index:,:].copy()
             data.rename(columns = data.iloc[0], inplace = True)
             data = data.iloc[1:,:]
             data.reset_index(drop = True,inplace = True)
