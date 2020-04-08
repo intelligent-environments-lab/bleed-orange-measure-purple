@@ -1,3 +1,6 @@
 
 *.pyc
 *.svg
+*.docx
+*.stats
+*.lnk
