@@ -43,7 +43,7 @@ class APSPMfile(commonfile):
     
         timearray = np.array(timearray)
         # timearray = self._str2date(np.array(timearray))
-        timearray = super()._str2date(np.array(timearray),'%m/%d/%Y %H:%M:%S')
+        timearray = super()._str2date(np.array(timearray),'%m/%d/%y %H:%M:%S')
 
         array_1= pd.DataFrame([timearray,array_1]).transpose()
         array_1.columns = ['time','pmdata']
