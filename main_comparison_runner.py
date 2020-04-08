@@ -7,10 +7,8 @@ Created on Thu Mar 12 02:51:22 2020
 from aps_pm_datafile import APSPMfile
 from aps_trh_datafile import APSTRHfile
 from pa_datafile import PAfile
-from visualize_data import plot_timeseries
 
 import matplotlib.pyplot as plt
-from matplotlib.dates import date2num
 import numpy as np
 
 import os
