@@ -4,4 +4,4 @@
 *.docx
 *.stats
 *.lnk
-/pa_covid/*
+*/pa_covid/
