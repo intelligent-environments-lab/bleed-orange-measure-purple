@@ -1,7 +1,7 @@
 
 *.pyc
-*.svg
+
 *.docx
 *.stats
 *.lnk
-*/pa_covid/
+
