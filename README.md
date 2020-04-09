@@ -14,9 +14,11 @@ We currently have 16 sensors on the University of Texas at Austin's campus. Thes
 ![sensor locations](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/blob/master/images/sensor_locations.png)
 
 ## Python Script Description
-  **main_comparison_runner.py**: Run this file to compare PurpleAir and APS for test 3  
-  **common_parent_datafile.py**: Superclass of other datafile scripts  
-  **..datafile.py**: Defines objects with functions and variables for different sensors, used in 'runner' scripts  
+**main_comparison_runner.py**: Run this file to compare PurpleAir and APS for test 3  
+**common_parent_datafile.py**: Superclass of other datafile scripts  
+**..datafile.py**: Defines objects with functions and variables for different sensors, used in 'runner' scripts  
   
-  **multi_pa_runner.py**: Used to test pa_datafile.py  
-  **visualize_data.py**: for reference only/deprecated  
+**pa_covid_runner.py**(New): Looks at data for all 16 of UT's PurpleAir sensors for the time period from Mar 1 - Apr 8, and creates a     scatter plot of hourly averages. This code is not optimized and may take one or two minutes to execute.
+  
+**multi_pa_runner.py**: Used to test pa_datafile.py  
+**visualize_data.py**: for reference only/deprecated  
