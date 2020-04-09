@@ -49,7 +49,7 @@ def plot_timeseries(time,y,fmt='o',**kwargs):
 #         elif key == 'filename':
 #             plt.savefig(value)
 
-def violin_plot(y):
+def violin_plot(y,file):
     fig = plt.figure()
     ax = fig.add_axes([0,0,1,1])
     bp = ax.violinplot(y)
