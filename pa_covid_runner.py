@@ -5,24 +5,34 @@ Created on Wed Apr  8 17:12:21 2020
 @author: CalvinL2
 """
 import os
-from sys import getsizeof
+from os import path
+import pickle as pkl
+# from sys import getsizeof
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 from pa_datafile import PAfile
-from timer_1 import Timer
 
-PAfiles = PAfile.import_pa_files(os.getcwd(), 'input\\pa_covid')
+use_cache = True
+cache = 'PAfiles_cache.pkl'
 
+# Using caching for improved performance
+if not path.exists(cache) or use_cache == False:
+    print('Importing data from csv...', flush=True, end="")
+    PAfiles = PAfile.import_pa_files(os.getcwd(), 'input\\pa_covid')
+    print('Done', flush=True)
+    pkl.dump(PAfiles, open(cache,'wb'))
+else:
+    print('Loading data from cache...', flush=True, end="")
+    PAfiles = pkl.load(open(cache,'rb'))
+    print('Done', flush=True)
+    
 fig = plt.figure(figsize=(20, 10))
 ax = fig.add_subplot(1, 1, 1)
-time = []
 for file in PAfiles:
     # file.set_frequency('H')
     plt.plot_date(file.hourly_time, file.hourly_pm25, '.', xdate=True, label=file.sensorname)
-    time = file.time
-
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
 ax.grid()
 plt.ylim(0, 70)
@@ -36,12 +46,10 @@ plt.legend()
 
 fig = plt.figure(figsize=(20, 10))
 ax = fig.add_subplot(1, 1, 1)
-time = []
 for file in PAfiles:
     # file.set_frequency('H')
     plt.plot_date(file.hourly_time, file.hourly_temp, '.', xdate=True, label=file.sensorname)
     plt.legend()
-    time = file.time
 
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
 ax.grid()
@@ -52,6 +60,11 @@ plt.ylabel('Temperature(F)')
 plt.xlabel('Time')
 fig.savefig('output//march_ut_pa_hourly_temp.svg')
 
-
-fig = plt.figure(figsize=(20, 10))
-time = []
+# def label_timeseries(fig,title,xlabel='Time',ylabel=None):
+#     fig.autofmt_xdate()
+#     plt.title(title)
+#     plt.xlabel(xlabel)
+#     plt.ylabel(ylabel)
+#     plt.legend()
+# fig = plt.figure(figsize=(20, 10))
+# time = []
