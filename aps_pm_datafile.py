@@ -7,9 +7,10 @@ Created on Mon Mar  9 17:12:34 2020
 import pandas as pd
 import numpy as np
 
-from common_parent_datafile import commonfile
+from common_parent_datafile import CommonFile
 
-class APSPMfile(commonfile):
+class APSPMfile(CommonFile):
+    """Stores and manipulates one PM csv file from an APS sensor"""
     def __init__(self, pmfile):
         super().__init__()
         raw_data = pd.read_csv(pmfile, index_col=False)
@@ -58,18 +59,22 @@ class APSPMfile(commonfile):
 
     @property
     def time(self):
+        """Returns datetime objects in a numpy array."""
         return self.pm25_data.index.values
 
     @property
-    def pm(self):
+    def pm25(self):
+        """Returns PM 2.5 values in a panda series."""
         return self.pm25_data.astype(float)['pmdata']
 
     @property
     def hourly_time(self):
+        """Returns hourly averaged datetime objects in numpy array"""
         return super().resample(self.pm25_data.astype(float), 'time', 'H')
 
     @property
-    def hourly_pm(self):
+    def hourly_pm25(self):
+        """Returns hourly averaged PM 2.5 values in a panda series."""
         return super().resample(self.pm25_data.astype(float), 'pmdata', 'H')
 
 if __name__ == "__main__":

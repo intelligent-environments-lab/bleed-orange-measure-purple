@@ -7,17 +7,19 @@ Created on Thu Mar 12 00:15:47 2020
 
 from datetime import datetime, timezone, timedelta
 
-class commonfile():
+class CommonFile():
+    """Superclass for sensor specific subclasses"""
     def __init__(self):
         self.frequency = None
 
     def set_frequency(self, freq):
+        """Set the frequency used for resampling"""
         # Use 'H' for hourly mean
         self.frequency = freq
 
     @staticmethod
     def _str2date(timearray, timeformat, tzone=None):
-        ''' Converts column of strings to datetime objects'''
+        """Converts column of strings to datetime objects"""
         time = []
         central = timezone(timedelta(hours=-6))
         for _, val in enumerate(timearray):
@@ -46,6 +48,7 @@ class commonfile():
 
     @staticmethod
     def resample(data, col_name, frequency=None):
+        """Returns the a copy of the provided pandas dataframe column with a new sample frequency"""
         # Determines if the column specified is the index column, need better name
         def find_column_data(data_):
             if col_name in data_:
