@@ -25,11 +25,14 @@ fig = plt.figure(figsize=(20,10))
 time =[]
 for file in PAfiles:
     # file.set_frequency('H')
-    plt.plot_date(file.hourly_time,file.hourly_pm,'-',xdate=True,label=file.sensorname)
+    plt.plot_date(file.hourly_time,file.hourly_pm,'.',xdate=True,label=file.sensorname)
     plt.legend()
     time = file.time
-plt.ylim(0,100)
-fig.savefig('output//covid_rawdata.svg')
+plt.ylim(0,70)
+plt.title('Hourly PM 2.5 Values During Coronavirus Period')
+plt.ylabel('PM 2.5 (ug/m3)')
+plt.xlabel('Time')
+fig.savefig('output//march_ut_pa_hourly.svg')
 
 fig = plt.figure(figsize=(20,10))
 time =[]  
