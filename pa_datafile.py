@@ -6,6 +6,8 @@ Created on Thu Feb 13 09:30:11 2020
 """
 
 # %% Imports
+import os
+
 from datetime import timezone
 import pandas as pd
 
@@ -62,6 +64,12 @@ class PAfile(CommonFile):
         self.latitude = iterate()
         self.longitude = iterate()
 
+    @staticmethod
+    def import_pa_files(cwd, file_dir):
+        """Returns a list of PAfile for every PurpleAir csv in the specified directory"""
+        return [PAfile(file_dir+'\\'+filename)
+                for filename in os.listdir(cwd+'\\'+file_dir)
+                if filename.endswith(".csv") and filename.startswith("PA")]
 
     @property
     def time(self):
