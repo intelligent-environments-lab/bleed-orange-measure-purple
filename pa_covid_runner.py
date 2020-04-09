@@ -29,7 +29,7 @@ for file in PAfiles:
     plt.legend()
     time = file.time
 plt.ylim(0,70)
-plt.title('Hourly PM 2.5 Values During Coronavirus Period')
+plt.title('Hourly PM 2.5 Values from UT PurpleAirs for Mar 1 to Apr 8')
 plt.ylabel('PM 2.5 (ug/m3)')
 plt.xlabel('Time')
 fig.savefig('output//march_ut_pa_hourly.svg')
