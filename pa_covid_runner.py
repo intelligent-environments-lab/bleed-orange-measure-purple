@@ -7,9 +7,7 @@ Created on Wed Apr  8 17:12:21 2020
 
 from pa_datafile import PAfile
 import matplotlib.pyplot as plt
-from matplotlib.dates import date2num
 import matplotlib.dates as mdates
-import numpy as np
 
 import os
 
@@ -27,7 +25,7 @@ ax = fig.add_subplot(1,1,1)
 time =[]
 for file in PAfiles:
     # file.set_frequency('H')
-    plt.plot_date(file.hourly_time,file.hourly_pm,'.',xdate=True,label=file.sensorname)
+    plt.plot_date(file.hourly_time,file.hourly_pm25,'.',xdate=True,label=file.sensorname)
     plt.legend()
     time = file.time
 

@@ -36,11 +36,11 @@ end_date = PmFile.hourly_time[PmFile.hourly_time.size - 1]
 for file in PAfiles:
     # Match PA time range to APS time range
     time = file.hourly_time[(file.hourly_time >= start_date) & (file.hourly_time <= end_date)]
-    pm = file.hourly_pm[(file.hourly_time >= start_date) & (file.hourly_time <= end_date)]
+    pm = file.hourly_pm25[(file.hourly_time >= start_date) & (file.hourly_time <= end_date)]
 
     plt.plot_date(time, pm, '-', label=file.sensorname)
 
-plt.plot_date(PmFile.hourly_time, PmFile.hourly_pm, '-', label='APS')
+plt.plot_date(PmFile.hourly_time, PmFile.hourly_pm25, '-', label='APS')
 
 plt.legend()
 plt.savefig('output//test.svg')
@@ -48,4 +48,3 @@ plt.savefig('output//test.svg')
 # %% reference code
 
 # file.data[file.data.index >= '2020-03-03 17:40:13-06:00' ]
-
