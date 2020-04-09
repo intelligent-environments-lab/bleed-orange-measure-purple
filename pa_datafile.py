@@ -78,3 +78,7 @@ class PAfile(commonfile):
     @property
     def hourly_pm(self):
         return super().resample(self.data, 'PM2.5_ATM_ug/m3', 'H')
+    
+    @property
+    def hourly_temp(self):
+        return super().resample(self.data, 'Temperature_F', 'H')
