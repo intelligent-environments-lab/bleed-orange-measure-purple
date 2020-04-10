@@ -1,8 +1,7 @@
 
 *.pyc
-
 *.docx
 *.stats
 *.lnk
-
 *.tmp
+.ipynb_checkpoints/
