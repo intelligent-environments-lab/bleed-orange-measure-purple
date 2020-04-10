@@ -27,8 +27,8 @@ class PAfile(CommonFile):
 
         # Converts string to datetime object
         timestamps = CommonFile.str2date(data.loc[:, 'created_at'],
-                                       '%Y-%m-%d %H:%M:%S %Z',
-                                       tzone=timezone.utc)
+                                         '%Y-%m-%d %H:%M:%S %Z',
+                                         tzone=timezone.utc)
 
         # Creates datetime column and makes it the index for the df,
             #use df.index.values or df.index.name to access
@@ -36,13 +36,10 @@ class PAfile(CommonFile):
         data = data.set_index('time')
 
         # Defining instance variables for the object
-        # TIP use dictionary
         self.filename = filename
         super().__init__(data)
 
     def _parse_filename(self, filename):
-        # BUG account for edited filename
-
         # Some adjustments to format to make parsing easier
         filename = filename[filename.rfind('\\')+1:]
         filename = filename.replace('(', '').replace(')', '')
@@ -74,11 +71,11 @@ class PAfile(CommonFile):
         return self['PM2.5_ATM_ug/m3']
 
     @property
-    def hourly_pm25(self):
-        """Returns hourly averaged PM 2.5 values in a panda series."""
-        return self.pm25.resample('H').mean()
+    def temperature(self):
+        """Returns temperature values in a panda series."""
+        return self['Temperature_F']
 
     @property
-    def hourly_temp(self):
-        """Returns hourly temperature values in a panda series."""
-        return self['Temperature_F'].resample('H').mean()
+    def humidity(self):
+        """Returns temperature values in a panda series."""
+        return self['Humidity_%']

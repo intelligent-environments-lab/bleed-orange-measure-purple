@@ -20,24 +20,14 @@ class APSTRHfile(CommonFile):
 
 
     @property
-    def rh(self):
+    def humidity(self):
         """Returns relative humidity values of type:float in a series"""
         return self[' RH(%)']
 
     @property
-    def t(self):
+    def temperature(self):
         """Returns temperature values of type:float in a series"""
         return self[' TEMP(C)']
-
-    @property
-    def hourly_rh(self):
-        """Returns hourly averaged relative humidity values"""
-        return self.rh.resample('H').mean()
-
-    @property
-    def hourly_t(self):
-        """Returns hourly averaged temperature values."""
-        return self.t.resample('H').mean()
 
 if __name__ == "__main__":
     debug = APSTRHfile('input\\test3\\Test_0304_CO_TRH.csv')

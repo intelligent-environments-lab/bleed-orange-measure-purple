@@ -22,46 +22,40 @@ class APSPMfile(CommonFile):
             data.reset_index(drop=True, inplace=True)
             return data
 
+        def _parse_pm25(data):
+            array_1 = []
+            timestamps = []
+            for row in data.iterrows():
+                #Access series in tuple (technical detail), convert to np array
+                row = np.array(row[1])
+
+                col_names = data.columns
+
+                #Access pm values part of series
+                row_pm = row[col_names.get_loc('<0.523'):col_names.get_loc(2.642)]
+
+                #Sum mass to get pm 2.5 mass
+                array_1.append(np.sum(row_pm.astype(float))*1000)
+
+                timestamps.append(row[1]+' '+row[2])
+
+
+            timestamps = np.array(timestamps)
+            timestamps = CommonFile.str2date(np.array(timestamps), '%m/%d/%y %H:%M:%S')
+
+            array_1 = pd.DataFrame([timestamps, array_1]).transpose()
+            array_1.columns = ['time', 'pmdata']
+            array_1 = array_1.set_index('time', drop=True).astype(float)
+            return array_1
+
         data = _isolate_pm(raw_data)
-        pm25_data = self._parse_pm25(data)
+        pm25_data = _parse_pm25(data)
         super().__init__(pm25_data)
-
-
-    def _parse_pm25(self, data):
-        array_1 = []
-        timearray = []
-        for row in data.iterrows():
-            #Access series in tuple (technical detail), convert to np array
-            row = np.array(row[1])
-
-            col_names = data.columns
-
-            #Access pm values part of series
-            row_pm = row[col_names.get_loc('<0.523'):col_names.get_loc(2.642)]
-
-            timestamp = row[1]+' '+row[2]
-            timearray.append(timestamp)
-
-            #Sum mass to get pm 2.5 mass
-            array_1.append(np.sum(row_pm.astype(float))*1000)
-
-        timearray = np.array(timearray)
-        timearray = CommonFile.str2date(np.array(timearray), '%m/%d/%y %H:%M:%S')
-
-        array_1 = pd.DataFrame([timearray, array_1]).transpose()
-        array_1.columns = ['time', 'pmdata']
-        array_1 = array_1.set_index('time').astype(float)
-        return array_1
 
     @property
     def pm25(self):
         """Returns PM 2.5 values in a panda series."""
         return self[:].astype(float)['pmdata']
-
-    @property
-    def hourly_pm25(self):
-        """Returns hourly averaged PM 2.5 values in a panda series."""
-        return self.pm25.resample('H').mean()
 
 if __name__ == "__main__":
     debug = APSPMfile('input\\test3\\Test_C_0304.csv')
