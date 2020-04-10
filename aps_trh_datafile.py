@@ -32,12 +32,12 @@ class APSTRHfile(CommonFile):
     @property
     def hourly_rh(self):
         """Returns hourly averaged relative humidity values"""
-        return self[' RH(%)'].resample('H').mean()
+        return self.rh.resample('H').mean()
 
     @property
     def hourly_t(self):
         """Returns hourly averaged temperature values."""
-        return self[' TEMP(C)'].resample('H').mean()
+        return self.t.resample('H').mean()
 
 if __name__ == "__main__":
     debug = APSTRHfile('input\\test3\\Test_0304_CO_TRH.csv')
