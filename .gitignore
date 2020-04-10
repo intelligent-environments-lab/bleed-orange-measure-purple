@@ -6,7 +6,4 @@
 *.tmp
 .ipynb_checkpoints/
 testing_grounds.ipynb
-*.svg
-*.svg
-output/march_ut_pa_hourly_pm.svg
-output/march_ut_pa_hourly_pm.svg
+
