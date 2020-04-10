@@ -30,9 +30,9 @@ else:
 fig = plt.figure(figsize=(20, 10))
 ax = fig.add_subplot(1, 1, 1)
 for file in PAfiles:
-    # file.set_frequency('H')
-    plt.plot_date(file.hourly_pm25.index.values,
-                  file.hourly_pm25,
+    file.frequency = 'H'
+    plt.plot_date(file.time,
+                  file.pm25,
                   '.', xdate=True, label=file.sensorname)
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
 ax.grid()
