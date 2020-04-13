@@ -53,10 +53,17 @@ class PAfile(CommonFile):
             return value
 
         # Uses iterate function to extract data from the filename
+<<<<<<< Updated upstream
         self.sensorname = iterate()
         self.sensor_environment = iterate()
         self.latitude = iterate()
         self.longitude = iterate()
+=======
+        self.sensorname = filename[0]
+        self.sensor_environment = filename[1]
+        self.latitude = float(filename[2])
+        self.longitude = float(filename[3])
+>>>>>>> Stashed changes
 
     @staticmethod
     def import_pa_files(cwd, file_dir):
