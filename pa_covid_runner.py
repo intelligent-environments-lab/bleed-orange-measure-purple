@@ -5,32 +5,18 @@ Created on Wed Apr  8 17:12:21 2020
 @author: CalvinL2
 """
 import os
-from os import path
-import pickle as pkl
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 from pa_datafile import PAfile
+from util import Util
 
 USE_CACHE = True
 CACHE = 'PAfiles_cache.pkl'
 
 # Using caching for improved performance
-def import_pa():
-    """Imports all PurpleAir files in current directory, uses caching to speed up future runs"""
-    if not path.exists(CACHE) or not USE_CACHE:
-        print('Importing data from csv...', flush=True, end="")
-        PAfiles = PAfile.import_pa_files(os.getcwd(), 'input\\pa_covid')
-        print('Done', flush=True)
-        pkl.dump(PAfiles, open(CACHE, 'wb'))
-    else:
-        print('Loading data from cache...', flush=True, end="")
-        PAfiles = pkl.load(open(CACHE, 'rb'))
-        print('Done', flush=True)
-    return PAfiles
-
-PAfiles = import_pa()
+PAfiles = Util.import_with_caching(PAfile.import_pa_files, os.getcwd(), 'input\\pa_covid')
 
 fig = plt.figure(figsize=(20, 10))
 ax = fig.add_subplot(1, 1, 1)

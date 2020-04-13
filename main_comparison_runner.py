@@ -16,12 +16,9 @@ from pa_datafile import PAfile
 cwd = os.getcwd()
 
 # %% Import Purple Air Files
-PAfiles = []
 relative_path = 'input\\test3'
 
-for filename in os.listdir(cwd+'\\'+relative_path):
-    if filename.endswith(".csv") and filename.startswith("PA"):
-        PAfiles.append(PAfile(relative_path+'\\'+filename))
+PAfiles = PAfile.import_pa_files(os.getcwd(), relative_path)
 
 # %% Import APS Files
 TrhFile = APSTRHfile(f'{relative_path}\\Test_0304_CO_TRH.csv')
