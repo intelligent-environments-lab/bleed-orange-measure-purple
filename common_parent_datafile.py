@@ -4,20 +4,19 @@ Created on Thu Mar 12 00:15:47 2020
 
 @author: CalvinL2
 """
-
+import copy
 from datetime import datetime, timezone, timedelta
 
-class commonfile():
-    def __init__(self):
-        self.frequency = None
-
-    def set_frequency(self, freq):
-        # Use 'H' for hourly mean
-        self.frequency = freq
+class CommonFile():
+    """Superclass for sensor specific subclasses"""
+    def __init__(self, data):
+        self.data = data
+        self.resampled_data = data
+        self._frequency = None
 
     @staticmethod
-    def _str2date(timearray, timeformat, tzone=None):
-        ''' Converts column of strings to datetime objects'''
+    def str2date(timearray, timeformat, tzone=None):
+        """Converts column of strings to datetime objects"""
         time = []
         central = timezone(timedelta(hours=-6))
         for _, val in enumerate(timearray):
@@ -25,46 +24,49 @@ class commonfile():
             time.append(value.replace(tzinfo=tzone).astimezone(tz=central))
         return time
 
-    # def resample(self,data,col_name):
-    #     frequency = self.frequency
+    @property
+    def frequency(self):
+        """The frequency used for panda's resampling function"""
+        return self._frequency
 
-    #     # Determines if the column specified is the index column, need better name
-    #     def find_column_data(data_):
-    #         if col_name in data_:
-    #             return data_[col_name]
-    #         elif col_name == data_.index.name:
-    #             return data_.index.values
-    #         else:
-    #             print('An error has occured')
+    @frequency.setter
+    def frequency(self, var):
+        """Used to set frequency via equality operator"""
+        # TIP Unknown effect with invalid frequency
+        if var != self._frequency:
+            self._frequency = var
+            self.resample(var)
 
-    #     # Determines if resampling was requested
-    #     if frequency is not None:
-    #         resampled_data = data.resample(frequency).mean()
-    #         return find_column_data(resampled_data)
-    #     else:
-    #         return find_column_data(data)
+    def resample(self, freq):
+        """Resamples the data using the provided frequency"""
+        if freq is None:
+            self.resampled_data = self.data
+            return self
+        self.resampled_data = self[:].resample(self.frequency).mean()
+        return self
 
-    @staticmethod
-    def resample(data, col_name, frequency=None):
-        # Determines if the column specified is the index column, need better name
-        def find_column_data(data_):
-            if col_name in data_:
-                return data_[col_name]
-            if col_name == data_.index.name:
-                return data_.index.values
-            print('An error has occured')
-            return None
+    def rolling(self, num=1):
+        """Returns an copy of the datafile with rolling average data"""
+        copyfile = copy.deepcopy(self)
+        copyfile.resampled_data = copyfile[:].rolling(window=num).mean()
+        return copyfile
 
-        # Determines if resampling was requested
-        if frequency is not None:
-            resampled_data = data.resample(frequency).mean()
-            return find_column_data(resampled_data)
-        return find_column_data(data)
+    @property
+    def time(self):
+        """Returns datetime objects in a numpy array."""
+        return self[:].index.values
 
-        # freq = self.frequency
-        # if freq is not None:
-        #     sample = self.pm25data.resample(freq).mean()
-        #     return sample.index.values
-        # else:
-        #     return data.index.values
-    
+    @property
+    def hourly(self):
+        """Set resampling frequency to hourly"""
+        self.frequency = 'H'
+        return self
+
+    @property
+    def raw(self):
+        """Set resampling frequency to None"""
+        self.frequency = None
+        return self
+
+    def __getitem__(self, key):
+        return self.resampled_data[key]

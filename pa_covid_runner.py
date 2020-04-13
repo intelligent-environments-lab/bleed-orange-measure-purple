@@ -4,61 +4,74 @@ Created on Wed Apr  8 17:12:21 2020
 
 @author: CalvinL2
 """
-
-from pa_datafile import PAfile
-import matplotlib.pyplot as plt
-from matplotlib.dates import date2num
-import matplotlib.dates as mdates
-import numpy as np
-
 import os
 
-#Get current working directory
-cwd = os.getcwd()
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
-PAfiles = []
-        
-for filename in os.listdir(cwd+r'\input\pa_covid'):
-    if filename.endswith(".csv") and filename.startswith("PA"):
-        PAfiles.append(PAfile('input\\pa_covid\\'+filename))
-        
-fig = plt.figure(figsize=(20,10))
-ax = fig.add_subplot(1,1,1)  
-time =[]
+from pa_datafile import PAfile
+from util import Util
+
+USE_CACHE = True
+CACHE = 'PAfiles_cache.pkl'
+
+# Using caching for improved performance
+PAfiles = Util.import_with_caching(PAfile.import_pa_files, os.getcwd(), 'input\\pa_covid')
+
+fig = plt.figure(figsize=(20, 10))
+ax = fig.add_subplot(1, 1, 1)
+
 for file in PAfiles:
-    # file.set_frequency('H')
-    plt.plot_date(file.hourly_time,file.hourly_pm,'.',xdate=True,label=file.sensorname)
-    plt.legend()
-    time = file.time
+    plt.plot_date(file.hourly.time, file.hourly.pm25, '.', xdate=True,
+                  label=file.sensorname)
 
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=1)) 
+rolling_data = [file.pm25 for file in PAfiles]
+pa_avg = sum(rolling_data)/len(rolling_data)
+pa_avg = pa_avg.rolling(window=48).mean()
+plt.plot_date(pa_avg.index.values, pa_avg,
+              '-k', xdate=True, linewidth=4,
+              label='Rolling Average')
+
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
 ax.grid()
-plt.ylim(0,70)
-fig.autofmt_xdate()
+
+plt.ylim(0, 70)
 plt.title('Hourly PM 2.5 Values from UT PurpleAirs for Mar 1 to Apr 8')
 plt.ylabel('PM 2.5 (ug/m3)')
 plt.xlabel('Time')
+plt.legend()
+
+fig.autofmt_xdate()
 fig.savefig('output//march_ut_pa_hourly_pm.svg')
 
 
-fig = plt.figure(figsize=(20,10))
-ax = fig.add_subplot(1,1,1)  
-time =[]
+fig = plt.figure(figsize=(20, 10))
+ax = fig.add_subplot(1, 1, 1)
+
 for file in PAfiles:
     # file.set_frequency('H')
-    plt.plot_date(file.hourly_time,file.hourly_temp,'.',xdate=True,label=file.sensorname)
-    plt.legend()
-    time = file.time
+    plt.plot_date(file.hourly.time, file.hourly.temperature, '.', xdate=True, label=file.sensorname)
 
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=1)) 
 ax.grid()
 # plt.ylim(0,70)
 fig.autofmt_xdate()
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
+
 plt.title('Hourly Temperature Values from UT PurpleAirs for Mar 1 to Apr 8')
 plt.ylabel('Temperature(F)')
 plt.xlabel('Time')
+plt.legend()
+
 fig.savefig('output//march_ut_pa_hourly_temp.svg')
 
+# def label_timeseries(fig,title,xlabel='Time',ylabel=None):
+#     fig.autofmt_xdate()
+#     plt.title(title)
+#     plt.xlabel(xlabel)
+#     plt.ylabel(ylabel)
+#     plt.legend()
+# fig = plt.figure(figsize=(20, 10))
+# time = []
 
-fig = plt.figure(figsize=(20,10))
-time =[]  
+#eval
+#getattr

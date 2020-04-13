@@ -6,39 +6,28 @@ Created on Wed Mar 11 23:22:59 2020
 """
 import pandas as pd
 
-from common_parent_datafile import commonfile
+from common_parent_datafile import CommonFile
 
-class APSTRHfile(commonfile):
-
+class APSTRHfile(CommonFile):
+    """Stores and manipulates one temperature/relative_humidity csv file from an APS sensor"""
     def __init__(self, RHfile):
-        super().__init__()
-        self.data = pd.read_csv(RHfile, index_col=False)
+        data = pd.read_csv(RHfile, index_col=False)
 
-        self.data['time'] = super()._str2date(self.data['Date Time'], '%d %b %Y %H:%M')
-        self.data = self.data.set_index('time')
+        data['time'] = CommonFile.str2date(data['Date Time'], '%d %b %Y %H:%M')
+        data = data.set_index('time')
 
-        self.frequency = None
+        super().__init__(data)
 
-    @property
-    def rh(self):
-        return self.data[' RH(%)']
 
     @property
-    def t(self):
-        return self.data[' TEMP(C)']
+    def humidity(self):
+        """Returns relative humidity values of type:float in a series"""
+        return self[' RH(%)']
 
     @property
-    def time(self):
-        return self.data.index.values
+    def temperature(self):
+        """Returns temperature values of type:float in a series"""
+        return self[' TEMP(C)']
 
-    @property
-    def hourly_time(self):
-        return super().resample(self.data, 'time', 'H')
-
-    @property
-    def hourly_rh(self):
-        return super().resample(self.data, ' RH(%)', 'H')
-
-    @property
-    def hourly_t(self):
-        return super().resample(self.data, ' TEMP(C)', 'H')
+if __name__ == "__main__":
+    debug = APSTRHfile('input\\test3\\Test_0304_CO_TRH.csv')

@@ -1,8 +1,9 @@
 
 *.pyc
-
 *.docx
 *.stats
 *.lnk
-
 *.tmp
+.ipynb_checkpoints/
+testing_grounds.ipynb
+
