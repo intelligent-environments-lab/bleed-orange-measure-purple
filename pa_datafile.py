@@ -46,21 +46,16 @@ class PAfile(commonfile):
 
         # Some adjustments to format to make parsing easier
         filename = filename[filename.rfind('\\')+1:]
+        filename = filename.replace(' B','[B]')
         filename = filename.replace('(', '').replace(')', '')
+        filename = filename.replace('.csv', '')
 
-        # Iterates across parts of a file name with space as the seperator
-        def iterate():
-            nonlocal filename
-            index = filename.find(' ')
-            value = filename[0:index]
-            filename = filename[index+1:]
-            return value
-
+        filename = filename.split(' ')
         # Uses iterate function to extract data from the filename
-        self.sensorname = iterate()
-        self.sensor_environment = iterate()
-        self.latitude = iterate()
-        self.longitude = iterate()
+        self.sensorname = filename[0]
+        self.sensor_environment = filename[1]
+        self.latitude = filename[2]
+        self.longitude = filename[3]
 
 
     @property
