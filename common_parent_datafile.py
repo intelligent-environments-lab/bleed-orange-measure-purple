@@ -69,4 +69,7 @@ class CommonFile():
         return self
 
     def __getitem__(self, key):
+        if type(key) == str:
+            if key not in self.resampled_data.columns:
+                return
         return self.resampled_data[key]
