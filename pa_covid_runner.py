@@ -46,7 +46,7 @@ def timegraph(files,param='pm25'):
     
     fig.savefig(f'output//march_ut_pa_hourly_{param}.svg')
 
-def plotnew(files,param='pm25'):
+def plotnew(files,param='PM10.0_CF1_ug/m3'):
     fig = go.Figure()
         
     for file in files:
@@ -54,7 +54,12 @@ def plotnew(files,param='pm25'):
             fig.add_trace(go.Scattergl(x=file.raw[:].index.to_pydatetime(), y=file.raw[param],
                     mode='markers',
                     name=file.sensorname))
-    plot(fig)
+    fig.update_layout(
+        title = 'UT PurpleAir',
+        xaxis_title = 'Time',
+        yaxis_title = 'PM 10(ug/m3)'
+        )
+    plot(fig, filename='Mar1-8pm10')
     
 pa_files = PAfiles('input\\pa_covid')
 plotnew(pa_files)
