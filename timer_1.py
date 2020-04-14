@@ -18,4 +18,4 @@ class Timer:
     
     def __exit__(self, exc_type, exc_value, exc_tb):
         end = time.perf_counter()
-        print(end-self.start)
+        print(f'{float(int((end-self.start)*1000))/1000} secs')

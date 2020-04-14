@@ -12,6 +12,7 @@ from datetime import timezone
 import pandas as pd
 
 from common_parent_datafile import CommonFile
+from util import Util
 
 # %%
 class PAfile(CommonFile):
@@ -75,3 +76,14 @@ class PAfile(CommonFile):
     def humidity(self):
         """Returns temperature values in a panda series."""
         return self['Humidity_%']
+    
+class PAfiles():
+    def __init__(self,file_dir):
+        files = Util.import_with_caching(PAfile.import_pa_files, os.getcwd(), file_dir)
+        self.files = {file.sensorname:file for file in files}
+
+    def __getitem__(self,key):
+        return self.files[key]
+
+    def __iter__(self):
+        return (file for file in self.files.values())

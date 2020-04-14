@@ -42,7 +42,7 @@ class CommonFile():
         if freq is None:
             self.resampled_data = self.data
             return self
-        self.resampled_data = self[:].resample(self.frequency).mean()
+        self.resampled_data = self[:].resample(freq).mean()
         return self
 
     def rolling(self, num=1):
@@ -70,6 +70,10 @@ class CommonFile():
 
     def __getitem__(self, key):
         if type(key) == str:
-            if key not in self.resampled_data.columns:
-                return
+            if key in self.resampled_data.columns: 
+                return self.resampled_data[key]
+            if hasattr(self,key):
+                return getattr(self,key)
+            else:
+                return 
         return self.resampled_data[key]
