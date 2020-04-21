@@ -27,27 +27,9 @@ class TCEQfile(CommonFile):
             PMdata[1] = self.str2num(PMdata[1])
             PMdata.columns = ['Time','PM2.5']
         self.data = PMdata
-        
-    def import_csv(self,filename):
-        '''Imports a TCEQ style csv file.'''
-        return pd.read_csv(filename,index_col = False)
-    
-    
+
     def findPM2_5(self,rawdata):
-        # TODO modify method to allow searching of different parameter given different search_values
-        '''
-        Isolates data associated with a particular air quality parameter.
-    
-        Parameters
-        ----------
-        rawdata : DataFrame
-            The unmodified data imported from a CSV filed using pd.read_csv().
-    
-        Returns
-        -------
-        target_data : DataFrame
-            A subset of the input data frame with the value 'Date' in the upper left cell.
-        '''
+        """Isolates data associated with a particular air quality parameter.(DataFrame)"""
         first_column = rawdata.iloc[:,0]
         search_value = 'PM-2.5 (Local Conditions) (POC 3) measured in micrograms per cubic meter (local conditions)'
         location = first_column.index[first_column == search_value] #Finds the desired parameter data
@@ -61,23 +43,9 @@ class TCEQfile(CommonFile):
                 return None
         else: 
             return None
-    
-    
+
     def flatten(self,data):
-        '''
-        Converts a 2D TCEQ array into a linear array.
-    
-        Parameters
-        ----------
-        data : DataFrame
-            2D TCEQ value array with 'Date' in upper left corner.
-    
-        Returns
-        -------
-        DataFrame
-            Two column DataFrame with time and value.
-    
-        '''
+        """Converts a 2D TCEQ array into a linear array.(DataFrame)"""
         values = np.array(data.iloc[1:,1:]).flatten()
         dates = np.array(data.iloc[1:,0])
         hours = np.array(data.iloc[0,1:])
@@ -87,25 +55,14 @@ class TCEQfile(CommonFile):
                 timestamp.append(date+' '+hour)
         timestamp = np.array(timestamp)
         return pd.DataFrame([timestamp,values]).transpose()
-    
-    
+
     def str2num(self,data):
         '''Converts column of strings to float values'''
         data = np.array(data.replace('AQI',np.nan)
                         .replace('QAS',np.nan)
                         .astype(float))
         return data
-    
-    
-    def str2date(self,timearray):
-        ''' Converts column of strings to datetime objects'''
-        time = []
-        central = timezone(timedelta(hours=-6))
-        for idx,val in enumerate(timearray):
-            value = datetime.strptime(val,'%m/%d/%Y %H:%M')
-            time.append(value.astimezone(tz=central)) 
-        return time
-    
+
 
 if __name__ == '__main__':
     sample = TCEQfile('input\\archive\\tceq2.csv')
