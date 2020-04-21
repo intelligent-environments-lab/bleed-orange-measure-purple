@@ -14,6 +14,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from datafiles.pa_datafile import PAfiles
+from datafiles.TCEQ_pm_datafile import TCEQfile
+
 from timer_1 import Timer
 
 #https://plotly.com/python/getting-started/
@@ -93,7 +95,7 @@ def label_plot(fig):
     plot(fig, filename='Mar1-Apr8r.html')
 
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
-                    x_title='Time(UTC)',
+                    x_title='Time(CST)',
                     specs = [[{"secondary_y":False}], [{"secondary_y":True}]])
 # fig = go.Figure()
 pa_files = PAfiles('input\\pa_covid')
@@ -102,6 +104,9 @@ plot_avg_param(fig, param='Temperature_F')
 plot_avg_param(fig, param='Humidity_%', second_y=True)
 plot_avg_pm(fig, param='PM2.5_ATM_ug/m3')
 
+sample = TCEQfile('C:/Users/CalvinLin/My Files/GitHub/bleed-orange-measure-purple/input/tceq_pm_mar.csv')
+fig.add_trace(go.Scattergl(x=sample.data['Time'], y=sample.data['PM2.5'],
+                    mode='lines',name='TCEQpm'),row=1,col=1)
 
 label_plot2(fig)
 label_plot(fig)

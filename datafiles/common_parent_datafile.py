@@ -15,12 +15,14 @@ class CommonFile():
         self._frequency = None
 
     @staticmethod
-    def str2date(timearray, timeformat, tzone=None):
+    def str2date(timearray, timeformat, tzone=None, isCentral=False):
         """Converts column of strings to datetime objects"""
         time = []
         central = timezone(timedelta(hours=-6))
         for _, val in enumerate(timearray):
             value = datetime.strptime(val, timeformat)
+            if isCentral:
+                tzone=central
             time.append(value.replace(tzinfo=tzone).astimezone(tz=central))
         return time
 
