@@ -12,24 +12,20 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from datetime import datetime, timezone, timedelta
 
-# from visualize import plot_timeseries
-# from matplotlib.dates import date2num
-# from datetime import datetime, timezone, tzinfo, timedelta
+from datafiles.common_parent_datafile import CommonFile
 
 # %% Read File
-# TODO Turn this file into PAsample class
-class TCEQfile:
+class TCEQfile(CommonFile):
     def __init__(self,filename):
-        raw = pd.read_csv(filename,index_col = False)
+        data = pd.read_csv(filename,index_col = False)
         
-        PMdata = self.findPM2_5(raw)
+        PMdata = self.findPM2_5(data)
         if not PMdata.empty:
             #TODO change numerical indicies to column names
             PMdata = self.flatten(PMdata)
-            PMdata[0] = self.str2date(PMdata[0])
+            PMdata[0] = CommonFile.str2date(PMdata[0],'%m/%d/%Y %H:%M',isCentral=True)
             PMdata[1] = self.str2num(PMdata[1])
             PMdata.columns = ['Time','PM2.5']
-            plot_timeseries(PMdata['Time'], PMdata['PM2.5'])
         self.data = PMdata
         
     def import_csv(self,filename):
@@ -95,7 +91,9 @@ class TCEQfile:
     
     def str2num(self,data):
         '''Converts column of strings to float values'''
-        data = np.array(data.replace('AQI',np.nan).astype(float))
+        data = np.array(data.replace('AQI',np.nan)
+                        .replace('QAS',np.nan)
+                        .astype(float))
         return data
     
     
