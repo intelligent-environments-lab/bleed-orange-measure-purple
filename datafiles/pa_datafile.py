@@ -43,7 +43,7 @@ class PAfile(CommonFile):
     def _parse_filename(self, filename):
         # Some adjustments to format to make parsing easier
         filename = filename[filename.rfind('\\')+1:]
-        filename = filename.replace(' B','[B]')
+        filename = filename.replace(' B', '[B]')
         filename = filename.replace('(', '').replace(')', '')
         filename = filename.replace('.csv', '')
 
@@ -76,13 +76,14 @@ class PAfile(CommonFile):
     def humidity(self):
         """Returns temperature values in a panda series."""
         return self['Humidity_%']
-    
+
+
 class PAfiles():
-    def __init__(self,file_dir):
+    def __init__(self, file_dir):
         files = Util.import_with_caching(PAfile.import_pa_files, os.getcwd(), file_dir)
         self.files = {file.sensorname:file for file in files}
 
-    def __getitem__(self,key):
+    def __getitem__(self, key):
         return self.files[key]
 
     def __iter__(self):
