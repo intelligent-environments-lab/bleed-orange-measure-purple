@@ -92,7 +92,7 @@ def label_plot(fig):
         yaxis_title = 'PM 2.5(ug/m3)'#,
         #xaxis = dict(rangeslider=dict(visible=True))
         )
-    plot(fig, filename='Mar1-Apr8r.html')
+    plot(fig, filename='Mar1-Apr8.html')
 
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
                     x_title='Time(CST)',
