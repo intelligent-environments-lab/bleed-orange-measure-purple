@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from datetime import datetime, timezone, timedelta
 
-from visualize import plot_timeseries
+# from visualize import plot_timeseries
 # from matplotlib.dates import date2num
 # from datetime import datetime, timezone, tzinfo, timedelta
 
@@ -110,7 +110,7 @@ class TCEQfile:
     
 
 if __name__ == '__main__':
-    sample = TCEQfile('input\\tceq2.csv')
+    sample = TCEQfile('input\\archive\\tceq2.csv')
     
 # # %% Nan remover
 # p2 = pm_vector[~np.isnan(temp_vector)]
