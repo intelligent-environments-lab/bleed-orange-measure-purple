@@ -110,36 +110,3 @@ fig.add_trace(go.Scattergl(x=sample.data['Time'], y=sample.data['PM2.5'],
 
 label_plot2(fig)
 label_plot(fig)
-
-#eval
-#getattr
-
-def timegraph(files,param='pm25'):
-    fig = plt.figure(figsize=(20, 10))
-    ax = fig.add_subplot(1, 1, 1)
-    
-    for file in files:
-        if file.hourly[param] is not None:
-            plt.plot_date(file.hourly.time, file.hourly[param], 'o-', xdate=True,
-                          label=file.sensorname)
-
-    rolling_data = [file[param] for file in files if file[param] is not None]
-    avg = sum(rolling_data)/len(rolling_data)
-    avg = avg.rolling(window=48).mean()
-    plt.plot_date(avg.index.values, avg,
-                  '-k', xdate=True, linewidth=4,
-                  label='Rolling Average')
-    
-    ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-    # ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
-
-    ax.grid()
-    plt.legend(loc='upper left')
-    fig.autofmt_xdate()
-    plt.ylim(0, 70)
-    plt.xlim([datetime.date(2020, 3, 17), datetime.date(2020, 4, 8)])    
-    plt.title(f'Hourly {param} Values from UT PurpleAirs for Mar 1 to Apr 8')
-    plt.ylabel('PM 2.5 (ug/m3)')
-    plt.xlabel('Time')
-    
-    fig.savefig(f'output//march_ut_pa_hourly_{param}.svg')

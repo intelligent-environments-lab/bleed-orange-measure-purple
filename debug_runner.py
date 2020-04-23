@@ -6,6 +6,7 @@ Created on Tue Apr 21 14:33:55 2020
 """
 import os
 
+import matplotlib.pyplot as plt
 from plotly.offline import plot
 import plotly.graph_objects as go
 
@@ -19,3 +20,6 @@ def plot_TCEQ():
     fig.add_trace(go.Scattergl(x=sample.data['Time'], y=sample.data['PM2.5'],
                         mode='lines'))
     plot(fig, filename='TCEQ test.html')
+
+
+plt.plot_date(sample.hourly.time, sample.hourly.pm25, 'o-', xdate=True)

@@ -18,6 +18,7 @@ class Util():
             output = import_func(*args, **kwargs)
             print('Done', flush=True)
             pkl.dump(output, open(cachefile, 'wb'))
+            return output
         
         if cachefile is None:
             func_name = import_func.__name__
@@ -25,7 +26,7 @@ class Util():
             hash_str = hashlib.md5(hash_str.encode('utf-8')).hexdigest()[:8]
             cachefile = '.' + hash_str + f'_{func_name}.cache'
         if not path.exists(cachefile) or not use_cache:
-            import_data()
+            output = import_data()
         else:
             print(f'Loading data from \'{cachefile}\' ... ', flush=True, end="")
             try:

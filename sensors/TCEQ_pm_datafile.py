@@ -26,7 +26,7 @@ class TCEQfile(CommonFile):
             PMdata[0] = CommonFile.str2date(PMdata[0],'%m/%d/%Y %H:%M',isCentral=True)
             PMdata[1] = self.str2num(PMdata[1])
             PMdata.columns = ['Time','PM2.5']
-        self.data = PMdata
+        super().__init__(PMdata)
 
     def findPM2_5(self,rawdata):
         """Isolates data associated with a particular air quality parameter.(DataFrame)"""
@@ -66,48 +66,3 @@ class TCEQfile(CommonFile):
     @property
     def pm25(self):
         return self.data['PM2.5']
-        
-
-
-if __name__ == '__main__':
-    sample = TCEQfile('input\\archive\\tceq2.csv')
-    
-# # %% Nan remover
-# p2 = pm_vector[~np.isnan(temp_vector)]
-# p2 = p2[~np.isnan(pm_vector)]
-# t2 = temp_vector[~np.isnan(temp_vector)]
-# t2 =  t2[~np.isnan(pm_vector)]
-# pm_vector = p2
-# temp_vector = t2
-
-# # %%
-# plt.figure()
-# t = temp_vector-np.min(temp_vector)
-# p = pm_vector-np.min(pm_vector)
-# plt.plot(abs((t)/np.max(t)),abs(p/np.max(p)),'.')
-# a = np.linspace(0,1,100)
-# plt.plot(a,a)
-
-
-
-# %% Linear Regression
-
-# #https://towardsdatascience.com/simple-and-multiple-linear-regression-in-python-c928425168f9
-# X = temp_vector ## X usually means our input variables (or independent variables)
-# y = pm_vector ## Y usually means our output/dependent variable
-# X = sm.add_constant(X) ## let's add an intercept (beta_0) to our model
-
-# # Note the difference in argument order
-# model = sm.OLS(y, X).fit() ## sm.OLS(output, input)
-# predictions = model.predict(X)
-
-# # Print out the statistics
-# model.summary()
-
-# plt.figure()
-# plt.plot(abs(predictions/np.max(predictions)),abs(pm_vector/np.max(pm_vector)),'.')
-# a = np.linspace(0,1,100)
-# plt.plot(a,a)
-
-
-    
