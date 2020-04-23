@@ -16,25 +16,7 @@ from plotly.subplots import make_subplots
 from sensors.pa_datafile import PAfiles
 from sensors.TCEQ_pm_datafile import TCEQfile
 
-from timer_1 import Timer
-
 #https://plotly.com/python/getting-started/
-
-def remove_outlier(df,param):
-    # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
-    Q1 = df[param].quantile(0.25)
-    Q3 = df[param].quantile(0.75)
-    IQR = Q3-Q1
-    mask = df[param].between(Q1-3*IQR,Q3+3*IQR,inclusive=True)
-    return df.loc[mask,:]
-
-def remove_outlier_2(df,param):
-    # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
-    Q1 = df[param].rolling(360,center=True).quantile(0.25)
-    Q3 = df[param].rolling(360,center=True).quantile(0.75)
-    IQR = Q3-Q1
-    mask = (df[param]>=Q1-1.5*IQR)&(df[param]<=Q3+1.5*IQR)
-    return df.loc[mask,:]
 
 def remove_outlier_3(df,param):
     # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
@@ -92,19 +74,19 @@ def label_plot(fig):
         yaxis_title = 'PM 2.5(ug/m3)'#,
         #xaxis = dict(rangeslider=dict(visible=True))
         )
-    plot(fig, filename='Mar1-Apr8.html')
+    plot(fig, filename='plots/Mar1-Apr8.html')
 
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
                     x_title='Time(CST)',
                     specs = [[{"secondary_y":False}], [{"secondary_y":True}]])
 # fig = go.Figure()
-pa_files = PAfiles('input\\pa_covid')
+pa_files = PAfiles('data\\pa_covid')
 plot_purpleair_pm(fig,pa_files)
 plot_avg_param(fig, param='Temperature_F')
 plot_avg_param(fig, param='Humidity_%', second_y=True)
 plot_avg_pm(fig, param='PM2.5_ATM_ug/m3')
 
-sample = TCEQfile('C:/Users/CalvinLin/My Files/GitHub/bleed-orange-measure-purple/input/tceq_pm_mar.csv')
+sample = TCEQfile('data/tceq_pm_mar.csv')
 fig.add_trace(go.Scattergl(x=sample.data['Time'], y=sample.data['PM2.5'],
                     mode='lines',name='TCEQpm'),row=1,col=1)
 

@@ -26,6 +26,7 @@ class TCEQfile(CommonFile):
             PMdata[0] = CommonFile.str2date(PMdata[0],'%m/%d/%Y %H:%M',isCentral=True)
             PMdata[1] = self.str2num(PMdata[1])
             PMdata.columns = ['Time','PM2.5']
+            PMdata.set_index('Time',drop=False,inplace=True)
         super().__init__(PMdata)
 
     def findPM2_5(self,rawdata):
@@ -49,11 +50,7 @@ class TCEQfile(CommonFile):
         values = np.array(data.iloc[1:,1:]).flatten()
         dates = np.array(data.iloc[1:,0])
         hours = np.array(data.iloc[0,1:])
-        timestamp = []
-        for date in dates:
-            for hour in hours:
-                timestamp.append(date+' '+hour)
-        timestamp = np.array(timestamp)
+        timestamp = np.array([date+' '+hour for date in dates for hour in hours])
         return pd.DataFrame([timestamp,values]).transpose()
 
     def str2num(self,data):
@@ -65,4 +62,4 @@ class TCEQfile(CommonFile):
 
     @property
     def pm25(self):
-        return self.data['PM2.5']
+        return self['PM2.5']
