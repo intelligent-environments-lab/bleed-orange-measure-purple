@@ -13,8 +13,8 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from datafiles.pa_datafile import PAfiles
-from datafiles.TCEQ_pm_datafile import TCEQfile
+from sensors.pa_datafile import PAfiles
+from sensors.TCEQ_pm_datafile import TCEQfile
 
 from timer_1 import Timer
 
