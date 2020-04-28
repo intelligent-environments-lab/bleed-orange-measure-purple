@@ -81,3 +81,4 @@ class PAfiles():
         return [PAfile(file_dir+'\\'+filename)
                 for filename in os.listdir(cwd+'\\'+file_dir)
                 if filename.endswith(".csv") and filename.startswith("PA")]
+    
