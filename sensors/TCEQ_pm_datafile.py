@@ -61,6 +61,8 @@ class TCEQfile(CommonFile):
         '''Converts column of strings to float values'''
         data = np.array(data.replace('AQI',np.nan)
                         .replace('QAS',np.nan)
+                        .replace('PMA',np.nan)
+                        .replace('LIM',np.nan)
                         .astype(float))
         return data
 
