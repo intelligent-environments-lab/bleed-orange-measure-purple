@@ -39,13 +39,12 @@ class APSPMfile(CommonFile):
 
                 timestamps.append(row[1]+' '+row[2])
 
-
-            timestamps = np.array(timestamps)
-            timestamps = CommonFile.str2date(np.array(timestamps), '%m/%d/%y %H:%M:%S')
-
-            array_1 = pd.DataFrame([timestamps, array_1]).transpose()
+            timestamps = CommonFile.to_datetime(pd.Series(timestamps), '%m/%d/%y %H:%M:%S', isCentral=True)
+            
+            array_1 = pd.Series(array_1)
+            array_1 = pd.concat([timestamps, array_1], axis=1)
             array_1.columns = ['time', 'pmdata']
-            array_1 = array_1.set_index('time', drop=True).astype(float)
+            array_1 = array_1.set_index('time', drop=True)#.astype(float)
             return array_1
 
         data = _isolate_pm(raw_data)

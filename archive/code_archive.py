@@ -4,7 +4,10 @@ Created on Wed Apr 22 23:54:58 2020
 
 @author: CalvinL2
 """
-
+# import os
+# import datetime
+# import matplotlib.pyplot as plt
+# import matplotlib.dates as mdates
 
 # # %% Nan remover
 # p2 = pm_vector[~np.isnan(temp_vector)]

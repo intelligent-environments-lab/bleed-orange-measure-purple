@@ -13,7 +13,7 @@ class APSTRHfile(CommonFile):
     def __init__(self, RHfile):
         data = pd.read_csv(RHfile, index_col=False)
 
-        data['time'] = CommonFile.str2date(data['Date Time'], '%d %b %Y %H:%M')
+        data['time'] = CommonFile.to_datetime(data['Date Time'], '%d %b %Y %H:%M', isCentral=True)
         data = data.set_index('time')
 
         super().__init__(data)

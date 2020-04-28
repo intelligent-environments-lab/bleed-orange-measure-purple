@@ -8,9 +8,6 @@ Created on Wed Feb 19 01:22:28 2020
 # %% Imports
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
-from datetime import datetime, timezone, timedelta
 
 from sensors.common_parent_datafile import CommonFile
 
@@ -26,8 +23,13 @@ class TCEQfile(CommonFile):
             PMdata[0] = CommonFile.str2date(PMdata[0],'%m/%d/%Y %H:%M',isCentral=True)
             PMdata[1] = self.str2num(PMdata[1])
             PMdata.columns = ['Time','PM2.5']
-            PMdata.set_index('Time',drop=False,inplace=True)
+            PMdata.set_index('Time', inplace=True)
+        
         super().__init__(PMdata)
+
+    @property
+    def pm25(self):
+        return self['PM2.5']
 
     def findPM2_5(self,rawdata):
         """Isolates data associated with a particular air quality parameter.(DataFrame)"""
@@ -47,10 +49,12 @@ class TCEQfile(CommonFile):
 
     def flatten(self,data):
         """Converts a 2D TCEQ array into a linear array.(DataFrame)"""
-        values = np.array(data.iloc[1:,1:]).flatten()
         dates = np.array(data.iloc[1:,0])
         hours = np.array(data.iloc[0,1:])
         timestamp = np.array([date+' '+hour for date in dates for hour in hours])
+        
+        values = np.array(data.iloc[1:,1:]).flatten()
+
         return pd.DataFrame([timestamp,values]).transpose()
 
     def str2num(self,data):
@@ -60,6 +64,3 @@ class TCEQfile(CommonFile):
                         .astype(float))
         return data
 
-    @property
-    def pm25(self):
-        return self['PM2.5']
