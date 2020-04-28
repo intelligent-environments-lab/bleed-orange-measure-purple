@@ -18,8 +18,7 @@ from sensors.pa_datafile import PAfile
 from util.timer import Timer
 
 sample = TCEQfile('data/tceq_pm_mar.csv')
-sample2 = PAfile('data/pa_covid/PA_II_0D9C (outside) (30.28559 -97.736931) 
-                 Primary Real Time 03_01_2020 04_08_2020.csv')
+sample2 = PAfile('data/pa_covid/PA_II_0D9C (outside) (30.28559 -97.736931) Primary Real Time 03_01_2020 04_08_2020.csv')
 apspm = APSPMfile('data/test3/Test_C_0304.csv')
 apst = APSTRHfile('data/test3/Test_0304_CO_TRH.csv')
 
