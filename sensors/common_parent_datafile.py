@@ -77,7 +77,7 @@ class CommonFile():
     def rolling(self, num=1):
         """Returns an copy of the datafile w ith rolling average data"""
         copyfile = copy.deepcopy(self)
-        copyfile.resampled_data = copyfile[:].rolling(window=num).mean()
+        copyfile.resampled_data = copyfile[:].rolling(window=num, min_periods=1, center=True).mean()
         return copyfile
 
     def __getitem__(self, key):
