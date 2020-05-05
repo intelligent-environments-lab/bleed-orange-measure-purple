@@ -60,10 +60,3 @@ temp.insert(0,rh.columns[0], rh)
 data = temp
 data.reset_index(inplace=True)
 data.to_csv('tceq_trh.csv', index=False)
-# if not PMdata.empty:
-#     #TODO change numerical indicies to column names
-#     PMdata = flatten(PMdata)
-#     PMdata[0] = CommonFile.str2date(PMdata[0],'%m/%d/%Y %H:%M',isCentral=True)
-#     PMdata[1] = str2num(PMdata[1])
-#     PMdata.columns = ['Time','PM2.5']
-#     PMdata.set_index('Time', inplace=True)
