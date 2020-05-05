@@ -6,7 +6,6 @@ Created on Mon Apr 27 15:33:13 2020
 """
 
 def remove_outlier(df, param):
-    #Copied from another script pa runner
     # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
     Q1 = df[param].quantile(0.25)
     Q3 = df[param].quantile(0.75)
