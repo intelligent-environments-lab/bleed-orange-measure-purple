@@ -28,25 +28,24 @@ def geo_df2(files, param):
     files = [append_coords(file) for file in files]
     return pd.concat(files)
 
-# pa_files = PAfiles('data\\pa_covid')
-# # fn = pa_files['PA_II_E6D8']
-# sample = TCEQfile('data/tceq_pm_mar.csv')
-
-pa_files = PAfiles('data/ytd', keepOutliers=False)
-sample = TCEQfile('data/ytd/tceq.csv')
-
-px.set_mapbox_access_token(open("token.txt").read())
-df = geo_df2(pa_files, 'pm25')
-df.dropna(axis=0, how='any', inplace=True)
-df['textlabel']=df['PM2.5_ATM_ug/m3'].astype(int, errors='ignore').astype(str)
-
-# row = df[df.index == '2020-02-29 20:00:00-06:00']
-fig = px.scatter_mapbox(df, lat = 'lat', lon = 'lon', size='PM2.5_ATM_ug/m3', text='textlabel', color='PM2.5_ATM_ug/m3', size_max=60, zoom=14,
-                        color_continuous_scale=px.colors.diverging.RdYlBu[::-1],
-                        animation_frame='time')#,
-                        # range_color=[int(df['PM2.5_ATM_ug/m3'].min(skipna=True)),int(df['PM2.5_ATM_ug/m3'].max(skipna=True))])
-                
-fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 2000
-# fig = px.density_mapbox(df, lat = 'lat', lon = 'lon', z='PM2.5_ATM_ug/m3', radius=200, zoom=14,
-                        # color_continuous_scale=px.colors.diverging.RdYlGn[::-1])
-plot(fig, filename='temp_map.html')
+if __name__ =='__main__':
+    pa_files = PAfiles('data/ytd', keepOutliers=False)
+    sample = TCEQfile('data/ytd/tceq.csv')
+    
+    px.set_mapbox_access_token(open("token.txt").read())
+    
+    df = geo_df2(pa_files, 'pm25')
+    
+    df.dropna(axis=0, how='any', inplace=True)
+    df['textlabel']=df['PM2.5_ATM_ug/m3'].astype(int, errors='ignore').astype(str)
+    df['fixedsize']= pd.Series([2]).repeat(df.count()[0]+1).reset_index(drop=True)
+    fig = px.scatter_mapbox(df, lat = 'lat', lon = 'lon', size='fixedsize', #size='PM2.5_ATM_ug/m3',
+                            text='textlabel', color='PM2.5_ATM_ug/m3', size_max=30, zoom=14,
+                            color_continuous_scale=px.colors.diverging.RdYlBu[::-1],
+                            animation_frame='time')#,
+                            # range_color=[int(df['PM2.5_ATM_ug/m3'].min(skipna=True)),int(df['PM2.5_ATM_ug/m3'].max(skipna=True))])
+                    
+    fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 2000
+    # fig = px.density_mapbox(df, lat = 'lat', lon = 'lon', z='PM2.5_ATM_ug/m3', radius=200, zoom=14,
+                            # color_continuous_scale=px.colors.diverging.RdYlGn[::-1])
+    plot(fig, filename='temp-map.html')
