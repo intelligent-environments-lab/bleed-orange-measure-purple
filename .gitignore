@@ -6,5 +6,5 @@
 *.tmp
 .ipynb_checkpoints/
 testing_grounds.ipynb
-
+temp-*.html
 *.cache
