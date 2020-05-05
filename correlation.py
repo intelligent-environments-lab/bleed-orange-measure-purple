@@ -15,16 +15,13 @@ import numpy as np
 
 from sensors.pa_datafile import PAfiles
 from sensors.TCEQ_pm_datafile import TCEQfile
-from sensors.analysis.outliers_remover import remove_outlier
 
 def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     
-    #A list of series with PM data
-    # combined_data = [remove_outlier(file[:], param).resample(freq).mean()[param].rename(file.sensorname) 
-    #                   for file in pa_files if file[param] is not None]
-    
-    combined_data = [remove_outlier(file[:], param).resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
+    #A list of series with PM data    
+    combined_data = [file[:].resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
                     for file in pa_files if file[param] is not None]
+    
     combined_data =  pd.concat(combined_data, axis=1) #columns = sensors, rows = pm values
     avg = combined_data.mean(axis=1)  #average all sensors
     values = avg
@@ -33,8 +30,7 @@ def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     return values
 
 
-
-pa_files = PAfiles('data/ytd')
+pa_files = PAfiles('data/ytd', keepOutliers=True)
 tceq = TCEQfile('data/ytd/tceq.csv')
 tceq_trh = pd.read_csv('data/ytd/tceq_trh.csv')
 
@@ -65,4 +61,4 @@ fig['layout']['xaxis'].update(title='TCEQ PM2.5', range=[0,35])
 fig['layout']['yaxis'].update(title='PurpleAir PM2.5', range=[0,35])
 
 
-plot(fig)
+plot(fig, filename='temp-correlation.html')

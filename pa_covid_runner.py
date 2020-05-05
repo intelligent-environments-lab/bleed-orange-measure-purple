@@ -13,17 +13,18 @@ import numpy as np
 
 from sensors.pa_datafile import PAfiles
 from sensors.TCEQ_pm_datafile import TCEQfile
-from sensors.analysis.outliers_remover import remove_outlier
+
 #https://plotly.com/python/getting-started/
 
 
 def plot_purpleair_pm(fig, files, param='PM2.5_ATM_ug/m3'):
     for file in files:
         if file.hourly[param] is not None:
-            file.frequency = None
-            filtered = remove_outlier(file[:], param).resample('H').mean()
+            file.frequency = 'H'
+            
             # values = file.raw[param]
-            values = filtered[param]
+            values = file[param]
+            
             time = values.index.to_pydatetime()
             fig.add_trace(go.Scattergl(x=time, y=values,
                                        mode='lines',
@@ -44,12 +45,14 @@ def plot_avg_param(fig, param='Temperature_F', second_y=False, r=2, c=1):
 
 def plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     
-    #A list of series with PM data
-    # combined_data = [remove_outlier(file[:], param).resample(freq).mean()[param].rename(file.sensorname) 
+    #A list of series with PM data (non rolling)
+    # combined_data = [file[:].resample(freq).mean()[param].rename(file.sensorname) 
     #                   for file in pa_files if file[param] is not None]
     
-    combined_data = [remove_outlier(file[:], param).resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
+    #Rolling
+    combined_data = [file[:].resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
                     for file in pa_files if file[param] is not None]
+    
     combined_data =  pd.concat(combined_data, axis=1) #columns = sensors, rows = pm values
     avg = combined_data.mean(axis=1)  #average all sensors
     values = avg
@@ -103,10 +106,10 @@ def make_raw_plot(pa_files, tceq):
     plot_tceq_trh(fig, freq=frequency)
     
     label_plot(fig)
-    plot(fig, filename='temp-timeseries-hourly.html')
+    plot(fig, filename='temp-timeplot.html')
 
 
-pa_files = PAfiles('data/ytd')
+pa_files = PAfiles('data/ytd', keepOutliers=False)
 
 tceq = TCEQfile('data/ytd/tceq.csv')
 

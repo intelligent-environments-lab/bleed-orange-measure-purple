@@ -9,12 +9,22 @@ from datetime import datetime, timezone, timedelta
 
 import pandas as pd
 
+from sensors.analysis.outliers_remover import remove_outlier
+
 class CommonFile():
     """Superclass for sensor classes"""
-    def __init__(self, data):
+    def __init__(self, data, keepOutliers=True):
         self.data = data
         self.resampled_data = data
         self._frequency = None
+        self.keepOutliers = keepOutliers
+        
+        if self.keepOutliers == False:
+            self.data = remove_outlier(self.data,'PM2.5_ATM_ug/m3')
+            self.resample(self.frequency)
+# =============================================================================
+# Accessible Properties
+# =============================================================================
 
     @property
     def time(self):
@@ -45,6 +55,19 @@ class CommonFile():
         if var != self._frequency:
             self._frequency = var
             self.resample(var)
+            
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            if key in self.resampled_data.columns:
+                return self.resampled_data[key]
+            if hasattr(self, key):
+                return getattr(self, key)
+            return None
+        return self.resampled_data[key]
+    
+# =============================================================================
+# Methods
+# =============================================================================
 
     @staticmethod
     def str2date(timearray, timeformat, tzone=None, isCentral=False):
@@ -65,7 +88,6 @@ class CommonFile():
             return pd.to_datetime(timearray, format=timeformat).dt.tz_localize('US/Central')
         return pd.to_datetime(timearray, format=timeformat).dt.tz_convert('US/Central')
 
-
     def resample(self, freq):
         """Resamples the data using the provided frequency"""
         if freq is None:
@@ -80,15 +102,5 @@ class CommonFile():
         copyfile.resampled_data = copyfile[:].rolling(window=num, min_periods=1, center=True).mean()
         return copyfile
 
-    def __getitem__(self, key):
-        if isinstance(key, str):
-            if key in self.resampled_data.columns:
-                return self.resampled_data[key]
-            if hasattr(self, key):
-                return getattr(self, key)
-            return None
-        return self.resampled_data[key]
-    
     def plot(self, *args, **kwargs):
         return self.resampled_data.plot(*args, **kwargs)
-
