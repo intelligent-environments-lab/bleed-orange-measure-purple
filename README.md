@@ -15,6 +15,6 @@ We currently have 16 sensors on the University of Texas at Austin's campus. Thes
 
 ## Python Script Description
 
-[pa_covid_runner.py]: Looks at data for all 16 of UT's PurpleAir sensors for the time period from Mar 1 - Apr 8, and creates a     scatter plot of hourly averages. This code is not optimized and may take one or two minutes to execute.
+[../pa_covid_runner.py]: Looks at data for all 16 of UT's PurpleAir sensors for the time period from Mar 1 - Apr 8, and creates a     scatter plot of hourly averages. This code is not optimized and may take one or two minutes to execute.
   
 
