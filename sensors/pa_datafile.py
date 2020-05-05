@@ -11,7 +11,7 @@ import os
 import pandas as pd
 
 from sensors.common_parent_datafile import CommonFile
-from util.importer import Util
+from sensors.util.importer import Util
 
 # %%
 class PAfile(CommonFile):

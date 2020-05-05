@@ -15,7 +15,7 @@ import numpy as np
 
 from sensors.pa_datafile import PAfiles
 from sensors.TCEQ_pm_datafile import TCEQfile
-from analysis.outliers_remover import remove_outlier
+from sensors.analysis.outliers_remover import remove_outlier
 
 def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     

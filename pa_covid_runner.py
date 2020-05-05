@@ -13,7 +13,7 @@ import numpy as np
 
 from sensors.pa_datafile import PAfiles
 from sensors.TCEQ_pm_datafile import TCEQfile
-from analysis.outliers_remover import remove_outlier
+from sensors.analysis.outliers_remover import remove_outlier
 #https://plotly.com/python/getting-started/
 
 
