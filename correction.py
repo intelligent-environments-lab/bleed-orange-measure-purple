@@ -5,6 +5,7 @@ Created on Tue May  5 14:52:18 2020
 @author: CalvinL2
 """
 import statsmodels.api as sm
+import statsmodels.formula.api as smf
 import pandas as pd
 from sklearn import linear_model
 
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     pa_avg.index.name = 'Time'
     
     # Combine PA data with tceq trh data in dataframe
-    df = pa_avg.append(tceq_trh).rename(columns={0:'PurplePM2.5'})
+    # df = pa_avg.append(tceq_trh).rename(columns={0:'PurplePM2.5'})
     df = pd.DataFrame(pa_avg).merge(tceq_trh, how='inner', on='Time')
     df = df.merge(tceq.data.tz_convert('US/Central'), how='inner', on='Time').dropna(how='any')
     
@@ -55,24 +56,37 @@ if __name__ == "__main__":
     X = sm.add_constant(X) ## let's add an intercept (beta_0) to our model
     
     # Note the difference in argument order
-    model = sm.OLS(y, X).fit() ## sm.OLS(output, input)
-    predictions = model.predict(X)
+    # model = sm.OLS(y, X).fit() ## sm.OLS(output, input)
+    # predictions = model.predict(X)
     
+    # Quadratic regression
+    data = {'temp':df['Temperature(F)'],'r':df['Relative Humidity(%)'],'purple':df['PM2.5_ATM_ug/m3'],'tceq':df['PM2.5']}
+    dewpoint = ((data['temp']-32)*5/9+((100-data['r'])/5))*9/5+32
+    data['dp']=dewpoint
+    # I() is used to get it to do quadratic regression properly
+    model = smf.ols(formula='tceq ~ temp + r + purple + I(r**2) + I(temp**2) + I(purple**2) + I(r*temp) + I(purple*temp) + I(r*purple)', data=data).fit()
+    # model = smf.ols(formula='tceq ~ temp + r + purple + dp', data=data).fit()
+    
+    data1 = {'temp':df['Temperature(F)'],'r':df['Relative Humidity(%)'],'purple':df['PM2.5_ATM_ug/m3']}
+    predictions = model.predict(data)
     # Print out the statistics
-    model.summary()
+    print(model.summary())
+    
+    
+    r2_predict = np.corrcoef(predictions,y)[0,1]**2
+    plt.figure()
+    plt.plot(abs(y/np.max(y)),abs(pm_vector/np.max(pm_vector)),'.')
+    a = np.linspace(0,1,100)
+    plt.plot(a,a)
     
     plt.figure()
     plt.plot(abs(predictions/np.max(predictions)),abs(y/np.max(y)),'.')
     a = np.linspace(0,1,100)
     plt.plot(a,a)
     
-    r1 = np.corrcoef(predictions,y)[0,1]**2
-    plt.figure()
-    plt.plot(abs(y/np.max(y)),abs(pm_vector/np.max(pm_vector)),'.')
-    a = np.linspace(0,1,100)
-    plt.plot(a,a)
+    
 
-    r2 = np.corrcoef(pm_vector,y)[0,1]**2
+    r2_original = np.corrcoef(pm_vector,y)[0,1]**2
 
     
     plt.figure(figsize=(20, 10))
