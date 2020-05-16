@@ -12,8 +12,8 @@ from sklearn import linear_model
 from plotly.offline import plot
 import plotly.graph_objects as go
 
-from sensors.pa_datafile import PAfiles
-from sensors.TCEQ_pm_datafile import TCEQfile
+from sensors.purpleair.pa_datafile import PAfiles
+from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 
 import matplotlib.pyplot as plt
 import numpy as np

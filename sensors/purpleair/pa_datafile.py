@@ -10,8 +10,8 @@ import os
 
 import pandas as pd
 
-from sensors.common_parent_datafile import CommonFile
-from sensors.util.importer import Util
+from sensors.common.common_parent_datafile import CommonFile
+from sensors.common.util.importer import Util
 
 # %%
 class PAfile(CommonFile):

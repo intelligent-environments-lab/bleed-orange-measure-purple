@@ -13,8 +13,8 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
-from sensors.pa_datafile import PAfiles
-from sensors.TCEQ_pm_datafile import TCEQfile
+from sensors.purpleair.pa_datafile import PAfiles
+from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 
 def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     
