@@ -9,7 +9,7 @@ from datetime import datetime, timezone, timedelta
 
 import pandas as pd
 
-from sensors.analysis.outliers_remover import remove_outlier
+from sensors.common.outliers_remover import remove_outlier
 
 class CommonFile():
     """Superclass for sensor classes"""

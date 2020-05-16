@@ -1,8 +1,8 @@
 # Bleed Orange Measure Purple
 The Bleed Orange Measure Project is aimed to learn more about the particulate matter sources, fate, and transport across UT's campus using a low-cost sensor network.
 
-## Purple Air Sensors
-[Purple Air](https://www2.purpleair.com) is a company that provides low-cost particulate matter sensors for indoor and outdoor applications. The company uses sensors developed by [Plantower](http://plantower.com/en/) and provides a [map](https://www.purpleair.com/map?mylocation) for real-time viewing of data gathered by publicly-registered sensors. Data are available to download from any publicly-registered device. 
+## PurpleAir Sensors
+[PurpleAir](https://www2.purpleair.com) is a company that provides low-cost particulate matter sensors for indoor and outdoor applications. The company uses sensors developed by [Plantower](http://plantower.com/en/) and provides a [map](https://www.purpleair.com/map?mylocation) for real-time viewing of data gathered by publicly-registered sensors. Data are available to download from any publicly-registered device. 
 
 For this project, we are using the [PA-II](https://www2.purpleair.com/products/purpleair-pa-ii) outdoor sensors to gather particulate matter, temperature, and relative humidty data on campus.
 

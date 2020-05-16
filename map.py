@@ -8,8 +8,8 @@ import pandas as pd
 import plotly.express as px
 from plotly.offline import plot
 
-from sensors.TCEQ_pm_datafile import TCEQfile
-from sensors.pa_datafile import PAfile, PAfiles
+from sensors.tceq.TCEQ_pm_datafile import TCEQfile
+from sensors.purpleair.pa_datafile import PAfile, PAfiles
 
 import numpy as np
 

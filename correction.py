@@ -8,8 +8,8 @@ import statsmodels.api as sm
 import pandas as pd
 from sklearn import linear_model
 
-from sensors.pa_datafile import PAfiles
-from sensors.TCEQ_pm_datafile import TCEQfile
+from sensors.purpleair.pa_datafile import PAfiles
+from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 
 
 def plot_avg_pm(param='PM2.5_ATM_ug/m3', freq=None):
