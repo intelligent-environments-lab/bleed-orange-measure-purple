@@ -6,7 +6,7 @@ Created on Wed Mar 11 23:22:59 2020
 """
 import pandas as pd
 
-from sensors.common_parent_datafile import CommonFile
+from sensors.common.common_parent_datafile import CommonFile
 
 class APSTRHfile(CommonFile):
     """Stores and manipulates one temperature/relative_humidity csv file from an APS sensor"""

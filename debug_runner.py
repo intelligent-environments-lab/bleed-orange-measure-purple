@@ -11,11 +11,11 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 
-from sensors.TCEQ_pm_datafile import TCEQfile
-from sensors.aps_pm_datafile import APSPMfile
-from sensors.aps_trh_datafile import APSTRHfile
-from sensors.pa_datafile import PAfile
-from sensors.util.timer import Timer
+from sensors.tceq.TCEQ_pm_datafile import TCEQfile
+from sensors.aps.aps_pm_datafile import APSPMfile
+from sensors.aps.aps_trh_datafile import APSTRHfile
+from sensors.purpleair.pa_datafile import PAfile
+from sensors.common.util.timer import Timer
 
 sample = TCEQfile('data/tceq_pm_mar.csv')
 sample2 = PAfile('data/pa_covid/PA_II_0D9C (outside) (30.28559 -97.736931) Primary Real Time 03_01_2020 04_08_2020.csv')

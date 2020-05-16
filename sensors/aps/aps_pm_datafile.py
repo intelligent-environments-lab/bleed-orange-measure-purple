@@ -7,7 +7,7 @@ Created on Mon Mar  9 17:12:34 2020
 import pandas as pd
 import numpy as np
 
-from sensors.common_parent_datafile import CommonFile
+from sensors.common.common_parent_datafile import CommonFile
 
 class APSPMfile(CommonFile):
     """Stores and manipulates one PM csv file from an APS sensor"""
