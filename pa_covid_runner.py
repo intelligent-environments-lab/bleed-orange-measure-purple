@@ -11,8 +11,8 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
-from sensors.pa_datafile import PAfiles
-from sensors.TCEQ_pm_datafile import TCEQfile
+from sensors.purpleair.pa_datafile import PAfiles
+from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 
 #https://plotly.com/python/getting-started/
 
