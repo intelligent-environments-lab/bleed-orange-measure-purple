@@ -9,14 +9,14 @@ import plotly.express as px
 from plotly.offline import plot
 
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
-from sensors.purpleair.pa_datafile import PAfile, PAfiles
+from sensors.purpleair.pa_datafile import PAfile, PAfiles2
 
 import numpy as np
 
 def geo_df2(files, param):
     """Creates a new dataframe that works with animation in mapbox"""
     def append_coords(file):
-        column = file[:].resample('D').mean()['PM2.5_ATM_ug/m3']
+        column = file.data.resample('D').mean()['PM2.5_ATM_ug/m3']
         lat = pd.Series(file.latitude, index=[i for i in range(column.size)])
         lat.index = column.index
         long = pd.Series(file.longitude, index=[i for i in range(column.size)])
@@ -29,8 +29,8 @@ def geo_df2(files, param):
     return pd.concat(files)
 
 if __name__ =='__main__':
-    pa_files = PAfiles('data/ytd', keepOutliers=False)
-    sample = TCEQfile('data/ytd/tceq.csv')
+    pa_files = PAfiles2('data/monthly', keepOutliers=False)
+    sample = TCEQfile('data/monthly/tceq.csv')
     
     px.set_mapbox_access_token(open("token.txt").read())
     

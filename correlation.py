@@ -13,13 +13,13 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
-from sensors.purpleair.pa_datafile import PAfiles
+from sensors.purpleair.pa_datafile import PAfiles2
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 
 def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     
     #A list of series with PM data    
-    combined_data = [file[:].resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
+    combined_data = [file.data.resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
                     for file in pa_files if file[param] is not None]
     
     combined_data =  pd.concat(combined_data, axis=1) #columns = sensors, rows = pm values
@@ -30,9 +30,9 @@ def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     return values
 
 
-pa_files = PAfiles('data/ytd', keepOutliers=True)
-tceq = TCEQfile('data/ytd/tceq.csv')
-tceq_trh = pd.read_csv('data/ytd/tceq_trh.csv')
+pa_files = PAfiles2('data/monthly', keepOutliers=False)
+tceq = TCEQfile('data/monthly/tceq.csv')
+tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')
 
 tceq_trh['Time']=pd.to_datetime(tceq_trh['Time'], format='%Y-%m-%d %H:%M:%S').dt.tz_localize('US/Central', nonexistent='NaT')
 tceq_trh.set_index('Time', inplace=True)

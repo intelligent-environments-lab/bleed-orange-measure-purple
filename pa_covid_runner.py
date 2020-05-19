@@ -44,15 +44,15 @@ def plot_avg_param(fig, param='Temperature_F', second_y=False, r=2, c=1):
                                name=param), row=r, col=c, secondary_y=second_y)
 
 
-def plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
+def plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1):
     
     #A list of series with PM data (non rolling)
     # combined_data = [file[:].resample(freq).mean()[param].rename(file.sensorname) 
     #                   for file in pa_files if file[param] is not None]
     
     #Rolling
-    combined_data = [file[:].resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
-                    for file in pa_files if file[param] is not None]
+    combined_data = [file.data.resample('H').mean().rolling(window=100, min_periods=1, center=True).mean()[param].rename(file.sensorname) 
+                    for file in pa_files]
     
     combined_data =  pd.concat(combined_data, axis=1) #columns = sensors, rows = pm values
     avg = combined_data.mean(axis=1)  #average all sensors
@@ -89,22 +89,22 @@ def make_raw_plot(pa_files, tceq):
                         specs=[[{"secondary_y":False}], [{"secondary_y":True}]])
     # fig = go.Figure()
     print('Subplots created')
-    plot_purpleair_pm(fig, pa_files)
+    # plot_purpleair_pm(fig, pa_files)
     print('PurpleAir Individual data plotted')
     # plot_avg_param(fig, param='Temperature_F')
     # plot_avg_param(fig, param='Humidity_%', second_y=True)
-    frequency = 'D'
+    
     # PurpleAir PM2.5 Average
-    # plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', freq=frequency)
+    plot_avg_pm(fig, param='PM2.5_ATM_ug/m3')
 
     # TCEQ PM2.5 
     tceq_a = tceq.rolling(100)
     # tceq_a = tceq.resample(frequency)
     fig.add_trace(go.Scattergl(x=tceq_a.time, y=tceq_a['PM2.5'],
-                               mode='lines', name='TCEQ PM2.5'), row=1, col=1)
+                                mode='lines', name='TCEQ PM2.5'), row=1, col=1)
     
     # TCEQ Temp & Humidity
-    plot_tceq_trh(fig, freq=frequency)
+    plot_tceq_trh(fig, freq='D')
     
     label_plot(fig)
     plot(fig, filename='temp-timeplot.html')
