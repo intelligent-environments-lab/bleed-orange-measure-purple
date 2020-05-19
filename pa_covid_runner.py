@@ -11,12 +11,13 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
-from sensors.purpleair.pa_datafile import PAfiles
+from sensors.purpleair.pa_datafile import PAfiles, PAfiles2
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
+from sensors.common.util.importer import Util
 
 #https://plotly.com/python/getting-started/
 
-
+# %%
 def plot_purpleair_pm(fig, files, param='PM2.5_ATM_ug/m3'):
     for file in files:
         if file.hourly[param] is not None:
@@ -25,7 +26,7 @@ def plot_purpleair_pm(fig, files, param='PM2.5_ATM_ug/m3'):
             # values = file.raw[param]
             values = file[param]
             
-            time = values.index.to_pydatetime()
+            time = values.index
             fig.add_trace(go.Scattergl(x=time, y=values,
                                        mode='lines',
                                        name=file.sensorname), row=1, col=1)
@@ -62,7 +63,7 @@ def plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=Non
                                name='PurpleAir PM2.5'), row=r, col=c, secondary_y=second_y)
 
 def plot_tceq_trh(fig, freq=None):
-    tceq_trh = pd.read_csv('data/ytd/tceq_trh.csv')
+    tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')
     tceq_trh['Time']=pd.to_datetime(tceq_trh['Time'], format='%Y-%m-%d %H:%M:%S')
     tceq_trh = tceq_trh.set_index('Time')
     # tceq_trh = tceq_trh.resample(freq).mean()
@@ -87,14 +88,14 @@ def make_raw_plot(pa_files, tceq):
                         x_title='Time(CST)', vertical_spacing=0.05,
                         specs=[[{"secondary_y":False}], [{"secondary_y":True}]])
     # fig = go.Figure()
-    
-    # plot_purpleair_pm(fig, pa_files)
-    
+    print('Subplots created')
+    plot_purpleair_pm(fig, pa_files)
+    print('PurpleAir Individual data plotted')
     # plot_avg_param(fig, param='Temperature_F')
     # plot_avg_param(fig, param='Humidity_%', second_y=True)
     frequency = 'D'
     # PurpleAir PM2.5 Average
-    plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', freq=frequency)
+    # plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', freq=frequency)
 
     # TCEQ PM2.5 
     tceq_a = tceq.rolling(100)
@@ -108,9 +109,12 @@ def make_raw_plot(pa_files, tceq):
     label_plot(fig)
     plot(fig, filename='temp-timeplot.html')
 
+# %%
+def import_PAfiles():
+    return PAfiles2('data/monthly', keepOutliers=False)
 
-pa_files = PAfiles('data/ytd', keepOutliers=False)
+pa_files = import_PAfiles()
 
-tceq = TCEQfile('data/ytd/tceq.csv')
-
+tceq = TCEQfile('data/monthly/tceq.csv')
+# %%
 make_raw_plot(pa_files, tceq)

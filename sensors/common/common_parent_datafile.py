@@ -93,7 +93,7 @@ class CommonFile():
         if freq is None:
             self.resampled_data = self.data
             return self
-        self.resampled_data = self[:].resample(freq).mean()
+        self.resampled_data = self.data.resample(freq).mean()
         return self
 
     def rolling(self, num=1):

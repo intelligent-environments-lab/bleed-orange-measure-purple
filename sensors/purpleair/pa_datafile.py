@@ -19,7 +19,7 @@ class PAfile(CommonFile):
 
     def __init__(self, filename, keepOutliers=True):
         # BUG Need to discriminate between primary and secondary files
-        data = pd.read_csv(filename, index_col=False)
+        data = pd.read_csv(filename, index_col=False, engine='c')
 
         self.filename = filename[filename.rfind('/')+1:]
 
@@ -83,3 +83,45 @@ class PAfiles():
                 for filename in os.listdir(cwd+'\\'+file_dir)
                 if filename.endswith(".csv") and filename.startswith("PA")]
     
+class PAfiles2():
+    def __init__(self, parent_dir, keepOutliers=True):
+        filepaths = PAfiles2.find_purpleair_in_subdirs(parent_dir)
+        self.files = self.import_pa_files(filepaths, keepOutliers)
+        self.files = self.merge_data(self.files)
+    
+    def import_pa_files(self, filepaths, keepOutliers):
+        return [PAfile(filepath, keepOutliers=keepOutliers) for filepath in filepaths]
+            
+    @staticmethod
+    def find_purpleair_in_subdirs(parent_dir):
+        return [parent_dir+'\\'+dir+'\\'+filename for dir in os.listdir(parent_dir)
+                if os.path.isdir(parent_dir+'\\'+dir)
+                for filename in os.listdir(parent_dir+'\\'+dir)]    
+
+    def merge_data(self,files):
+        condensed_set = {}
+        for file in files:
+            if file.sensorname in condensed_set:
+                stored_file = condensed_set[file.sensorname]
+                # stored_file.data = stored_file.data.append(file.data)
+                stored_file.data = pd.merge_ordered(stored_file.data, file.data, on='created_at')
+                condensed_set[file.sensorname] = stored_file
+            else:
+                condensed_set[file.sensorname] = file
+                
+        for file in condensed_set:
+            condensed_set[file].data['created_at'] = CommonFile.to_datetime(condensed_set[file].data['created_at'], '%Y-%m-%d %H:%M:%S %Z')
+            condensed_set[file].data.set_index('created_at', inplace=True)
+            
+            # condensed_set[file].data.sort_index(inplace=True)
+            
+        return condensed_set
+    
+    def __getitem__(self, key):
+        return self.files[key]
+
+    def __iter__(self):
+        return (file for file in self.files.values())
+    
+    def __str__(self):
+        return str(self.files)
