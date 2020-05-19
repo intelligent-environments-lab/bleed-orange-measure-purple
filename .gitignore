@@ -10,3 +10,5 @@ temp-*.html
 *.cache
 temp-*.svg
 Untitled.ipynb
+*.dirlock
+*.lock
