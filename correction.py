@@ -20,7 +20,7 @@ import numpy as np
 def plot_avg_pm2(param='PM2.5_ATM_ug/m3', freq=None):
     
     # A list of series with PM data (non rolling)
-    combined_data = [file[:].resample(freq).mean()[param].rename(file.sensorname) 
+    combined_data = [file.data.resample(freq).mean()[param].rename(file.sensorname) 
                       for file in pa_files if file[param] is not None]
     
     
@@ -33,9 +33,9 @@ def plot_avg_pm2(param='PM2.5_ATM_ug/m3', freq=None):
 if __name__ == "__main__":
     
     # Import data
-    pa_files = PAfiles('data/ytd', keepOutliers=False)
-    tceq = TCEQfile('data/ytd/tceq.csv')
-    tceq_trh = pd.read_csv('data/ytd/tceq_trh.csv')#.set_index('Time')
+    pa_files = PAfiles('data/monthly', keepOutliers=False)
+    tceq = TCEQfile('data/monthly/tceq.csv')
+    tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')#.set_index('Time')
     
     tceq_trh['Time'] = pd.to_datetime(tceq_trh['Time'], format='%Y-%m-%d %H:%M:%S')
     tceq_trh = tceq_trh.set_index('Time').tz_localize('US/Central', nonexistent='shift_forward')

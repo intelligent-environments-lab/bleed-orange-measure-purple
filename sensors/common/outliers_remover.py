@@ -16,5 +16,6 @@ def remove_outlier(df, param):
     Q1 = df[param].rolling(180, center=True).quantile(0.25)
     Q3 = df[param].rolling(180, center=True).quantile(0.75)
     IQR = Q3-Q1
-    mask = (df[param] >= Q1-1.5*IQR)&(df[param] <= Q3+1.5*IQR)
+    mask = (df[param] >= Q1-1.5*IQR)&(df[param] <= Q3+1.5*IQR)&(df[param] <= 500)
+
     return df.loc[mask, :]

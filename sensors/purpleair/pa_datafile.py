@@ -19,7 +19,7 @@ class PAfile(CommonFile):
 
     def __init__(self, filename, keepOutliers=True):
         # BUG Need to discriminate between primary and secondary files
-        data = pd.read_csv(filename, index_col=False)
+        data = pd.read_csv(filename, index_col=False, engine='c')
 
         self.filename = filename[filename.rfind('/')+1:]
 
@@ -60,7 +60,49 @@ class PAfile(CommonFile):
         return self['Humidity_%']
 
 
+
+    
 class PAfiles():
+    def __init__(self, parent_dir, keepOutliers=True):
+        filepaths = PAfiles.find_purpleair_in_subdirs(parent_dir)
+        self.files = self.import_pa_files(filepaths, keepOutliers)
+        self.files = self.merge_data(self.files)
+    
+    
+    @Util.caching
+    def import_pa_files(self, filepaths, keepOutliers):
+        print('Importing files')
+        return [PAfile(filepath, keepOutliers=keepOutliers) for filepath in filepaths]
+            
+    @staticmethod
+    def find_purpleair_in_subdirs(parent_dir):
+        print('Identifying files in subdirectories')
+        return [parent_dir+'\\'+dir+'\\'+filename for dir in os.listdir(parent_dir)
+                if os.path.isdir(parent_dir+'\\'+dir)
+                for filename in os.listdir(parent_dir+'\\'+dir)]    
+
+    def merge_data(self,files):
+        print('Merging files')
+        condensed_set = {}
+        for file in files:
+            if file.sensorname in condensed_set:
+                stored_file = condensed_set[file.sensorname]
+                stored_file.data = pd.concat([stored_file.data, file.data])
+                condensed_set[file.sensorname] = stored_file
+            else:
+                condensed_set[file.sensorname] = file            
+        return condensed_set
+    
+    def __getitem__(self, key):
+        return self.files[key]
+
+    def __iter__(self):
+        return (file for file in self.files.values())
+    
+    def __str__(self):
+        return str(self.files)
+    
+class PAfiles2():
     """An object to import and store multiple PAfile objects"""
     def __init__(self, file_dir, keepOutliers=True):
         files = Util.import_with_caching(PAfiles.import_pa_files, os.getcwd(),
@@ -82,4 +124,3 @@ class PAfiles():
         return [PAfile(file_dir+'\\'+filename, keepOutliers = keepOutliers)
                 for filename in os.listdir(cwd+'\\'+file_dir)
                 if filename.endswith(".csv") and filename.startswith("PA")]
-    
