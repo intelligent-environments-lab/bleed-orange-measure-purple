@@ -10,3 +10,6 @@ temp-*.html
 *.cache
 temp-*.svg
 Untitled.ipynb
+dask-worker-space/purge.lock
+*.lock
+*.dirlock
