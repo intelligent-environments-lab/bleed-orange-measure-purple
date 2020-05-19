@@ -12,7 +12,7 @@ from sklearn import linear_model
 from plotly.offline import plot
 import plotly.graph_objects as go
 
-from sensors.purpleair.pa_datafile import PAfiles2
+from sensors.purpleair.pa_datafile import PAfiles
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 
 import matplotlib.pyplot as plt
@@ -20,7 +20,7 @@ import numpy as np
 def plot_avg_pm2(param='PM2.5_ATM_ug/m3', freq=None):
     
     # A list of series with PM data (non rolling)
-    combined_data = [file[:].resample(freq).mean()[param].rename(file.sensorname) 
+    combined_data = [file.data.resample(freq).mean()[param].rename(file.sensorname) 
                       for file in pa_files if file[param] is not None]
     
     
@@ -33,7 +33,7 @@ def plot_avg_pm2(param='PM2.5_ATM_ug/m3', freq=None):
 if __name__ == "__main__":
     
     # Import data
-    pa_files = PAfiles2('data/monthly', keepOutliers=False)
+    pa_files = PAfiles('data/monthly', keepOutliers=False)
     tceq = TCEQfile('data/monthly/tceq.csv')
     tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')#.set_index('Time')
     

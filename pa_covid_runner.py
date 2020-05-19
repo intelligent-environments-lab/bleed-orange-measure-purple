@@ -11,7 +11,7 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
-from sensors.purpleair.pa_datafile import PAfiles, PAfiles2
+from sensors.purpleair.pa_datafile import PAfiles, PAfiles
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 from sensors.common.util.importer import Util
 
@@ -111,7 +111,7 @@ def make_raw_plot(pa_files, tceq):
 
 # %%
 def import_PAfiles():
-    return PAfiles2('data/monthly', keepOutliers=False)
+    return PAfiles('data/monthly', keepOutliers=False)
 
 pa_files = import_PAfiles()
 

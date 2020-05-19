@@ -62,9 +62,9 @@ class PAfile(CommonFile):
 
 
     
-class PAfiles2():
+class PAfiles():
     def __init__(self, parent_dir, keepOutliers=True):
-        filepaths = PAfiles2.find_purpleair_in_subdirs(parent_dir)
+        filepaths = PAfiles.find_purpleair_in_subdirs(parent_dir)
         self.files = self.import_pa_files(filepaths, keepOutliers)
         self.files = self.merge_data(self.files)
     
@@ -102,7 +102,7 @@ class PAfiles2():
     def __str__(self):
         return str(self.files)
     
-class PAfiles():
+class PAfiles2():
     """An object to import and store multiple PAfile objects"""
     def __init__(self, file_dir, keepOutliers=True):
         files = Util.import_with_caching(PAfiles.import_pa_files, os.getcwd(),
