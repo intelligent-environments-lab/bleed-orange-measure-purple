@@ -12,3 +12,4 @@ temp-*.svg
 Untitled.ipynb
 *.dirlock
 *.lock
+*.log
