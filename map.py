@@ -10,6 +10,7 @@ from plotly.offline import plot
 
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
 from sensors.purpleair.pa_datafile import PAfile, PAfiles
+from sensors.common.util.importer import Util
 
 import numpy as np
 
@@ -29,7 +30,13 @@ def geo_df2(files, param):
     return pd.concat(files)
 
 if __name__ =='__main__':
-    pa_files = PAfiles('data/monthly', keepOutliers=False)
+    
+    @Util.caching(cachefile='purpleair.cache')
+    def import_PAfiles():
+        return PAfiles('data/monthly', keepOutliers=False)
+    
+    pa_files = import_PAfiles()
+
     sample = TCEQfile('data/monthly/tceq.csv')
     
     px.set_mapbox_access_token(open("token.txt").read())

@@ -15,6 +15,7 @@ import numpy as np
 
 from sensors.purpleair.pa_datafile import PAfiles
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
+from sensors.common.util.importer import Util
 
 def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     
@@ -29,8 +30,12 @@ def plot_avg_pm(param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1, freq=None):
     values.name='PA PM2.5'
     return values
 
+@Util.caching(cachefile='purpleair.cache')
+def import_PAfiles():
+    return PAfiles('data/monthly', keepOutliers=False)
 
-pa_files = PAfiles('data/monthly', keepOutliers=False)
+pa_files = import_PAfiles()
+
 tceq = TCEQfile('data/monthly/tceq.csv')
 tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')
 

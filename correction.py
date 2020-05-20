@@ -14,6 +14,7 @@ import plotly.graph_objects as go
 
 from sensors.purpleair.pa_datafile import PAfiles
 from sensors.tceq.TCEQ_pm_datafile import TCEQfile
+from sensors.common.util.importer import Util
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,9 +32,12 @@ def plot_avg_pm2(param='PM2.5_ATM_ug/m3', freq=None):
 
     
 if __name__ == "__main__":
+    @Util.caching(cachefile='purpleair.cache')
+    def import_PAfiles():
+        return PAfiles('data/monthly', keepOutliers=False)
     
-    # Import data
-    pa_files = PAfiles('data/monthly', keepOutliers=False)
+    pa_files = import_PAfiles()
+    
     tceq = TCEQfile('data/monthly/tceq.csv')
     tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')#.set_index('Time')
     

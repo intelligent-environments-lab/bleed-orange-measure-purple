@@ -110,6 +110,7 @@ def make_raw_plot(pa_files, tceq):
     plot(fig, filename='temp-timeplot.html')
 
 # %%
+@Util.caching(cachefile='purpleair.cache')
 def import_PAfiles():
     return PAfiles('data/monthly', keepOutliers=False)
 
