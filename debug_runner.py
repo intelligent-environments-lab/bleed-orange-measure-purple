@@ -47,3 +47,11 @@ sample2 = PAfiles2(os.getcwd()+'/data/monthly')
 # plt.plot_date(sample.time, sample.pm25, 'o-', xdate=True)
     
 # plot_TCEQ()
+def block_run():
+# %% Debugging Code (To be used in ipython)
+# You must be using spyder and already have pa_files created thru another script
+    data = pa_files['PA_II_E6D8'].data
+    datatypes = data.dtypes
+    mem = data.memory_usage()
+    header = data.head()
+    cols = data.columns
