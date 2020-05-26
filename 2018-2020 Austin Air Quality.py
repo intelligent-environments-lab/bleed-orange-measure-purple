@@ -46,9 +46,15 @@ def process_data(years, column):
 
     return years
 
-def create_fig(years, column, mode='lines'):
+def create_fig(years, column, mode='lines', hideBackground=True):
     """ Drawing the lines and stuff """
-    fig = go.Figure()
+    if hideBackground:
+        fig = go.Figure(layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)',
+                                         xaxis={'showgrid': False, 'showline': True, 'linecolor': 'black'},
+                                         yaxis={'showgrid': False, 'showline': True, 'linecolor': 'black'}))
+    else:
+        fig = go.Figure()
+    
     for k, df in years.items():
         if k=='2020':
             opacity=1
@@ -62,7 +68,7 @@ def create_fig(years, column, mode='lines'):
                                  dtick=30.42 * 24 * 60 * 60 * 1000))
     
     fig.update_xaxes(range=["2020-01-01","2020-12-31"])
-    
+    fig.update_yaxes(range=[0, max(df[column])+2])
     return fig
 
 def label_plot(fig, title, xtitle, ytitle):
@@ -97,7 +103,7 @@ def highlight_covid(fig):
                 )
             ]
         )
-            
+
 # =============================================================================
 #  Functions that actually import and plot the data (requesters)
 # =============================================================================

@@ -94,7 +94,18 @@ data = {'ozone': ozone_plot(root),
 
 
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
-                    x_title='Month of the Year', vertical_spacing=0.025)
+                    x_title='Month of the Year', vertical_spacing=0.0)
+
+# Hides the background and grid
+fig.update_layout(plot_bgcolor='rgba(0,0,0,0)',
+                   xaxis={'showgrid': False, 'showline': True, 'zeroline':False, 'linewidth': 0.01},
+                  xaxis2={'showgrid': False, 'showline': True, 'linecolor': 'black'},
+                  yaxis={'showgrid': False, 'showline': True, 'linecolor': 'black'},
+                  yaxis2={'showgrid': False, 'showline': True, 'linecolor': 'black'})
+
+
+fig.update_yaxes(range=[0, max([data['PA_PM'].max()[0], data['PM'].max()[0]])+2], row=1, col=1)
+fig.update_yaxes(range=[0, max([data['NOx'].max()[0], data['ozone'].max()[0]])+5], row=2, col=1)
 
 add_subplot_trace(fig, data['PM'], 'PM 2.5 (ug/m3)', name='PM 2.5 (TCEQ)')
 add_subplot_trace(fig, data['PA_PM'], 'Corrected PM 2.5 (ug/m3)', name='PM 2.5 (PurpleAir)')    
@@ -102,6 +113,12 @@ add_subplot_trace(fig, data['PA_PM'], 'Corrected PM 2.5 (ug/m3)', name='PM 2.5 (
 add_subplot_trace(fig, data['ozone'], 'Ozone (ppb)', name='Ozone', num=2)    
 add_subplot_trace(fig, data['NOx'], 'NOx (ppb)', name='NOx', num=2)    
 highlight_covid(fig)
+
+
+
+
+
+
 
 fig.update_layout(title='2020 Austin Air Quality', xaxis_tickformat='%b')
 fig.update_yaxes(title_text='PM 2.5 (ug/m3)', row=1, col=1)
