@@ -35,9 +35,7 @@ def primary_A():
 if __name__ == "__main__":
     browser = webdriver.Chrome()
     
-    browser.get('https://www.purpleair.com/sensorlist?exclude=true'
-                '&nwlat=30.291268505204116&selat=30.272526603783206'
-                '&nwlng=-97.7717631299262&selng=-97.72423886855452')
+    browser.get('https://www.purpleair.com/sensorlist?exclude=true&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452')
     
     buttons = find_buttons()
     

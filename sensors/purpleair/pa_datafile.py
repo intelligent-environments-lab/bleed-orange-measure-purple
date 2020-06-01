@@ -63,8 +63,8 @@ class PAfiles():
     """Stores multiple PAfile objects"""
     def __init__(self, parent_dir, keepOutliers=True):
         filepaths = PAfiles.find_purpleair_in_subdirs(parent_dir)
-        self.files = PAfiles.import_pa_files(filepaths, keepOutliers)
-        self.files = PAfiles.merge_data(self.files)
+        files = PAfiles.import_pa_files(filepaths, keepOutliers)
+        self.files = PAfiles.merge_data(files)
 
     
     @staticmethod
@@ -75,23 +75,32 @@ class PAfiles():
     @staticmethod
     def find_purpleair_in_subdirs(parent_dir):
         """Searches for purple csvs in subdirectories one level down from the given parent"""
-        return [parent_dir+'\\'+dir+'\\'+filename for dir in os.listdir(parent_dir)
-                if os.path.isdir(parent_dir+'\\'+dir)
-                for filename in os.listdir(parent_dir+'\\'+dir)]
+        return [parent_dir+'\\'+folder+'\\'+filename for folder in os.listdir(parent_dir)
+                if os.path.isdir(parent_dir+'\\'+folder)
+                for filename in os.listdir(parent_dir+'\\'+folder)]
 
     @staticmethod
     def merge_data(files):
         """For each sensor, the corresponding monthly data is aggregated into a single dataframe"""
-        print('Merging files')
         condensed_set = {}
         for file in files:
-            if file.sensorname in condensed_set:
+            if file.sensorname in condensed_set:    # Check if file already and merge if true
                 stored_file = condensed_set[file.sensorname]
                 stored_file.data = pd.concat([stored_file.data, file.data])
                 condensed_set[file.sensorname] = stored_file
-            else:
+            else:                                   # Otherwise just add the file
                 condensed_set[file.sensorname] = file
         return condensed_set
+    
+    def get_average(self, param):
+        """Returns the data for a column averaged across all sensors"""
+        aggregated_data = [file.data.resample(freq).mean()[param].rename(file.sensorname) 
+                      for file in self.files.items() if file[param] is not None]
+    
+        aggregated_data =  pd.concat(combined_data, axis=1) #columns = sensors, rows = pm values
+        average_data = combined_data.mean(axis=1)  #average all sensors
+        
+        return average_data #panda series
 
     def __getitem__(self, key):
         return self.files[key]
