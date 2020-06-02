@@ -13,3 +13,5 @@ Untitled.ipynb
 *.dirlock
 *.lock
 *.log
+.vscode/launch.json
+.spyproject
