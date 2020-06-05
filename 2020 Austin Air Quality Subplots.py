@@ -58,10 +58,13 @@ def PA_PM_plot(root):
     column = 'Corrected PM 2.5 (ug/m3)'
     return process_data(pd.read_csv(f'{root}/2020 PurpleAir PM 2.5 corrected.csv'), column)
 
-def add_subplot_trace(fig, df, column, name=None, num=1):
+def add_subplot_trace(fig, dataset, column, name=None, num=1):
     if name is None:
         name=column
-    fig.add_trace(go.Scattergl(x=df.index, y=df[column],
+    dataset = dataset[dataset.index >= '2020-02-01 00:00:00-06:00']
+    dataset = dataset[dataset.index < '2020-05-01 00:00:00-06:00']
+        
+    fig.add_trace(go.Scattergl(x=dataset.index, y=dataset[column],
                                mode='lines', name=name), row=num, col=1)
 
 def highlight_covid(fig):
