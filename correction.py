@@ -7,7 +7,7 @@ Created on Tue May  5 14:52:18 2020
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 import pandas as pd
-from sklearn import linear_model
+# from sklearn import linear_model
 
 from plotly.offline import plot
 import plotly.graph_objects as go
