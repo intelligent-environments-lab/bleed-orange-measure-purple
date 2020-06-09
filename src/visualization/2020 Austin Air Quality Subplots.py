@@ -29,13 +29,13 @@ def process_data(year, column):
     
     return year
 
-@Util.caching(cachefile='2020ozone.cache')
+@Util.caching(cachefile='.cache/2020ozone.cache')
 def ozone_plot(root):
     column = 'Ozone (ppb)'
     return process_data(pd.read_csv(f'{root}/2020 Edwards ozone.csv'), column)
 
 # %% Oxides of Nitrogen
-@Util.caching(cachefile='2020NOx.cache')
+@Util.caching(cachefile='.cache/2020NOx.cache')
 def NOx_plot(root):
     column = 'NOx (ppb)'
     return process_data(pd.read_csv(f'{root}/2020 Interstate.csv', 
@@ -47,13 +47,13 @@ def NOx_plot(root):
 #     NO2 = process_data(pd.read_csv(f'{root}/2020 Interstate.csv'), column)
 
 # %% Particulate Matter 2.5 data
-@Util.caching(cachefile='2020PM.cache')
+@Util.caching(cachefile='.cache/2020PM.cache')
 def PM_plot(root):
     """ Plots averaged PM2.5 data from TCEQ Webberville and Interstate sensors"""
     column = 'PM 2.5 (ug/m3)'
     return process_data(pd.read_csv(f'{root}/2020 Webberville-Interstate PM 2.5.csv'), column)
 
-@Util.caching(cachefile='2020PAPM.cache')
+@Util.caching(cachefile='.cache/2020PAPM.cache')
 def PA_PM_plot(root):
     column = 'Corrected PM 2.5 (ug/m3)'
     return process_data(pd.read_csv(f'{root}/2020 PurpleAir PM 2.5 corrected.csv'), column)
@@ -88,7 +88,7 @@ def highlight_covid(fig):
         )
     # fig['layout']['annotations'][0].update(text='your text here');
 # %% Function calls
-root = 'data/zolton'
+root = '../data/raw/zolton'
 
 data = {'ozone': ozone_plot(root),
         'NOx': NOx_plot(root),
@@ -128,4 +128,4 @@ fig.update_yaxes(title_text='PM 2.5 (ug/m3)', row=1, col=1)
 fig.update_yaxes(title_text='parts per billion', row=2, col=1)
 fig.update_xaxes(dict(tickformat="%b"))
 
-fig.write_image("2020 Austin Air Quality.png", scale=1.5)
+fig.write_image("../2020 Austin Air Quality.png", scale=1.5)

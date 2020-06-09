@@ -112,7 +112,7 @@ def ozone_plot(root):
                'Month of the Year',
                'Ozone (parts per billion)')
 
-    fig.write_image("2018-2020 Austin Ozone percent change.png", scale=1.5)
+    fig.write_image("../heatmap.png", scale=1.5)
 
 # %% Oxides of Nitrogen
 def NOx_plot(root):
@@ -160,16 +160,16 @@ def PM_plot(root):
                'Month of the Year',
                'PM 2.5 (ug/m3)')
 
-    fig.write_image("2018-2020 Austin PM 2.5 percent change.png", scale=1.5)
+    fig.write_image("../2018-2020 Austin PM 2.5 percent change.png", scale=1.5)
 
 # %% Function calls
 def main():
-    root = 'data/zolton'
+    root = '../data/raw/zolton'
     
     ozone_plot(root)
-    NOx_plot(root)
-    NO2_plot(root)
-    PM_plot(root)
+    # NOx_plot(root)
+    # NO2_plot(root)
+    # PM_plot(root)
     
 if __name__ == '__main__':
     main()

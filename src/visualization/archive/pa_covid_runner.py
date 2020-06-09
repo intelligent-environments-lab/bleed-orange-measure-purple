@@ -63,7 +63,7 @@ def plot_avg_pm(fig, param='PM2.5_ATM_ug/m3', second_y=False, r=1, c=1):
                                name='PurpleAir PM2.5'), row=r, col=c, secondary_y=second_y)
 
 def plot_tceq_trh(fig, freq=None):
-    tceq_trh = pd.read_csv('data/monthly/tceq_trh.csv')
+    tceq_trh = pd.read_csv('../data/raw/monthly/tceq_trh.csv')
     tceq_trh['Time']=pd.to_datetime(tceq_trh['Time'], format='%Y-%m-%d %H:%M:%S')
     tceq_trh = tceq_trh.set_index('Time')
     # tceq_trh = tceq_trh.resample(freq).mean()
@@ -112,10 +112,10 @@ def make_raw_plot(pa_files, tceq):
 # %%
 @Util.caching(cachefile='purpleair.cache')
 def import_PAfiles():
-    return PAfiles('data/monthly', keepOutliers=False)
+    return PAfiles('../data/raw/monthly', keepOutliers=False)
 
 pa_files = import_PAfiles()
 
-tceq = TCEQfile('data/monthly/tceq.csv')
+tceq = TCEQfile('../data/raw/monthly/tceq.csv')
 # %%
 make_raw_plot(pa_files, tceq)
