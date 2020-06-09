@@ -9,9 +9,9 @@ Created on Sat May 23 15:09:54 2020
 #  This script imports data located under data/zolton and uses it create plots
 #  that compare the differences in a parameter in 2018, 2019, and 2020.
 # =============================================================================
-
 # %% Setup
 import pandas as pd
+import os
 
 # from plotly.offline import plot
 import plotly.graph_objects as go
@@ -139,7 +139,7 @@ def ozone_plot(root):
                'Month of the Year',
                'Ozone (parts per billion)')
 
-    fig.write_image("2018-2020 Austin Ozone percent change.png", scale=1.5)
+    fig.write_image("../2018-2020 Austin Ozone percent change.png", scale=1.5)
 
 # %% Oxides of Nitrogen
 def NOx_plot(root):
@@ -159,7 +159,7 @@ def NOx_plot(root):
                'Month of the Year',
                'NOx (parts per billion)')
 
-    fig.write_image("2018-2020 Austin NOx percent change.png", scale=1.5)
+    fig.write_image("../2018-2020 Austin NOx percent change.png", scale=1.5)
 
 # %% Nitrogen Dioxide data
 def NO2_plot(root):
@@ -179,7 +179,7 @@ def NO2_plot(root):
                'Month of the Year',
                'NO2 (parts per billion)')
 
-    fig.write_image("2018-2020 Austin NO2 percent change.png", scale=1.5)
+    fig.write_image("../2018-2020 Austin NO2 percent change.png", scale=1.5)
 
 # %% Particulate Matter 2.5 data
 def PM_plot(root):
@@ -200,11 +200,11 @@ def PM_plot(root):
                'Month of the Year',
                'PM 2.5 (ug/m3)')
 
-    fig.write_image("2018-2020 Austin PM 2.5 percent change.png", scale=1.5)
+    fig.write_image("../2018-2020 Austin PM 2.5 percent change.png", scale=1.5)
 
 # %% Function calls
 def main():
-    root = 'data/zolton'
+    root = '../data/raw/zolton'
     
     ozone_plot(root)
     NOx_plot(root)
@@ -212,4 +212,5 @@ def main():
     PM_plot(root)
     
 if __name__ == '__main__':
+     # Go up one level
     main()
