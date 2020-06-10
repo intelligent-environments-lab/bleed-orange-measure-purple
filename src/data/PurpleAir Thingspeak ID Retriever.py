@@ -14,10 +14,49 @@ def load_json_from_url(url):
     html = urlopen(url).read()
     return json.loads(html)
     
+def extract_key_info(pa_json):
+    thingspeak = {'THINGSPEAK_PRIMARY_ID': pa_json['THINGSPEAK_PRIMARY_ID'],
+                  'THINGSPEAK_PRIMARY_ID_READ_KEY': pa_json['THINGSPEAK_PRIMARY_ID_READ_KEY'],
+                  'THINGSPEAK_SECONDARY_ID': pa_json['THINGSPEAK_SECONDARY_ID'],
+                  'THINGSPEAK_SECONDARY_ID_READ_KEY': pa_json['THINGSPEAK_SECONDARY_ID_READ_KEY']}
+    
 
+    sensor = {'ID': pa_json['ID'],
+              'Label': pa_json['Label']}
+    
+    if 'ParentID' in pa_json:
+        sensor['ParentID'] = pa_json['ParentID']
+        thingspeak['ID'] = pa_json['ID']
+        thingspeak2 = {'ID': pa_json['ID']}
+        thingspeak2.update(thingspeak)
+        sensor['B'] = thingspeak2
+    else:
+        sensor.update(thingspeak)
+        
+    return sensor
+
+def associate_AB_channels(pa_json):
+    sensors = {sensor['ID']:sensor for sensor in pa_json if 'ParentID' not in sensor}
+    channel_B = [sensor for sensor in pa_json if 'ParentID' in sensor]
+    
+    for channel in channel_B:
+        sensors[channel['ParentID']]['B'] = channel['B']
+    
+    return sensors
+def export_json(pa_json):
+    with open('thingspeak_keys.json', 'w', encoding='utf8') as file:
+        json.dump(pa_json, file, indent=4, ensure_ascii=False)
+    
 def main():
     purple_air_json = load_json_from_url(config['purple_json_url'])
-    
+    purple_air_json = purple_air_json['results']
+    purpleair_IDs = [extract_key_info(sensor) for sensor in purple_air_json]
+    purpleair_IDs = associate_AB_channels(purpleair_IDs)
+    purpleair_IDs = {sensor['Label']:sensor for _, sensor in purpleair_IDs.items()}
+    for _, entry in purpleair_IDs.items():
+        entry.pop('Label')
+    export_json(purpleair_IDs)
+
 if __name__=='__main__':
     with open('config.yaml') as file:
         config = yaml.full_load(file)
