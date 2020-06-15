@@ -33,7 +33,12 @@ def extract_key_info(pa_json):
         thingspeak2.update(thingspeak)
         sensor['B'] = thingspeak2
     else:
-        sensor.update(thingspeak)
+        sensor['DEVICE_LOCATIONTYPE'] = pa_json['DEVICE_LOCATIONTYPE']
+        sensor['Lat'] = pa_json['Lat']
+        sensor['Lon'] = pa_json['Lon']
+        thingspeak2 = {'ID': pa_json['ID']}
+        thingspeak2.update(thingspeak)
+        sensor['A'] = thingspeak2
 
     return sensor
 
@@ -44,7 +49,9 @@ def associate_ab_channels(pa_json):
 
     for channel in channel_b:
         sensors[channel['ParentID']]['B'] = channel['B']
-
+        
+    for _, sensor in sensors.items():
+        sensor.pop('ID')        
     return sensors
 
 
