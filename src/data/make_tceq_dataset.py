@@ -79,7 +79,7 @@ def extract_data_from_htmls(htmls):
                 if extract_data_from_html(html) is not None]
     return datasets
 
-def export_to_file(data, filename='temp_file.csv'):
+def export_to_file(data, filename='tempfile.csv'):
     """Produces a csv file that contains the provided data
 
 
@@ -87,8 +87,8 @@ def export_to_file(data, filename='temp_file.csv'):
     ----------
     data : str
         Data string to be written to file.
-    filename : str
-        Name for the output file, can also include relative path from working directory.
+    filename : str, optional
+        Name for the output file, can also include relative path from working directory. The default is 'tempfile.csv'.
 
     Returns
     -------
@@ -99,33 +99,34 @@ def export_to_file(data, filename='temp_file.csv'):
         file.write(data)
 
 def post_requests(url, forms):
-    print(f"Posting {len(forms)} requests...")
+    print(f"Sending {len(forms)} requests...")
     responses = [requests.post(url, data=form).text for form in forms]
-    print("Posting complete")
+    print("Requests complete")
     return responses
 
-
-def main(site, param=None, years=None, save_location=None):
-    """ Entry point for the program """
-    request_url = 'https://www.tceq.texas.gov/cgi-bin/compliance/monops/yearly_summary.pl'
-
-    # request = create_form(site, param, years)
-    forms = create_forms(site)
-    responses = post_requests(request_url, forms)
-    datasets = extract_data_from_htmls(responses)
-
+def save_tceq_files(datasets, save_location=None):
     for dataset in datasets:
         filename = dataset.partition("\n")[0]+'.csv'
         if save_location is not None:
             filename = f'{save_location}/{filename}'
         export_to_file(dataset, filename)
-    print()
+
+def main(site, param=None, years=None, save_location=None):
+    """ Entry point for the program """
+    request_url = 'https://www.tceq.texas.gov/cgi-bin/compliance/monops/yearly_summary.pl'
+
+    forms = create_forms(site)
+    responses = post_requests(request_url, forms)
+
+    datasets = extract_data_from_htmls(responses)
+    save_tceq_files(datasets, save_location)
+
     # response = requests.post(request_url, data=request)
     # data = extract_data_from_html(response.text)
 
 if __name__ == '__main__':
+    sites = [{'cams':171, 'params':[88101], 'years':[2020, 2019, 2018, 2017, 2016, 2015]},
+               {'cams': 1605, 'params': [44201], 'years':[2020, 2019, 2018, 2017, 2016, 2015]},
+              {'cams': 1068, 'params':[42601, 42602, 88101], 'years':[2020, 2019, 2018, 2017, 2016, 2015]}]
 
-    sites = [{'cams':171, 'params':[88101], 'years':[2020, 2019, 2018, 2017, 2016]},
-               {'cams': 1605, 'params': [44201], 'years':[2020, 2019, 2018, 2017, 2016]},
-              {'cams': 1068, 'params':[42601, 42602, 88101], 'years':[2020, 2019, 2018, 2017, 2016]}]
     main(sites, save_location='data/raw/tceq')
