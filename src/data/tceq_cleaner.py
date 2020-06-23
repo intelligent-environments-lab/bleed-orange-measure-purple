@@ -20,11 +20,11 @@ def flatten(matrix_df):
 
 def clean_invalid_measurements(series):
     new_series = pd.to_numeric(series, errors='coerce')
-    return new_series
+    return new_series.copy()
 
 def negative_to_zero(series):
-    series[series<=0]=0
-    return series
+    series.loc[series<=0]=0
+    return series.copy()
 
 def has_substring(dataset, substring):
     first_column = dataset[0]
@@ -37,7 +37,7 @@ def match_param_name(dataset):
     first_column = dataset[0].str
     if has_substring(dataset,'Nitric Oxide'):
         return 'NO (ppb)'
-    if has_substring(dataset,'Nitric Dioxide'):
+    if has_substring(dataset,'Nitrogen Dioxide'):
         return 'NO2 (ppb)'
     if has_substring(dataset,'Oxides of Nitrogen'):
         return 'NOx (ppb)'
@@ -56,17 +56,19 @@ def per_dataset_clean(dataset):
     start_row = dataset[0].index[dataset[0]=='Date'][0]
     matrix = dataset.iloc[start_row:,:]
     table = flatten(matrix)
-    table.iloc[:,1] = clean_invalid_measurements(table.iloc[:,1].copy())
-    table.iloc[:,1] = negative_to_zero(table.iloc[:,1].copy())
+    table.iloc[:,1] = clean_invalid_measurements(table.iloc[:,1])
+    table.iloc[:,1] = negative_to_zero(table.iloc[:,1])
     table.columns = get_col_names(dataset)
     table = format_time(table)
-    table.set_index('Time')
-    return
+    table.set_index('Time', inplace=True)
+    return table
 
 def format_time(dataset):
     dataset['Time'] = pd.to_datetime(dataset.iloc[:,0], format='%m/%d/%Y %H:%M').dt.tz_localize('US/Central', ambiguous='NaT', nonexistent='shift_forward').dt.tz_convert('UTC')
-    NaT_loc = dataset[pd.isnull(dataset['Time'])].index[0]
-    dataset['Time'][NaT_loc] = dataset['Time'].copy()[NaT_loc-1] + pd.Timedelta('1h')
+    NaT_loc = dataset[pd.isnull(dataset['Time'])].index
+    if len(NaT_loc) != 0:
+        NaT_loc = NaT_loc[0]
+        dataset.loc[NaT_loc, 'Time'] = dataset['Time'].copy()[NaT_loc-1] + pd.Timedelta('1h')
     return dataset
 
 def list_files(path):
@@ -74,7 +76,27 @@ def list_files(path):
                  if os.path.isfile(path+'/'+filename)]
     return filepaths
 
-def main(path):
+def merge_years_file(datasets):
+    datasets_by_year = {}
+    for filename, data in datasets.items():
+        filename_minus_year = filename[:-5]
+        if filename_minus_year in datasets_by_year:
+            datasets_by_year[filename_minus_year].append(data)
+        else:
+            datasets_by_year[filename_minus_year] = [data]
+
+    for year, datasets in datasets_by_year.items():
+        datasets_by_year[year] = pd.concat(datasets)
+
+    return datasets_by_year
+
+def export_datasets(datasets, save_location='', file_format='.csv'):
+    if save_location != '':
+        save_location += '/'
+    for name, dataset in datasets.items():
+        dataset.to_parquet(f'{save_location}{name}.parquet')
+
+def main(path, save_location=''):
     if os.path.isdir(path) and isinstance(path, str):
         filepaths = list_files(path)
     else:
@@ -84,8 +106,10 @@ def main(path):
 
     for filename, data in datasets.items():
         datasets[filename] = per_dataset_clean(data)
+        print(filename)
 
+    datasets_by_year = merge_years_file(datasets)
+    export_datasets(datasets_by_year, save_location=save_location)
 
-    return
 if __name__ == '__main__':
-    main('data/raw/tceq')
+    main('data/raw/tceq', save_location='data/interim/tceq')
