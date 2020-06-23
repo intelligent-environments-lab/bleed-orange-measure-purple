@@ -11,11 +11,11 @@ import unittest
 import sys
 sys.path.append('../..')
 
-from src.data.purple_data_download import *
+from src.data.make_purpleair_dataset import *
 
 class TestPurpleData(unittest.TestCase):
     def test_load_keys(self):
         self.assertGreater(len(main()), 0)
-        
+
 if __name__ == '__main__':
     unittest.main()
