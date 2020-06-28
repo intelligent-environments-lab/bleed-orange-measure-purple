@@ -61,8 +61,10 @@ class PAfile(CommonFile):
 
 class PAfiles():
     """Stores multiple PAfile objects"""
-    def __init__(self, parent_dir, keepOutliers=True):
+    def __init__(self, parent_dir, keepOutliers=True, level=2):
         filepaths = PAfiles.find_purpleair_in_subdirs(parent_dir)
+        if level==1:
+            filepaths = PAfiles.find_purpleair_in_dir(parent_dir)
         files = PAfiles.import_pa_files(filepaths, keepOutliers)
         self.files = PAfiles.merge_data(files)
 
@@ -78,7 +80,12 @@ class PAfiles():
         return [parent_dir+'\\'+folder+'\\'+filename for folder in os.listdir(parent_dir)
                 if os.path.isdir(parent_dir+'\\'+folder)
                 for filename in os.listdir(parent_dir+'\\'+folder)]
-
+    @staticmethod
+    def find_purpleair_in_dir(parent_dir):
+        """Searches for purple csvs in current directory"""
+        return [parent_dir+'\\'+filename 
+                for filename in os.listdir(parent_dir)]
+        
     @staticmethod
     def merge_data(files):
         """For each sensor, the corresponding monthly data is aggregated into a single dataframe"""
