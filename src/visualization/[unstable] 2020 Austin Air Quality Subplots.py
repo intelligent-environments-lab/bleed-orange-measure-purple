@@ -17,7 +17,7 @@ def to_datetimeindex(df, column='Time', tz='US/Central'):
     df[column] = pd.to_datetime(df[column])
     df = df.set_index(column).tz_convert(tz)
     return df
-    
+
 def replace_strings(pd_series):
     """ Numbers only please """
     return pd.to_numeric(pd_series, errors='coerce')
@@ -26,7 +26,7 @@ def process_data(year, column):
     year[column] = replace_strings(year[column])
     year = to_datetimeindex(year)
     year = year.rolling(24*7, center=True, min_periods=24*3).mean().resample('D').mean()
-    
+
     return year
 
 @Util.caching(cachefile='.cache/2020ozone.cache')
@@ -38,7 +38,7 @@ def ozone_plot(root):
 @Util.caching(cachefile='.cache/2020NOx.cache')
 def NOx_plot(root):
     column = 'NOx (ppb)'
-    return process_data(pd.read_csv(f'{root}/2020 Interstate.csv', 
+    return process_data(pd.read_csv(f'{root}/2020 Interstate.csv',
                                     usecols=['Time', 'NOx (ppb)']), column)
 
 # %% Nitrogen Dioxide data
@@ -63,7 +63,7 @@ def add_subplot_trace(fig, dataset, column, name=None, num=1):
         name=column
     dataset = dataset[dataset.index >= '2020-02-01 00:00:00-06:00']
     dataset = dataset[dataset.index < '2020-05-01 00:00:00-06:00']
-        
+
     fig.add_trace(go.Scattergl(x=dataset.index, y=dataset[column],
                                mode='lines', name=name), row=num, col=1)
 
@@ -111,15 +111,11 @@ fig.update_yaxes(range=[0, max([data['PA_PM'].max()[0], data['PM'].max()[0]])+2]
 fig.update_yaxes(range=[0, max([data['NOx'].max()[0], data['ozone'].max()[0]])+5], row=2, col=1)
 
 add_subplot_trace(fig, data['PM'], 'PM 2.5 (ug/m3)', name='PM 2.5 (TCEQ)')
-add_subplot_trace(fig, data['PA_PM'], 'Corrected PM 2.5 (ug/m3)', name='PM 2.5 (PurpleAir)')    
-# add_subplot_trace(fig, data['ozone'], 'Ozone (ppb)')    
-add_subplot_trace(fig, data['ozone'], 'Ozone (ppb)', name='Ozone', num=2)    
-add_subplot_trace(fig, data['NOx'], 'NOx (ppb)', name='NOx', num=2)    
+add_subplot_trace(fig, data['PA_PM'], 'Corrected PM 2.5 (ug/m3)', name='PM 2.5 (PurpleAir)')
+# add_subplot_trace(fig, data['ozone'], 'Ozone (ppb)')
+add_subplot_trace(fig, data['ozone'], 'Ozone (ppb)', name='Ozone', num=2)
+add_subplot_trace(fig, data['NOx'], 'NOx (ppb)', name='NOx', num=2)
 highlight_covid(fig)
-
-
-
-
 
 
 

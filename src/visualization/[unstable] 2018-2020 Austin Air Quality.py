@@ -18,28 +18,16 @@ import plotly.graph_objects as go
 
 from sensors.common.util.importer import Util
 
-def to_numeric(pd_series):
-    """ Substitutes TCEQ strings like 'MDL' or 'AQI' with nans """
-    return pd.to_numeric(pd_series, errors='coerce')
-
-def set_datetimeindex(df, column='Time', tz='US/Central'):
-    """ Time column to datetimeindex """
-    df[column] = pd.to_datetime(df[column])
-    df = df.set_index(column).tz_convert(tz)
-
-    return df
 
 def shift_year_to_present(df, column='Time'):
     """ Shifts all data to 2020 so that data for all years can be place in the same xrange """
-    df[column] = df[column].apply(lambda s: s.replace('2018', '2020').replace('2019', '2020'))
+    df.index = df.index.map(lambda t: t.replace(year=2020))
     return df
 
 def process_data(years_of_data, column):
     """ Clean, resample, and roll """
     for year, dataset in years_of_data.items():
-        dataset[column] = to_numeric(dataset[column])
         dataset = shift_year_to_present(dataset)
-        years_of_data[year] = set_datetimeindex(dataset)
 
     for year, dataset in years_of_data.items():
         years_of_data[year] = dataset.rolling(24*7, center=True, min_periods=24*3).mean().resample('3D').mean()
@@ -58,15 +46,15 @@ def create_fig(years_of_data, column, mode='lines', hide_background=True):
         fig = go.Figure()
 
     for year, dataset in years_of_data.items():
-        if year == '2020':
+        if year == 2020:
             opacity = 1
         else:
-            opacity = 0.5
-            
+            opacity = 0.3
+
         # Only use data from Feb 1-May 1
         dataset = dataset[dataset.index >= '2020-02-01 00:00:00-06:00']
         dataset = dataset[dataset.index < '2020-05-01 00:00:00-06:00']
-        
+
         fig.add_trace(go.Scattergl(x=dataset.index, y=dataset[column],
                                    mode=mode, name=year, opacity=opacity))
 
@@ -111,65 +99,9 @@ def highlight_covid(fig):
         )
 
 # =============================================================================
-#  Functions to import and plot the data 
+#  Functions to import and plot the data
 # =============================================================================
 
-# %% Ozone data
-def ozone_plot(root):
-    column = 'Ozone (ppb)'
-
-    @Util.caching(cachefile='.cache/18-20ozone.cache')
-    def _import():
-        return process_data({'2020': pd.read_csv(f'{root}/2020 Edwards ozone.csv'),
-                             '2019': pd.read_csv(f'{root}/2019 Edwards ozone.csv'),
-                             '2018': pd.read_csv(f'{root}/2018 Edwards ozone.csv')},
-                            column)
-    ozone = _import()
-    fig = create_fig(ozone, column)
-    highlight_covid(fig)
-    label_plot(fig, 'Ozone Levels in Austin 2018-2020',
-               'Month of the Year',
-               'Ozone (parts per billion)')
-
-    fig.write_image("../2018-2020 Austin Ozone.png", scale=1.5)
-
-# %% Oxides of Nitrogen
-def NOx_plot(root):
-    column = 'NOx (ppb)'
-
-    @Util.caching(cachefile='.cache/18-20NOx.cache')
-    def _import():
-        return process_data({'2020': pd.read_csv(f'{root}/2020 Interstate.csv'),
-                             '2019': pd.read_csv(f'{root}/2019 Interstate.csv'),
-                             '2018': pd.read_csv(f'{root}/2018 Interstate.csv')},
-                            column)
-    NOx = _import()
-    fig = create_fig(NOx, column)
-    highlight_covid(fig)
-    label_plot(fig, 'NOx Levels in Austin 2018-2020',
-               'Month of the Year',
-               'NOx (parts per billion)')
-
-    fig.write_image("../2018-2020 Austin NOx.png", scale=1.5)
-
-# %% Nitrogen Dioxide data
-def NO2_plot(root):
-    column = 'NO2 (ppb)'
-
-    @Util.caching(cachefile='.cache/18-20NO2.cache')
-    def _import():
-        return  process_data({'2020': pd.read_csv(f'{root}/2020 Interstate.csv'),
-                              '2019': pd.read_csv(f'{root}/2019 Interstate.csv'),
-                              '2018': pd.read_csv(f'{root}/2018 Interstate.csv')},
-                             column)
-    NO2 = _import()
-    fig = create_fig(NO2, column)
-    highlight_covid(fig)
-    label_plot(fig, 'NO2 Levels in Austin 2018-2020',
-               'Month of the Year',
-               'NO2 (parts per billion)')
-
-    fig.write_image("../2018-2020 Austin NO2.png", scale=1.5)
 
 # %% Particulate Matter 2.5 data
 def PM_plot(root):
@@ -192,14 +124,68 @@ def PM_plot(root):
 
     fig.write_image("../2018-2020 Austin PM 2.5.png", scale=1.5)
 
+
+def run_param(
+    input_file,
+    column,
+    root=None,
+    title=None,
+    xtitle='Month of the Year',
+    ytitle=None,
+    out_file='temp_plot.png',
+):
+    # TODO: Replace O3 with ozone
+    assert root is not None
+    assert column is not None
+    assert input_file is not None
+
+    def _import():
+        data = pd.read_parquet(f'{root}/{input_file}')
+        years = [key for key in data.groupby(data.index.year).groups.keys()]
+        dataset = {year: data[data.index.year == year] for year in years}
+        return process_data(dataset, column)
+
+    param = _import()
+
+    fig = create_fig(param, column)
+    highlight_covid(fig)
+    label_plot(fig, title, xtitle, ytitle)
+
+    fig.write_image(out_file, scale=1.5)
+
+
 # %% Function calls
 def main():
-    root = '../data/raw/zolton'
-    
-    ozone_plot(root)
-    NOx_plot(root)
-    NO2_plot(root)
-    PM_plot(root)
-    
+    root = '../data/interim/tceq'
+
+
+    run_param(
+        'CAMS 1605 Ozone.parquet',
+        'O3 (ppb)',
+        root=root,
+        title='Ozone Levels in Austin 2018-2020',
+        ytitle='Ozone (parts per billion)',
+        out_file="../aaa2018-2020 Austin Ozone.png",
+    )
+
+    run_param(
+        'CAMS 1068 Nitrogen Dioxide.parquet',
+        'NO2 (ppb)',
+        root=root,
+        title='NO2 Levels in Austin 2018-2020',
+        ytitle='NO2 (parts per billion)',
+        out_file="../a2018-2020 Austin NO2.png",
+    )
+
+    # run_param(
+    #     'CAMS 1068 Nitrogen Dioxide.parquet',
+    #     'NOx (ppb)',
+    #     root=root,
+    #     title='NOx Levels in Austin 2018-2020',
+    #     ytitle='NOx (parts per billion)',
+    #     out_file="../a2018-2020 Austin NOx percent change.png",
+    # )
+
+
 if __name__ == '__main__':
     main()
