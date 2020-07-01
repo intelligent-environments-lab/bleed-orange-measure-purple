@@ -13,9 +13,10 @@ Untitled.ipynb
 *.dirlock
 *.lock
 *.log
-.vscode/launch.json
+/.vscode/*
 .spyproject
 /*.png
 /*.html
 /*.svg
 *.prof
+*.bat
