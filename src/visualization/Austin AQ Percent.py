@@ -132,36 +132,51 @@ def get_percent_error(base, actual):
 #  Functions to import and plot the data
 # =============================================================================
 
-def add_subplot_trace(fig, percent_change, column, name=None, num=1):
-    if name is None:
-        name = column
-    percent_change = percent_change[percent_change.index >= '2020-02-01 00:00:00-06:00']
-    percent_change = percent_change[percent_change.index < '2020-05-01 00:00:00-06:00']
 
-    fig.add_trace(
-        go.Scattergl(x=percent_change.index, y=percent_change, mode='lines', name=name),
-        row=num,
-        col=1,
-    )
+def run_param(
+    input_file,
+    column,
+    root='',
+    title=None,
+    xtitle='Month of the Year',
+    ytitle=None,
+    out_file='temp_plot.png',
+):
+    # TODO: Replace O3 with ozone
+    assert column is not None
+    assert input_file is not None
+
+    def _import():
+        data = pd.read_feather(f'{root}/{input_file}')
+        data = data.set_index('Time')
+        years = [key for key in data.groupby(data.index.year).groups.keys()]
+        dataset = {year: data[data.index.year == year] for year in years}
+        return process_data(dataset, column)
+
+    ozone, percent_diff = _import()
+    percent_diff = percent_diff.rename('error')
+    fig = create_fig()
+    add_trace(fig, percent_diff, 'lines')
+    highlight_covid(fig)
+    label_plot(fig, title, xtitle, ytitle)
+
+    fig.write_image(out_file, scale=1.5)
 
 
-def run_param_combined_subplots(
+def run_param_combined(
     param_files=None,
     root='',
-    title='2020 Percent Change in Air Quality Parameters',
+    title='Percent Change in Air Quality Parameters',
     xtitle='Month of the Year',
     ytitle='Percent Change',
     out_file='temp_plot.png',
 ):
-    fig = make_subplots(
-        rows=3,
-        cols=1,
-        shared_xaxes=True,
-        x_title='Month of the Year',
-        y_title='Percent Change Relative to Past Five Years (%)',
-        vertical_spacing=0.0,
-    )
-    count = 1
+    assert param_files is not None
+
+    fig = create_fig()
+    highlight_covid(fig)
+    label_plot(fig, title, xtitle, ytitle)
+
     for param_name, filename in param_files.items():
         data = pd.read_feather(f'{root}/{filename}').set_index('Time')
         years = [key for key in data.groupby(data.index.year).groups.keys()]
@@ -169,58 +184,7 @@ def run_param_combined_subplots(
         year_min = [key for key in dataset.keys()][0]
         _, percent_diff = process_data(dataset, dataset[year_min].columns[0])
         percent_diff = percent_diff.rename('error')
-        add_subplot_trace(fig, percent_diff, 'lines', name=param_name, num=count)
-        count += 1
-
-    # Hides the background and grid
-    fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis={
-            'showgrid': False,
-            'showline': True,
-            'linecolor': 'black',
-        },  # , 'zeroline':False, 'linewidth': 0.01
-        xaxis2={'showgrid': False, 'showline': True, 'linecolor': 'black'},
-        xaxis3={'showgrid': False, 'showline': True, 'linecolor': 'black'},
-        yaxis={
-            'showgrid': False,
-            'showline': True,
-            'linecolor': 'black',
-            'zeroline': True,
-            'zerolinecolor': 'black',
-            'zerolinewidth': 0.5,
-        },
-        yaxis2={
-            'showgrid': False,
-            'showline': True,
-            'linecolor': 'black',
-            'zeroline': True,
-            'zerolinecolor': 'black',
-            'zerolinewidth': 0.5,
-        },
-        yaxis3={
-            'showgrid': False,
-            'showline': True,
-            'linecolor': 'black',
-            'zeroline': True,
-            'zerolinecolor': 'black',
-            'zerolinewidth': 0.5,
-        },
-    )
-
-    fig.update_yaxes(range=[-60, 60], row=1, col=1)
-    fig.update_yaxes(range=[-60, 60], row=2, col=1)
-    fig.update_yaxes(range=[-60, 60], row=3, col=1)
-
-    highlight_covid(fig)
-
-    fig.update_layout(title=title, xaxis_tickformat='%b')
-    # fig.update_yaxes(title_text='PM 2.5 (ug/m3)', row=1, col=1)
-    # fig.update_yaxes(title_text='parts per billion', row=2, col=1)
-    # fig.update_yaxes(title_text='parts per billion', row=3, col=1)
-    fig.update_xaxes(
-        dict(tickformat="%b", tick0="2020-01-02", dtick=30.42 * 24 * 60 * 60 * 1000)
-    )
+        add_trace(fig, percent_diff, 'lines', name=param_name)
 
     fig.write_image(out_file, scale=1.5)
 
@@ -229,16 +193,33 @@ def run_param_combined_subplots(
 def main():
     root = 'data/processed/tceq'
 
-    run_param_combined_subplots(
+    run_param(
+        'CAMS 1605 Ozone.feather',
+        'O3 (ppb)',
+        root=root,
+        title='Percent Change in Ozone Levels in Austin 2018-2020',
+        ytitle='Percent change',
+        out_file="2018-2020 Austin Ozone percent change.png",
+    )
+
+    run_param(
+        'CAMS 1068 Nitrogen Dioxide.feather',
+        'NO2 (ppb)',
+        root=root,
+        title='Percent Change in NO2 Levels in Austin 2018-2020',
+        ytitle='Percent Change',
+        out_file="a2018-2020 Austin NO2 percent change.png",
+    )
+
+    run_param_combined(
         param_files={
             'Ozone': 'CAMS 1605 Ozone.feather',
             'NO2': 'CAMS 1068 Nitrogen Dioxide.feather',
             'PM 2.5': 'CAMS 171_1068 PM-2.5.feather',
         },
         root=root,
-        out_file="Austin Air Quality Percent Change from 2015 to 2020 subplot.png",
+        out_file="aaAustin Air Quality Percent Change from 2015 to 2020 subplot.png",
     )
-
 
 if __name__ == '__main__':
     # Go up one level
