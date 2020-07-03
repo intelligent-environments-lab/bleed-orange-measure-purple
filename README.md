@@ -1,20 +1,26 @@
 # Bleed Orange Measure Purple
-The Bleed Orange Measure Project is aimed to learn more about the particulate matter sources, fate, and transport across UT's campus using a low-cost sensor network.
 
-## PurpleAir Sensors
-[PurpleAir](https://www2.purpleair.com) is a company that provides low-cost particulate matter sensors for indoor and outdoor applications. The company uses sensors developed by [Plantower](http://plantower.com/en/) and provides a [map](https://www.purpleair.com/map?mylocation) for real-time viewing of data gathered by publicly-registered sensors. Data are available to download from any publicly-registered device. 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![GitHub top language](https://img.shields.io/github/languages/top/intelligent-environments-lab/bleed-orange-measure-purple)
 
-For this project, we are using the [PA-II](https://www2.purpleair.com/products/purpleair-pa-ii) outdoor sensors to gather particulate matter, temperature, and relative humidty data on campus.
+Bleed Orange Measure Purple project explores the potential uses and benefits of the PurpleAir air quality sensors located on the UT Austin campus through data processing, analysis, and visualization. This repo features a data pipeline with various scripts that handle everything from downloading to visualizing the data. Data from TCEQ sensors is also included in this project to provide regulatory grade reference data. For a more detailed explaination of this project, please refer to the [wiki](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/wiki).
 
-![pa-ii](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fs.w-x.co%2Fwu%2Fpurpleair-device2x.jpeg&f=1&nofb=1)
+## Prerequisites
 
-## Sensor Network
-We currently have 16 sensors on the University of Texas at Austin's campus. These sensors are provided with constant power from the emergency help poles they are installed on and are connected to UT's IoT network.
 
-![sensor locations](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/blob/master/images/sensor_locations.png)
+Currently, the plotting library used for the project is Plotly. Their setup instructions can be found [here](https://plotly.com/python/getting-started/). Depending on the ide or export format, different external dependencies may be required (e.g. node for Jupyter, plotly-orca for static image export).
+### Plotly
 
-## Python Script Description
+Plotly is plotting engine used in this project. It can be installed via pip/conda and is included in the requirements.txt for this repository. However, there may be additional dependencies that need be installed separately. For instance, node might be required for JupyterLab support.
 
-[pa_covid_runner.py](/pa_covid_runner.py): Looks at data for all 16 of UT's PurpleAir sensors for the time period from Mar 1 - Apr 8, and creates a     scatter plot of hourly averages. This code is not optimized and may take one or two minutes to execute.
-  
+### Spyder (Anaconda distribution)
 
+This repository is intended to be used with the Spyder IDE. The main reason for this is that the project feature of Spyder makes it easy to add the repo's root directory to sys.path and also set it as the current working directory. If you choose to you another IDE such as VSCode, you will need to either figure how to set these two things in that IDE or correct all the import/file references to work for your IDE.
+
+
+## Installation
+First, clone the repository.
+```
+git clone https://github.com/intelligent-environments-lab/bleed-orange-measure-purple.git
+```
