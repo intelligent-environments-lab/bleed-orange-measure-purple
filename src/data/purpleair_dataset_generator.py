@@ -14,6 +14,7 @@ import pandas as pd
 import nest_asyncio
 nest_asyncio.apply()
 
+from src.data.helpers.requests import AsyncRequest
 #TODO: add autogeneration of folder directory, anticipate asyncio instability,
 #   handle secondary headers
 
@@ -39,20 +40,13 @@ def get_key(keys, sensor_name, mode='primaryA'):
     return channel_ID, api_key
 
 
-def send_url_request(channel, api_key, start=None, end=None):
-    start_date = start.strftime('%Y-%m-%d')
-    end_date = end.strftime('%Y-%m-%d')
-    url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
-    response = requests.get(url).text
-    return response
-
-def get_url_str(channel, api_key, start=None, end=None):
+def build_url(channel, api_key, start=None, end=None):
     start_date = start.strftime('%Y-%m-%d')
     end_date = end.strftime('%Y-%m-%d')
     url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
     return url
 
-def generate_filename(metadata_sets, sensor_name, start_date, end_date, mode):
+def build_filename(metadata_sets, sensor_name, start_date, end_date, mode):
     metadata = metadata_sets[sensor_name]
 
     location_type = metadata['DEVICE_LOCATIONTYPE']
@@ -83,57 +77,36 @@ def combine_and_export(datasets, sensor_name, metadata, filename):
     single_file.columns = columns
     single_file.to_csv(filename)
 
-async def fetch(url, session):
-    # print('One')
-    async with await session.get(url) as resp:
-        result = await resp.text()
-    # print('Two')
-    return result
 
-async def fetch_async(urls):
-    tasks = []
-    async with aiohttp.ClientSession() as session:
-            for url in urls:
-                task = asyncio.create_task(fetch(url, session))
-                tasks.append(task)
-            responses = await asyncio.gather(*tasks)
-    return responses
-
-async def run_request(start_date, end_date, mode='primaryA', keys=None, save_location=None):
+def run_request(start_date, end_date, mode='primaryA', keys=None, save_location=None):
     start_date = pd.to_datetime(start_date, format='%Y-%m-%d', infer_datetime_format=True)
     end_date = pd.to_datetime(end_date, format='%Y-%m-%d', infer_datetime_format=True) + pd.Timedelta('1d')
     delta = pd.Timedelta('11d')
     for name, metadata in keys.items():
-        print(f'Downloading data for {name}...')
+        print(f'\nDownloading data for {name}')
         channel_ID, api_key = get_key(keys, name, mode=mode)
         file_start = start_date
         file_end = start_date + delta
         urls = []
         while True:
             # print(f'From {file_start} to {file_end}')
-            urls.append(get_url_str(channel_ID, api_key, file_start, file_end))
+            urls.append(build_url(channel_ID, api_key, file_start, file_end))
             file_start = file_end
             file_end = file_start + delta
             if file_end > end_date:
                 file_end = end_date
             if file_start >= end_date or file_start >= file_end:
                 break
+        responses = AsyncRequest.get_urls(urls)
 
-        future = asyncio.ensure_future(fetch_async(urls))
-        loop = asyncio.get_event_loop()
-        responses = loop.run_until_complete(future)
-        # responses = [await fetch(url, session) for url in urls]
-
-        filename = generate_filename(keys, name, start_date, end_date, mode)
+        filename = build_filename(keys, name, start_date, end_date, mode)
         if save_location is not None:
             filename = save_location + '/' + filename
         combine_and_export(responses, name, metadata, filename)
 
-async def main():
+def main():
     thingkeys = import_json('src/data/thingspeak_keys.json')
-    await run_request('2020-1-1', '2020-6-1', keys=thingkeys, save_location='data/raw/purpleair')
+    run_request('2020-1-1', '2020-6-1', keys=thingkeys, save_location='data/raw/purpleair/test')
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    future = asyncio.ensure_future(main())
-    loop.run_until_complete(future)
+    main()
