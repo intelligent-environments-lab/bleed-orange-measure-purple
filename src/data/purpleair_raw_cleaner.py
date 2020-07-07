@@ -6,21 +6,27 @@ Created on Mon Jun 22 17:22:14 2020
 """
 import os
 import pandas as pd
+
 # TODO: improve outlier removal to replace value instead of deleting a row
 def remove_outlier(df, param):
     # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
     Q1 = df[param].quantile(0.25)
     Q3 = df[param].quantile(0.75)
-    IQR = Q3-Q1
-    mask = df[param].between(Q1-5*IQR, Q3+5*IQR, inclusive=True)
+    IQR = Q3 - Q1
+    mask = df[param].between(Q1 - 5 * IQR, Q3 + 5 * IQR, inclusive=True)
     df = df.loc[mask, :].copy()
 
     Q1 = df[param].rolling(180, center=True).quantile(0.25)
     Q3 = df[param].rolling(180, center=True).quantile(0.75)
-    IQR = Q3-Q1
-    mask = (df[param] >= Q1-1.5*IQR)&(df[param] <= Q3+1.5*IQR)&(df[param] <= 500)
+    IQR = Q3 - Q1
+    mask = (
+        (df[param] >= Q1 - 1.5 * IQR)
+        & (df[param] <= Q3 + 1.5 * IQR)
+        & (df[param] <= 500)
+    )
 
     return df.loc[mask, :]
+
 
 def list_files(path):
     filepaths = [
@@ -30,11 +36,11 @@ def list_files(path):
     ]
     return filepaths
 
+
 def format_time(dataset):
-    dataset['Time'] = (
-        pd.to_datetime(dataset.iloc[:, 0], format='%Y-%m-%d %H:%M:%S %Z')
-        .dt.tz_convert('US/Central')
-    )
+    dataset['Time'] = pd.to_datetime(
+        dataset.iloc[:, 0], format='%Y-%m-%d %H:%M:%S %Z'
+    ).dt.tz_convert('US/Central')
     NaT_loc = dataset[pd.isnull(dataset['Time'])].index
     if len(NaT_loc) != 0:
         NaT_loc = NaT_loc[0]
@@ -42,6 +48,7 @@ def format_time(dataset):
             NaT_loc - 1
         ] + pd.Timedelta('1h')
     return dataset
+
 
 def main(path, save_location=''):
     if os.path.isdir(path) and isinstance(path, str):
@@ -73,7 +80,9 @@ def main(path, save_location=''):
         dataset = format_time(dataset)
         dataset = remove_outlier(dataset, 'PM2.5 (ug/m3)')
         dataset = dataset.set_index('Time').resample('H').mean()
-        filename = filepath[filepath.rfind('/') + 1 : -4].replace('Real Time', 'Hourly Average')
+        filename = filepath[filepath.rfind('/') + 1 : -4].replace(
+            'Real Time', 'Hourly Average'
+        )
         if save_location != '':
             save_location += '/'
         dataset.to_parquet(f'{save_location}{filename}.parquet')

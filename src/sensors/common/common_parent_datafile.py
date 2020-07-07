@@ -11,20 +11,23 @@ import pandas as pd
 
 from sensors.common.outliers_remover import remove_outlier
 
-class CommonFile():
+
+class CommonFile:
     """Superclass for sensor classes"""
+
     def __init__(self, data, keepOutliers=True):
         self.data = data
         self.resampled_data = data
         self._frequency = None
         self.keepOutliers = keepOutliers
-        
+
         if self.keepOutliers == False:
-            self.data = remove_outlier(self.data,'PM2.5_ATM_ug/m3')
+            self.data = remove_outlier(self.data, 'PM2.5_ATM_ug/m3')
             self.resample(self.frequency)
-# =============================================================================
-# Accessible Properties
-# =============================================================================
+
+    # =============================================================================
+    # Accessible Properties
+    # =============================================================================
 
     @property
     def time(self):
@@ -55,7 +58,7 @@ class CommonFile():
         if var != self._frequency:
             self._frequency = var
             self.resample(var)
-            
+
     def __getitem__(self, key):
         if isinstance(key, str):
             if key in self.resampled_data.columns:
@@ -64,10 +67,10 @@ class CommonFile():
                 return getattr(self, key)
             return None
         return self.resampled_data[key]
-    
-# =============================================================================
-# Methods
-# =============================================================================
+
+    # =============================================================================
+    # Methods
+    # =============================================================================
 
     @staticmethod
     def str2date(timearray, timeformat, tzone=None, isCentral=False):
@@ -85,7 +88,9 @@ class CommonFile():
     def to_datetime(timearray, timeformat, isCentral=False):
         """ Wrapper function for pandas.to_datetime"""
         if isCentral:
-            return pd.to_datetime(timearray, format=timeformat).dt.tz_localize('US/Central')
+            return pd.to_datetime(timearray, format=timeformat).dt.tz_localize(
+                'US/Central'
+            )
         return pd.to_datetime(timearray, format=timeformat).dt.tz_convert('US/Central')
 
     def resample(self, freq):
@@ -99,7 +104,9 @@ class CommonFile():
     def rolling(self, num=1):
         """Returns an copy of the datafile w ith rolling average data"""
         copyfile = copy.deepcopy(self)
-        copyfile.resampled_data = copyfile[:].rolling(window=num, min_periods=1, center=True).mean()
+        copyfile.resampled_data = (
+            copyfile[:].rolling(window=num, min_periods=1, center=True).mean()
+        )
         return copyfile
 
     def plot(self, *args, **kwargs):

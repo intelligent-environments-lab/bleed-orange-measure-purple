@@ -132,6 +132,7 @@ def get_percent_error(base, actual):
 #  Functions to import and plot the data
 # =============================================================================
 
+
 def add_subplot_trace(fig, percent_change, column, name=None, num=1):
     if name is None:
         name = column

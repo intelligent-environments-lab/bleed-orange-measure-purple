@@ -20,3 +20,4 @@ Untitled.ipynb
 /*.svg
 *.prof
 *.bat
+tests/output

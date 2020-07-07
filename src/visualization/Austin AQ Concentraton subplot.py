@@ -132,6 +132,7 @@ def get_percent_error(base, actual):
 #  Functions to import and plot the data
 # =============================================================================
 
+
 def add_subplot_trace(fig, percent_change, column, name=None, num=1, showlegend=True):
     if name is None:
         name = column
@@ -144,21 +145,28 @@ def add_subplot_trace(fig, percent_change, column, name=None, num=1, showlegend=
         opacity = 0.6
         width = 2
 
-    color = {2020:'#636EFA',
-             2019:'#ef553b',
-             2018:'#00cc96',
-             2017:'#ab63fa',
-             2016:'#ffa15a',
-             2015:'#19d3f3'
-             }
-    showlegend=False
-    if num==2:
-        showlegend=True
+    color = {
+        2020: '#636EFA',
+        2019: '#ef553b',
+        2018: '#00cc96',
+        2017: '#ab63fa',
+        2016: '#ffa15a',
+        2015: '#19d3f3',
+    }
+    showlegend = False
+    if num == 2:
+        showlegend = True
     fig.add_trace(
-        go.Scattergl(x=percent_change.index, y=percent_change, mode='lines', name=name, legendgroup=name, showlegend=showlegend,
-                     line=dict(width=width, color=color[name]),
-
-                     opacity=opacity),
+        go.Scattergl(
+            x=percent_change.index,
+            y=percent_change,
+            mode='lines',
+            name=name,
+            legendgroup=name,
+            showlegend=showlegend,
+            line=dict(width=width, color=color[name]),
+            opacity=opacity,
+        ),
         row=num,
         col=1,
     )
@@ -190,10 +198,17 @@ def run_param_combined_subplots_mean(
         dataset, percent_diff = process_data(dataset, dataset[year_min].columns[0])
         # percent_diff = percent_diff.rename('error')
         for year, dataset in dataset.items():
-            showlegend=True
+            showlegend = True
             if year in years_in_legend_tracker:
-                showlegend=False
-            add_subplot_trace(fig, dataset.iloc[:,0], 'lines', name=year, num=count, showlegend=showlegend)
+                showlegend = False
+            add_subplot_trace(
+                fig,
+                dataset.iloc[:, 0],
+                'lines',
+                name=year,
+                num=count,
+                showlegend=showlegend,
+            )
             years_in_legend_tracker.append(year)
         # add_subplot_trace(fig, percent_diff, 'lines', name=param_name, num=count)
         count += 1
@@ -249,14 +264,14 @@ def run_param_combined_subplots_mean(
         dict(tickformat="%b", tick0="2020-01-02", dtick=30.42 * 24 * 60 * 60 * 1000)
     )
 
-    fig.write_html(out_file+'.html')
+    fig.write_html(out_file + '.html')
 
     fig.write_image(out_file, scale=1.5)
+
 
 # %% Function calls
 def main():
     root = 'data/processed/tceq'
-
 
     run_param_combined_subplots_mean(
         param_files={
