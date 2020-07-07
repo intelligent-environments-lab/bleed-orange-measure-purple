@@ -5,8 +5,8 @@ Created on Wed Jul  1 23:29:10 2020
 @author: CalvinL2
 """
 
-from src.data.helpers.requests import AsyncRequest as areq
-from src.data.helpers.requests import StandardRequest as req
+from src.data.helpers.web_requests import AsyncRequest as areq
+from src.data.helpers.web_requests import StandardRequest as req
 
 
 def test_async_requests():
