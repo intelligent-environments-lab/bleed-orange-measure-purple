@@ -6,6 +6,7 @@ Created on Tue Jun  9 15:40:39 2020
 """
 
 from urllib.request import urlopen
+import requests
 import json
 
 import yaml
@@ -15,6 +16,8 @@ def load_json_from_url(url):
     html = urlopen(url).read()
     return json.loads(html)
 
+def get_json_from_url(url):
+    html = requests.get(url)
 
 def extract_key_info(pa_json):
     thingspeak = {
@@ -49,19 +52,22 @@ def associate_ab_channels(pa_json):
 
     for channel in channel_b:
         sensors[channel['ParentID']]['B'] = channel['B']
-        
+
     for _, sensor in sensors.items():
-        sensor.pop('ID')        
+        sensor.pop('ID')
     return sensors
 
 
 def export_json(pa_json):
-    with open('thingspeak_keys.json', 'w', encoding='utf8') as file:
+    with open('thingspeak_keys_test.json', 'w', encoding='utf8') as file:
         json.dump(pa_json, file, indent=4, ensure_ascii=False)
 
 
 def main():
-    purple_air_json = load_json_from_url(config['purple_json_url'])
+    with open('src/data/config.yaml') as file:
+        config = yaml.full_load(file)
+    url = config['purple_json_url']
+    purple_air_json = load_json_from_url(url)
     purple_air_json = purple_air_json['results']
     purpleair_ids = [extract_key_info(sensor) for sensor in purple_air_json]
     purpleair_ids = associate_ab_channels(purpleair_ids)
@@ -72,6 +78,4 @@ def main():
 
 
 if __name__ == '__main__':
-    with open('config.yaml') as file:
-        config = yaml.full_load(file)
     main()
