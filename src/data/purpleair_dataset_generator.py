@@ -12,16 +12,20 @@ import asyncio
 
 import pandas as pd
 import nest_asyncio
+
 nest_asyncio.apply()
 
 from src.data.helpers.web_requests import AsyncRequest
-#TODO: add autogeneration of folder directory, anticipate asyncio instability,
+
+# TODO: add autogeneration of folder directory, anticipate asyncio instability,
 #   handle secondary headers
+
 
 def import_json(filename):
     with open(filename, 'r', encoding='utf8') as file:
         filedata = json.load(file)
     return filedata
+
 
 def get_key(keys, sensor_name, mode='primaryA'):
     channel = keys[sensor_name]
@@ -46,6 +50,7 @@ def build_url(channel, api_key, start=None, end=None):
     url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
     return url
 
+
 def build_filename(metadata_sets, sensor_name, start_date, end_date, mode):
     metadata = metadata_sets[sensor_name]
 
@@ -66,12 +71,26 @@ def build_filename(metadata_sets, sensor_name, start_date, end_date, mode):
 
 
 def combine_and_export(datasets, sensor_name, metadata, filename):
-    columns = ['entry_id','PM1.0_CF1_ug/m3','PM2.5_CF1_ug/m3','PM10.0_CF1_ug/m3','UptimeMinutes','RSSI_dbm','Temperature_F','Humidity_%','PM2.5_ATM_ug/m3']
+    columns = [
+        'entry_id',
+        'PM1.0_CF1_ug/m3',
+        'PM2.5_CF1_ug/m3',
+        'PM10.0_CF1_ug/m3',
+        'UptimeMinutes',
+        'RSSI_dbm',
+        'Temperature_F',
+        'Humidity_%',
+        'PM2.5_ATM_ug/m3',
+    ]
     # if type(datasets[0]) is bytes:
     #     datasets = [data.decode('utf8') for data in datasets]
-    frames = [pd.DataFrame([line.split(',') for line in data.split('\n')])
-              for data in datasets]
-    frames = [frame.drop(frame.index[0]).set_index(0).dropna(how='all') for frame in frames]
+    frames = [
+        pd.DataFrame([line.split(',') for line in data.split('\n')])
+        for data in datasets
+    ]
+    frames = [
+        frame.drop(frame.index[0]).set_index(0).dropna(how='all') for frame in frames
+    ]
     single_file = pd.concat(frames)
     single_file.index.name = 'created_at'
     single_file.columns = columns
@@ -79,8 +98,12 @@ def combine_and_export(datasets, sensor_name, metadata, filename):
 
 
 def run_request(start_date, end_date, mode='primaryA', keys=None, save_location=None):
-    start_date = pd.to_datetime(start_date, format='%Y-%m-%d', infer_datetime_format=True)
-    end_date = pd.to_datetime(end_date, format='%Y-%m-%d', infer_datetime_format=True) + pd.Timedelta('1d')
+    start_date = pd.to_datetime(
+        start_date, format='%Y-%m-%d', infer_datetime_format=True
+    )
+    end_date = pd.to_datetime(
+        end_date, format='%Y-%m-%d', infer_datetime_format=True
+    ) + pd.Timedelta('1d')
     delta = pd.Timedelta('11d')
     for name, metadata in keys.items():
         print(f'\nDownloading data for {name}')
@@ -104,9 +127,13 @@ def run_request(start_date, end_date, mode='primaryA', keys=None, save_location=
             filename = save_location + '/' + filename
         combine_and_export(responses, name, metadata, filename)
 
+
 def main():
     thingkeys = import_json('src/data/thingspeak_keys.json')
-    run_request('2020-1-1', '2020-6-1', keys=thingkeys, save_location='data/raw/purpleair/test')
+    run_request(
+        '2020-1-1', '2020-6-1', keys=thingkeys, save_location='data/raw/purpleair/test'
+    )
+
 
 if __name__ == '__main__':
     main()

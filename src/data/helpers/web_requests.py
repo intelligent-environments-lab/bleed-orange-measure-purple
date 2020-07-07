@@ -11,7 +11,7 @@ import nest_asyncio
 import requests
 
 
-class AsyncRequest():
+class AsyncRequest:
     @staticmethod
     async def __fetch_url(session, url, payload=None):
         # print('One')
@@ -35,11 +35,12 @@ class AsyncRequest():
         async def _get_url(urls):
             asyncio_tasks = []
             async with aiohttp.ClientSession() as session:
-                    for url in urls:
-                        task = asyncio.create_task(AsyncRequest.__fetch_url(session, url))
-                        asyncio_tasks.append(task)
-                    responses = await asyncio.gather(*asyncio_tasks)
+                for url in urls:
+                    task = asyncio.create_task(AsyncRequest.__fetch_url(session, url))
+                    asyncio_tasks.append(task)
+                responses = await asyncio.gather(*asyncio_tasks)
             return responses
+
         print(f'Accessing {len(urls)} urls with async...', end='')
         future = asyncio.ensure_future(_get_url(urls))
         responses = loop.run_until_complete(future)
@@ -52,12 +53,14 @@ class AsyncRequest():
         loop = asyncio.get_event_loop()
 
         async def _post_url(url, forms):
-            asyncio_tasks=[]
+            asyncio_tasks = []
             async with aiohttp.ClientSession() as session:
-                    for form in forms:
-                        task = asyncio.create_task(AsyncRequest.__fetch_url(session, url, payload=form))
-                        asyncio_tasks.append(task)
-                    responses = await asyncio.gather(*asyncio_tasks)
+                for form in forms:
+                    task = asyncio.create_task(
+                        AsyncRequest.__fetch_url(session, url, payload=form)
+                    )
+                    asyncio_tasks.append(task)
+                responses = await asyncio.gather(*asyncio_tasks)
             return responses
 
         print(f'Posting {len(forms)} forms with async...', end='')
@@ -66,11 +69,13 @@ class AsyncRequest():
         print('Done')
         return responses
 
+
 class StandardRequest:
     """ Use this class only if the AsyncRequest one isn't working"""
+
     @staticmethod
     def get_urls(urls):
-        responses = [requests.get(url)for url in urls]
+        responses = [requests.get(url) for url in urls]
         responses = [r.text for r in responses if r.ok]
         return responses
 
@@ -79,6 +84,7 @@ class StandardRequest:
         responses = [requests.post(url, data=form) for form in forms]
         responses = [r.text for r in responses if r.ok]
         return responses
+
 
 if __name__ == '__main__':
     urls = ['https://example.com', 'https://google.com']

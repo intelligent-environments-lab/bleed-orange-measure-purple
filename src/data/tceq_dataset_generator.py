@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 
 from src.data.helpers.web_requests import AsyncRequest
 
+
 def create_form(site, param, year):
     """Creates a form to send in a POST request to TCEQ website
 
@@ -30,15 +31,17 @@ def create_form(site, param, year):
 
     """
 
-
-    request = {'submitted':'1',
-               'select_site':f'site|||{site}',
-               'user_year':f'{year}',
-               'user_param':f'{param}',
-               'time_format':'24hr',
-               'report_format':'comma'}
+    request = {
+        'submitted': '1',
+        'select_site': f'site|||{site}',
+        'user_year': f'{year}',
+        'user_param': f'{param}',
+        'time_format': '24hr',
+        'report_format': 'comma',
+    }
 
     return request
+
 
 def create_forms(sites):
     """Creates multiple forms for the provided years, sites, and parameters
@@ -67,7 +70,6 @@ def create_forms(sites):
     return forms
 
 
-
 def extract_data(htmls):
     """
     Locates and returns the datasets within the html source codes
@@ -83,6 +85,7 @@ def extract_data(htmls):
         A list of strings containing the comma delineated datasets.
 
     """
+
     def _extract_data(html):
         soup = BeautifulSoup(html, 'html.parser')
         data = soup.find('pre')
@@ -91,9 +94,9 @@ def extract_data(htmls):
         else:
             return data.text
 
-    datasets = [_extract_data(html) for html in htmls
-                if _extract_data(html) is not None]
-
+    datasets = [
+        _extract_data(html) for html in htmls if _extract_data(html) is not None
+    ]
 
     return datasets
 
@@ -115,12 +118,13 @@ def export(datasets, save_location=None):
 
     '''
     for dataset in datasets:
-        filename = dataset.partition("\n")[0]+'.csv'
+        filename = dataset.partition("\n")[0] + '.csv'
         if save_location is not None:
             filename = f'{save_location}/{filename}'
 
         with open(filename, 'w', encoding='utf8') as file:
             file.write(dataset)
+
 
 def main(site, save_location=None):
     """Entry point for this script
@@ -149,8 +153,18 @@ def main(site, save_location=None):
 
 
 if __name__ == '__main__':
-    sites = [{'cams':171, 'params':[88101], 'years':[2020, 2019, 2018, 2017, 2016, 2015]},
-               {'cams': 1605, 'params': [44201], 'years':[2020, 2019, 2018, 2017, 2016, 2015]},
-              {'cams': 1068, 'params':[42601, 42602, 88101], 'years':[2020, 2019, 2018, 2017, 2016, 2015]}]
+    sites = [
+        {'cams': 171, 'params': [88101], 'years': [2020, 2019, 2018, 2017, 2016, 2015]},
+        {
+            'cams': 1605,
+            'params': [44201],
+            'years': [2020, 2019, 2018, 2017, 2016, 2015],
+        },
+        {
+            'cams': 1068,
+            'params': [42601, 42602, 88101],
+            'years': [2020, 2019, 2018, 2017, 2016, 2015],
+        },
+    ]
 
     main(sites, save_location='data/raw/tceq/test')

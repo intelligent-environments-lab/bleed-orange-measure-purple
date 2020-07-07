@@ -221,6 +221,7 @@ def main():
         out_file="aaAustin Air Quality Percent Change from 2015 to 2020 subplot.png",
     )
 
+
 if __name__ == '__main__':
     # Go up one level
     main()

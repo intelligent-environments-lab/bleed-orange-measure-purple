@@ -16,8 +16,10 @@ def load_json_from_url(url):
     html = urlopen(url).read()
     return json.loads(html)
 
+
 def get_json_from_url(url):
     html = requests.get(url)
+
 
 def extract_key_info(pa_json):
     thingspeak = {

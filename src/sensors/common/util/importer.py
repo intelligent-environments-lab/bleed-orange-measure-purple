@@ -10,9 +10,10 @@ import pickle as pkl
 import hashlib
 import functools
 
-class Util():
-    
-    #https://realpython.com/primer-on-python-decorators/#both-please-but-never-mind-the-bread
+
+class Util:
+
+    # https://realpython.com/primer-on-python-decorators/#both-please-but-never-mind-the-bread
     @staticmethod
     def caching(_func=None, cachefile='cachefile.cache'):
         def wrap(import_func):
@@ -24,6 +25,7 @@ class Util():
                     print('Done', flush=True)
                     pkl.dump(output, open(cachefile, 'wb'))
                     return output
+
                 # if cachefile is None:
                 #     func_name = import_func.__name__
                 #     hash_str  = func_name + [arg for arg in args if arg != os.getcwd()][0]
@@ -41,12 +43,10 @@ class Util():
                     else:
                         print('Done', flush=True)
                 return output
+
             return wrapper
+
         if _func is None:
-            return wrap         #If arguments passed to decorator
-        else: 
-            return wrap(_func)  #If arguments not passed to decorator
-
-
-    
-    
+            return wrap  # If arguments passed to decorator
+        else:
+            return wrap(_func)  # If arguments not passed to decorator

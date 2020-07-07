@@ -10,8 +10,10 @@ Refer to: https://realpython.com/python-timer/
 import time
 import functools
 
+
 class Timer:
     """A timer class to be used with the 'with' statement"""
+
     def __init__(self, msg=''):
         self.start = None
         self.msg = msg
@@ -23,8 +25,10 @@ class Timer:
         end = time.perf_counter()
         print(f'{self.msg}{float(int((end-self.start)*1000))/1000} secs')
 
+
 def timeit(func):
     """Timer decorator: put @timeit before any function to time it in seconds"""
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
@@ -33,4 +37,5 @@ def timeit(func):
         elapsed = end - start
         print(f'Elapsed time:{elapsed:0.4f} seconds')
         return value
+
     return wrapper
