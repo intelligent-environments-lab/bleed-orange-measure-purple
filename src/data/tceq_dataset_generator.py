@@ -8,7 +8,7 @@ Created on Tue Jun 16 11:22:43 2020
 import requests
 from bs4 import BeautifulSoup
 
-from src.data.helpers.requests import AsyncRequest
+from src.data.helpers.web_requests import AsyncRequest
 
 def create_form(site, param, year):
     """Creates a form to send in a POST request to TCEQ website

@@ -14,7 +14,7 @@ import pandas as pd
 import nest_asyncio
 nest_asyncio.apply()
 
-from src.data.helpers.requests import AsyncRequest
+from src.data.helpers.web_requests import AsyncRequest
 #TODO: add autogeneration of folder directory, anticipate asyncio instability,
 #   handle secondary headers
 
