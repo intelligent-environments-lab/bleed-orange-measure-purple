@@ -121,15 +121,9 @@ def main(path, save_location=''):
     if os.path.isdir(path) and isinstance(path, str):
         filepaths = list_files(path)
     else:
+        print('Provided path is not a valid directory')
         return
-    datasets = {
-        filepath[filepath.rfind('/') + 1 : -4]
-        .replace('Summary Report for ', '')
-        .replace('(Local Conditions) ', ''): pd.read_csv(
-            filepath, names=list(range(25))
-        )
-        for filepath in filepaths
-    }
+    datasets = {filepath[filepath.rfind('/') + 1 : -4].replace('Summary Report for ', '').replace('(Local Conditions) ', ''): pd.read_csv(filepath, names=list(range(25))) for filepath in filepaths}
 
     for filename, data in datasets.items():
         datasets[filename] = per_dataset_clean(data)
