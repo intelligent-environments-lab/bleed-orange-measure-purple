@@ -131,7 +131,7 @@ def run_request(start_date, end_date, mode='primaryA', keys=None, save_location=
 def main():
     thingkeys = import_json('src/data/thingspeak_keys.json')
     run_request(
-        '2020-1-1', '2020-6-1', keys=thingkeys, save_location='data/raw/purpleair/test'
+        '2020-1-1', '2020-7-1', keys=thingkeys, save_location='data/raw/purpleair'
     )
 
 

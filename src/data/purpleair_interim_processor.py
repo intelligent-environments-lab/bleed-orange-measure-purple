@@ -37,7 +37,7 @@ def main():
     combined = pd.concat(datasets)
     combined_average = combined.groupby(combined.index).mean()
     combined_average.reset_index().to_feather(
-        'data/processed/purpleair/PA average.feather'
+        'data/processed/purpleair/PA_combined_hourly_average.feather'
     )
 
 
