@@ -21,3 +21,4 @@ Untitled.ipynb
 *.prof
 *.bat
 tests/output
+*.DS_Store
