@@ -13,18 +13,6 @@ from plotly.subplots import make_subplots
 from sensors.common.util.importer import Util
 
 
-def to_datetimeindex(df, column='Time', tz='US/Central'):
-    """ Time column to datetimeindex """
-    df[column] = pd.to_datetime(df[column])
-    df = df.set_index(column).tz_convert(tz)
-    return df
-
-
-def replace_strings(pd_series):
-    """ Numbers only please """
-    return pd.to_numeric(pd_series, errors='coerce')
-
-
 def process_data(year, column):
     year[column] = replace_strings(year[column])
     year = to_datetimeindex(year)
@@ -37,27 +25,6 @@ def process_data(year, column):
 
     return year
 
-
-@Util.caching(cachefile='.cache/2020ozone.cache')
-def ozone_plot(root):
-    column = 'Ozone (ppb)'
-    return process_data(pd.read_csv(f'{root}/2020 Edwards ozone.csv'), column)
-
-
-# %% Oxides of Nitrogen
-@Util.caching(cachefile='.cache/2020NOx.cache')
-def NOx_plot(root):
-    column = 'NOx (ppb)'
-    return process_data(
-        pd.read_csv(f'{root}/2020 Interstate.csv', usecols=['Time', 'NOx (ppb)']),
-        column,
-    )
-
-
-# %% Nitrogen Dioxide data
-# def NO2_plot(root):
-#     column = 'NO2 (ppb)'
-#     NO2 = process_data(pd.read_csv(f'{root}/2020 Interstate.csv'), column)
 
 # %% Particulate Matter 2.5 data
 @Util.caching(cachefile='.cache/2020PM.cache')
