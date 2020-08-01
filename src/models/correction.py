@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 """
 Created on Tue May  5 14:52:18 2020
 
@@ -13,51 +13,32 @@ import pandas as pd
 from plotly.offline import plot
 import plotly.graph_objects as go
 
-from sensors.purpleair.pa_datafile import PAfiles
-from sensors.tceq.TCEQ_pm_datafile import TCEQfile
-from sensors.common.util.importer import Util
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_avg_pm2(param='PM2.5_ATM_ug/m3', freq=None):
-
-    # A list of series with PM data (non rolling)
-    combined_data = [
-        file.data.resample(freq).mean()[param].rename(file.sensorname)
-        for file in pa_files
-        if file[param] is not None
+def list_files(path):
+    filepaths = [
+        path + '/' + filename
+        for filename in os.listdir(path)
+        if os.path.isfile(path + '/' + filename)
     ]
-
-    combined_data = pd.concat(
-        combined_data, axis=1
-    )  # columns = sensors, rows = pm values
-    avg_values = combined_data.mean(axis=1)  # average all sensors
-
-    return avg_values  # panda series
-
+    return filepaths
 
 if __name__ == "__main__":
     # %% Import data from csvs
-    @Util.caching(cachefile='purpleair.cache')
-    def import_PAfiles():
-        return PAfiles('data/monthly', keepOutliers=False)
 
-    pa_files = import_PAfiles()
-
-    tceq = pd.read_csv('data/monthly/2020 Webberville-Interstate PM 2.5.csv').set_index(
+    tceq_pm = pd.read_feather('data/processed/tceq/CAMS 171_1068 PM-2.5.feather').set_index(
         'Time'
     )
 
+    # TODO: Replace with UT weather
     tceq_trh = pd.read_csv('data/monthly/2020 Camp Mabry TRH.csv')  # .set_index('Time')
 
     tceq_trh['Time'] = pd.to_datetime(tceq_trh['Time'], format='%Y-%m-%d %H:%M:%S %Z')
     tceq_trh = tceq_trh.set_index('Time').tz_convert('US/Central')
 
-    # %% Use data from all Purple Airs to create a single average
-    pa_avg = plot_avg_pm2(freq='H').rename('PM2.5_ATM_ug/m3')
-    pa_avg.index.name = 'Time'
 
     # Combine PA data with tceq trh data in dataframe
     # df = pa_avg.append(tceq_trh).rename(columns={0:'PurplePM2.5'})
