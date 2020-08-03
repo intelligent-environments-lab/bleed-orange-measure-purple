@@ -22,12 +22,49 @@ from src.data.helpers.web_requests import AsyncRequest
 
 
 def import_json(filename):
+    '''
+    Loads a json file
+
+    Parameters
+    ----------
+    filename : str
+        Filename or relative path to file.
+
+    Returns
+    -------
+    filedata : dict
+        Data in json file.
+
+    '''
     with open(filename, 'r', encoding='utf8') as file:
         filedata = json.load(file)
     return filedata
 
 
 def get_key(keys, sensor_name, mode='primaryA'):
+    '''
+    Locates the correct channel_ID and api key for the given sensor.
+
+    Specifically, it traverses the dictionary provided in the variable keys.
+
+    Parameters
+    ----------
+    keys : dict
+        Data loaded from json file.
+    sensor_name : str
+        Name of the PurpleAir sensor.
+    mode : str, optional
+        Can specify primaryA, primaryB, secondaryA, or secondaryB.
+        The default is 'primaryA'.
+
+    Returns
+    -------
+    channel_ID : str
+        Thingspeak channel ID for the given sensor.
+    api_key : str
+        Thingspeak api key for the given sensor.
+
+    '''
     channel = keys[sensor_name]
     if 'A' in mode:
         channel = channel['A']
@@ -43,8 +80,28 @@ def get_key(keys, sensor_name, mode='primaryA'):
 
     return channel_ID, api_key
 
-
+# TODO: function might not handle a none value correctly
 def build_url(channel, api_key, start=None, end=None):
+    '''
+    Creates a thingspeak.com url that can be used to access the target data
+
+    Parameters
+    ----------
+    channel : str
+        Thingspeak channel ID.
+    api_key : str
+        Thingspeak api key.
+    start : Timestamp, optional
+        Starting date. The default is None.
+    end : Timestamp, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    url : str
+        A request url with the included parameters.
+
+    '''
     start_date = start.strftime('%Y-%m-%d')
     end_date = end.strftime('%Y-%m-%d')
     url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&start={start_date}%2000:00:00&end={end_date}%2000:00:00'

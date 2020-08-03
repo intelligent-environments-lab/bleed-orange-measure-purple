@@ -8,14 +8,60 @@ import os
 import pandas as pd
 
 # TODO: improve outlier removal to replace value instead of deleting a row
+
+def list_files(path):
+    '''
+    Creates a list of files in the provided directory
+
+    Parameters
+    ----------
+    path : str
+        the relative path (from repo root) to the directory containing the target files.
+
+    Returns
+    -------
+    filepaths : list
+        a list of the relative path strings for the target files.
+
+    '''
+    filepaths = [
+        path + '/' + filename
+        for filename in os.listdir(path)
+        if os.path.isfile(path + '/' + filename)
+    ]
+    return filepaths
+
+
 def remove_outlier(df, param):
+    '''
+    Removes outlier using IQR twice.
+
+    The first time it uses 5 * IQR to remove
+    outliers that are way out of range of the dataset. Then it uses 1.5 IQR to
+    remove outliers that are more local to a timeframe.
+
+    Parameters
+    ----------
+    df : dataframe
+        Original dataset.
+    param : str
+        Column name to perform outlier removal on.
+
+    Returns
+    -------
+    dataframe
+        Returns a dataframe with the outliers remove.
+
+    '''
     # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
+    # Broad outlier removal
     Q1 = df[param].quantile(0.25)
     Q3 = df[param].quantile(0.75)
     IQR = Q3 - Q1
     mask = df[param].between(Q1 - 5 * IQR, Q3 + 5 * IQR, inclusive=True)
     df = df.loc[mask, :].copy()
 
+    # Local outlier removal
     Q1 = df[param].rolling(180, center=True).quantile(0.25)
     Q3 = df[param].rolling(180, center=True).quantile(0.75)
     IQR = Q3 - Q1
@@ -28,19 +74,28 @@ def remove_outlier(df, param):
     return df.loc[mask, :]
 
 
-def list_files(path):
-    filepaths = [
-        path + '/' + filename
-        for filename in os.listdir(path)
-        if os.path.isfile(path + '/' + filename)
-    ]
-    return filepaths
+def to_datetime(dataset):
+    '''
+    Converts the time column from strings to datetime objects.
 
+    Parameters
+    ----------
+    dataset : dataframe
+        Pandas dataframe with time (strings)  as the first column.
 
-def format_time(dataset):
+    Returns
+    -------
+    dataset : dataframe
+        Pandas dataframe with time (Pandas datetimes) as the first column.
+
+    '''
+    # Converts string time to datetime
     dataset['Time'] = pd.to_datetime(
         dataset.iloc[:, 0], format='%Y-%m-%d %H:%M:%S %Z'
     ).dt.tz_convert('US/Central')
+
+    # Replaces NaT value resulting from datetime savings change with the preceding time
+    # value shifted forward by one hour
     NaT_loc = dataset[pd.isnull(dataset['Time'])].index
     if len(NaT_loc) != 0:
         NaT_loc = NaT_loc[0]
@@ -51,13 +106,33 @@ def format_time(dataset):
 
 
 def main(path, save_location=''):
+    '''
+    Entry point for script
+
+    Parameters
+    ----------
+    path : str
+        Folder path (relative) containing the input files.
+    save_location : str, optional
+        Folder path (relative) for the output files. The default is ''.
+
+    Returns
+    -------
+    None.
+
+    '''
+    # Create a list of filepaths in the provided directory
     if os.path.isdir(path) and isinstance(path, str):
         filepaths = list_files(path)
     else:
         return
 
+    # Import and perform operations for each provided file
     for filepath in filepaths:
+        # Get column names
         cols = list(pd.read_csv(filepath, nrows=1))
+
+        # Import csv while excluding some columns
         dataset = pd.read_csv(
             filepath,
             usecols=[
@@ -66,6 +141,8 @@ def main(path, save_location=''):
                 if col not in ['entry_id', 'UptimeMinutes', 'RSSI_dbm']
             ],
         )
+
+        # Rename columns
         dataset = dataset.rename(
             columns={
                 'created_at': 'Time',
@@ -77,9 +154,13 @@ def main(path, save_location=''):
                 'PM2.5_ATM_ug/m3': 'PM2.5 (ug/m3)',
             }
         )
-        dataset = format_time(dataset)
+
+        # Function calls to modify dataframe
+        dataset = to_datetime(dataset)
         dataset = remove_outlier(dataset, 'PM2.5 (ug/m3)')
         dataset = dataset.set_index('Time').resample('H').mean()
+
+        # Create filename and export file
         filename = filepath[filepath.rfind('/') + 1 : -4].replace(
             'Real Time', 'Hourly Average'
         )
@@ -87,7 +168,6 @@ def main(path, save_location=''):
             save_location += '/'
         dataset.to_parquet(f'{save_location}{filename}.parquet')
 
-    return
 
 
 if __name__ == '__main__':

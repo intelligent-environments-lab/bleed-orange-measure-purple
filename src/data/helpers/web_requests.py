@@ -14,6 +14,8 @@ import requests
 class AsyncRequest:
     @staticmethod
     async def __fetch_url(session, url, payload=None):
+        ''' This method is intended to be called by get_urls(urls) or post_url()'''
+
         # print('One')
         if payload is not None:
             # print('Posting')
@@ -29,6 +31,21 @@ class AsyncRequest:
 
     @staticmethod
     def get_urls(urls):
+        '''
+        Retrieves urls faster by making asynchronous requests (GET).
+
+        Parameters
+        ----------
+        urls : list
+            A list of urls (strings) to be accessed asynchronously.
+
+        Returns
+        -------
+        responses : list
+            A list of html responses (strings).
+
+        '''
+        # Nest_asyncio is needed for running asyncio in an existing IPython event loop
         nest_asyncio.apply()
         loop = asyncio.get_event_loop()
 
@@ -49,6 +66,23 @@ class AsyncRequest:
 
     @staticmethod
     def post_url(url, forms):
+        '''
+        Makes multiple POST requests to the provided url.
+
+        Parameters
+        ----------
+        url : str
+            Url that contains a form on its page.
+        forms : list
+            A list of dictionaries where each dictionary is a set of data values
+            that gets POSTed to the website.
+
+        Returns
+        -------
+        responses : list
+            A list of the html responses (strings) for each form.
+
+        '''
         nest_asyncio.apply()
         loop = asyncio.get_event_loop()
 
@@ -71,7 +105,8 @@ class AsyncRequest:
 
 
 class StandardRequest:
-    """ Use this class only if the AsyncRequest one isn't working"""
+    """ A fallback class that can be utilized in the event the async version is
+    broken by unexpected deprecation"""
 
     @staticmethod
     def get_urls(urls):
