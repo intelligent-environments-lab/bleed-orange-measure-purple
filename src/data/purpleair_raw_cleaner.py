@@ -105,10 +105,10 @@ def to_datetime(dataset):
         ] + pd.Timedelta('1h')
     return dataset
 
-
+# TODO check if outlier removes a whole row or just a values
 def main(path, save_location=''):
     '''
-    Entry point for script
+    Entry point for script.
 
     Parameters
     ----------
@@ -126,39 +126,18 @@ def main(path, save_location=''):
     if os.path.isdir(path) and isinstance(path, str):
         filepaths = list_files(path)
     else:
+        print('Error: files not found')
         return
 
     # Import and perform operations for each provided file
     for filepath in filepaths:
-        # Get column names
-        cols = list(pd.read_csv(filepath, nrows=1))
-
         # Import csv while excluding some columns
-        dataset = pd.read_csv(
-            filepath,
-            usecols=[
-                col
-                for col in cols
-                if col not in ['entry_id', 'UptimeMinutes', 'RSSI_dbm']
-            ],
-        )
-
-        # Rename columns
-        dataset = dataset.rename(
-            columns={
-                'created_at': 'Time',
-                'PM1.0_CF1_ug/m3': 'PM1.0 CF1 (ug/m3)',
-                'PM2.5_CF1_ug/m3': 'PM2.5 CF1 (ug/m3)',
-                'PM10.0_CF1_ug/m3': 'PM10.0 CF1 (ug/m3)',
-                'Temperature_F': 'Temperature (F)',
-                'Humidity_%': 'Humidity(%)',
-                'PM2.5_ATM_ug/m3': 'PM2.5 (ug/m3)',
-            }
-        )
+        dataset = pd.read_csv(filepath)
+        dataset = dataset.drop(columns=['entry_id', 'UptimeMinutes', 'RSSI_dbm'])
 
         # Function calls to modify dataframe
         dataset = to_datetime(dataset)
-        dataset = remove_outlier(dataset, 'PM2.5 (ug/m3)')
+        dataset = remove_outlier(dataset, 'PM2.5_ATM_ug/m3')
         dataset = dataset.set_index('Time').resample('H').mean()
 
         # Create filename and export file
