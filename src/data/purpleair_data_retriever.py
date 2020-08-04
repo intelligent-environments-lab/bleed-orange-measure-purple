@@ -38,7 +38,7 @@ def import_json(filename):
     return filedata
 
 
-def get_key(keys, sensor, mode='primaryA'):
+def get_key(sensor, mode='primaryA'):
     """
     Locates the correct channel_ID and api key for the given sensor.
 
@@ -63,13 +63,13 @@ def get_key(keys, sensor, mode='primaryA'):
 
     """
     # Choose A or B
-    if 'A' in sensor:
+    if 'A' in mode:
         channel = sensor['A']
     else:
         channel = sensor['B']
 
     # Choose primary or secondary
-    if 'primary' in sensor:
+    if 'primary' in mode:
         channel_ID = channel['THINGSPEAK_PRIMARY_ID']
         api_key = channel['THINGSPEAK_PRIMARY_ID_READ_KEY']
     else:
@@ -253,7 +253,7 @@ def main(start, end, mode='primaryA', thingspeak='src/data/thingspeak_keys.json'
         print(f'\nDownloading data for {name}')
 
         # Get Thingspeak ID and API key for current sensor
-        channel_ID, api_key = get_key(thingkeys, sensor, mode=mode)
+        channel_ID, api_key = get_key(sensor, mode=mode)
 
         # Start and end date for each url request
         url_start = start
