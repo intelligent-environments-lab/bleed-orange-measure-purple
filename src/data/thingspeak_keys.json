@@ -1,5 +1,6 @@
-{
-    "PA_II_0D9C": {
+[
+    {
+        "Label": "PA_II_0D9C",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.28559,
         "Lon": -97.736931,
@@ -11,14 +12,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "4LMD1FMG32ZOVIO0"
         },
         "B": {
-            "ID": 27520,
+            "ID": 27519,
             "THINGSPEAK_PRIMARY_ID": "714794",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "EZBKSXWWLAQQL0P3",
             "THINGSPEAK_SECONDARY_ID": "714795",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "CRO10RJICO92LQ75"
         }
     },
-    "PA_II_0DA2": {
+    {
+        "Label": "PA_II_0DA2",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.279041,
         "Lon": -97.725929,
@@ -30,14 +32,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "7Z4YVS68EKO0KY27"
         },
         "B": {
-            "ID": 27540,
+            "ID": 27539,
             "THINGSPEAK_PRIMARY_ID": "714834",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "7COXQE0K5WSORVCB",
             "THINGSPEAK_SECONDARY_ID": "714835",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "LJKQAL7R7RD6UI01"
         }
     },
-    "PA_II_0DA8": {
+    {
+        "Label": "PA_II_0DA8",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.277252,
         "Lon": -97.733324,
@@ -49,14 +52,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "VNXGXCUALC4AP933"
         },
         "B": {
-            "ID": 27574,
+            "ID": 27573,
             "THINGSPEAK_PRIMARY_ID": "714906",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "K36DJODFD8A0RB31",
             "THINGSPEAK_SECONDARY_ID": "714907",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "70A7PC9FJ5BXWPIE"
         }
     },
-    "PA_II_0E47": {
+    {
+        "Label": "PA_II_0E47",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.283525,
         "Lon": -97.734657,
@@ -68,14 +72,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "OX6FNZSD8DDW8512"
         },
         "B": {
-            "ID": 27548,
+            "ID": 27547,
             "THINGSPEAK_PRIMARY_ID": "714851",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "VT4C7LY4D4OAGFGQ",
             "THINGSPEAK_SECONDARY_ID": "714852",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "9X8JB6RV3ISOI6ZJ"
         }
     },
-    "PA_II_0E49": {
+    {
+        "Label": "PA_II_0E49",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.286664,
         "Lon": -97.740014,
@@ -87,14 +92,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "UAQNJ894M2EEIDX8"
         },
         "B": {
-            "ID": 27572,
+            "ID": 27571,
             "THINGSPEAK_PRIMARY_ID": "714901",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "G4OX8CR58F9LI09S",
             "THINGSPEAK_SECONDARY_ID": "714902",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "ALYNPMIAKDZUWA6O"
         }
     },
-    "PA_II_0ED1": {
+    {
+        "Label": "PA_II_0ED1",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.285181,
         "Lon": -97.734983,
@@ -106,14 +112,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "3CY4G8BH1LI5DSGX"
         },
         "B": {
-            "ID": 27456,
+            "ID": 27455,
             "THINGSPEAK_PRIMARY_ID": "710236",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "DJUUNIKO2EX80C9P",
             "THINGSPEAK_SECONDARY_ID": "710237",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "985ZD7WT2ITSR4HC"
         }
     },
-    "PA_II_6A1A": {
+    {
+        "Label": "PA_II_6A1A",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.287293,
         "Lon": -97.733449,
@@ -125,14 +132,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "IT7SS1X6JRY2MPFQ"
         },
         "B": {
-            "ID": 27464,
+            "ID": 27463,
             "THINGSPEAK_PRIMARY_ID": "710253",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "5THAE3316LDJUMEP",
             "THINGSPEAK_SECONDARY_ID": "710254",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "C7C3SBPC8F9XEEQ8"
         }
     },
-    "PA_II_806B": {
+    {
+        "Label": "PA_II_806B",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.285022,
         "Lon": -97.741655,
@@ -144,14 +152,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "AIZ3QCR7EFWD91PC"
         },
         "B": {
-            "ID": 27512,
+            "ID": 27511,
             "THINGSPEAK_PRIMARY_ID": "714777",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "9EPOXYRBV4SN89YY",
             "THINGSPEAK_SECONDARY_ID": "714778",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "K6KL1PS7LIFXSRXQ"
         }
     },
-    "PA_II_D44F": {
+    {
+        "Label": "PA_II_D44F",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.282121,
         "Lon": -97.726869,
@@ -163,33 +172,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "REZ26L4ZUK1RFRL2"
         },
         "B": {
-            "ID": 27570,
+            "ID": 27569,
             "THINGSPEAK_PRIMARY_ID": "714896",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "MRJH062S62HLBC88",
             "THINGSPEAK_SECONDARY_ID": "714897",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "1FJAG51TGS0T470U"
         }
     },
-    "PA_II_D718": {
-        "DEVICE_LOCATIONTYPE": "outside",
-        "Lat": 30.280028,
-        "Lon": -97.732507,
-        "A": {
-            "ID": 27533,
-            "THINGSPEAK_PRIMARY_ID": "714820",
-            "THINGSPEAK_PRIMARY_ID_READ_KEY": "0SN23FWM0ZFA4EOY",
-            "THINGSPEAK_SECONDARY_ID": "714821",
-            "THINGSPEAK_SECONDARY_ID_READ_KEY": "6CKPFQQ052IFGPZ3"
-        },
-        "B": {
-            "ID": 27534,
-            "THINGSPEAK_PRIMARY_ID": "714822",
-            "THINGSPEAK_PRIMARY_ID_READ_KEY": "2SMRSMR4ZJSKQ98B",
-            "THINGSPEAK_SECONDARY_ID": "714823",
-            "THINGSPEAK_SECONDARY_ID_READ_KEY": "G5SMAOX8WQ2OMLM0"
-        }
-    },
-    "PA_II_D71C": {
+    {
+        "Label": "PA_II_D71C",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.285305,
         "Lon": -97.728241,
@@ -201,14 +192,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "461GYUBAF91MCRZS"
         },
         "B": {
-            "ID": 27492,
+            "ID": 27491,
             "THINGSPEAK_PRIMARY_ID": "710309",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "3V7H5KH5HPPC5EG6",
             "THINGSPEAK_SECONDARY_ID": "710310",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "2XS5QA9J5X9N00J1"
         }
     },
-    "PA_II_D727": {
+    {
+        "Label": "PA_II_D727",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.281025,
         "Lon": -97.737099,
@@ -220,14 +212,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "16WOO0IPZK9M4O0I"
         },
         "B": {
-            "ID": 27564,
+            "ID": 27563,
             "THINGSPEAK_PRIMARY_ID": "714884",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "LCC9TPDMTATCJ1JX",
             "THINGSPEAK_SECONDARY_ID": "714885",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "VYUL0RQLTSA7D5V6"
         }
     },
-    "PA_II_D8B6": {
+    {
+        "Label": "PA_II_D8B6",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.285069,
         "Lon": -97.732877,
@@ -239,14 +232,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "2ZT7SW0GB51BVZBQ"
         },
         "B": {
-            "ID": 27396,
+            "ID": 27395,
             "THINGSPEAK_PRIMARY_ID": "710104",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "HK46N83XPGW1AZB4",
             "THINGSPEAK_SECONDARY_ID": "710105",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "ILBFAXKJM7X1K2P0"
         }
     },
-    "PA_II_D8BE": {
+    {
+        "Label": "PA_II_D8BE",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.290632,
         "Lon": -97.740244,
@@ -258,14 +252,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "1ZLKHEMNFYF30MF6"
         },
         "B": {
-            "ID": 27486,
+            "ID": 27485,
             "THINGSPEAK_PRIMARY_ID": "710297",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "AGG7ZSI6L4OIC4IH",
             "THINGSPEAK_SECONDARY_ID": "710298",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "06FTR7F25KVYZFAA"
         }
     },
-    "PA_II_DA7A": {
+    {
+        "Label": "PA_II_DA7A",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.287216,
         "Lon": -97.736966,
@@ -277,14 +272,15 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "99WKZSHBUHS5CO5Q"
         },
         "B": {
-            "ID": 27184,
+            "ID": 27183,
             "THINGSPEAK_PRIMARY_ID": "708734",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "YC5NM6YFT05E4PE2",
             "THINGSPEAK_SECONDARY_ID": "708735",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "LH8X12RLT1YXY3HS"
         }
     },
-    "PA_II_E6D8": {
+    {
+        "Label": "PA_II_E6D8",
         "DEVICE_LOCATIONTYPE": "outside",
         "Lat": 30.28941,
         "Lon": -97.736607,
@@ -296,11 +292,11 @@
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "0APQGUZ8BSYZ3FQG"
         },
         "B": {
-            "ID": 27568,
+            "ID": 27567,
             "THINGSPEAK_PRIMARY_ID": "714892",
             "THINGSPEAK_PRIMARY_ID_READ_KEY": "XCPHP2VKTIYKU6N4",
             "THINGSPEAK_SECONDARY_ID": "714893",
             "THINGSPEAK_SECONDARY_ID_READ_KEY": "MJ16Y3MP5ZCC6GLU"
         }
     }
-}
+]
