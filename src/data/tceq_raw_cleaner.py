@@ -37,7 +37,7 @@ def has_substring(dataset, substring):
             return True
     return False
 
-
+# TODO: don't hardcode this stuff
 def match_param_name(dataset):
     first_column = dataset[0].str
     if has_substring(dataset, 'Nitric Oxide'):
@@ -50,6 +50,10 @@ def match_param_name(dataset):
         return 'O3 (ppb)'
     if has_substring(dataset, 'PM-2.5'):
         return 'PM2.5 (ug/m3)'
+    if has_substring(dataset, 'Temperature'):
+        return 'Temperature (F)'
+    if has_substring(dataset, 'Relative Humidity'):
+        return 'Relative Humidity (%)'
     return
 
 
@@ -64,25 +68,23 @@ def per_dataset_clean(dataset):
     matrix = dataset.iloc[start_row:, :]
     table = flatten(matrix)
     table.iloc[:, 1] = clean_invalid_measurements(table.iloc[:, 1])
-    table.iloc[:, 1] = negative_to_zero(table.iloc[:, 1])
     table.columns = get_col_names(dataset)
     table = format_time(table)
-    table.set_index('Time', inplace=True)
+    table.set_index('Time', inplace=True, verify_integrity=True)
     return table
 
 
 def format_time(dataset):
     dataset['Time'] = (
         pd.to_datetime(dataset.iloc[:, 0], format='%m/%d/%Y %H:%M')
-        .dt.tz_localize('US/Central', ambiguous='NaT', nonexistent='shift_forward')
-        .dt.tz_convert('UTC')
+        .dt.tz_localize('US/Central', ambiguous='NaT', nonexistent='NaT')
     )
-    NaT_loc = dataset[pd.isnull(dataset['Time'])].index
-    if len(NaT_loc) != 0:
-        NaT_loc = NaT_loc[0]
-        dataset.loc[NaT_loc, 'Time'] = dataset['Time'].copy()[
-            NaT_loc - 1
-        ] + pd.Timedelta('1h')
+
+    dataset = dataset.drop(index=dataset[pd.isnull(dataset['Time'])].index)
+
+
+    # if len(NaT_loc) != 0:
+    #     dataset.drop()
     return dataset
 
 

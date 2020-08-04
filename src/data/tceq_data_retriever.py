@@ -5,15 +5,14 @@ Created on Tue Jun 16 11:22:43 2020
 @author: CalvinL2
 """
 
-import requests
 from bs4 import BeautifulSoup
 
 from src.data.helpers.web_requests import AsyncRequest
 
 
 def create_form(site, param, year):
-    """Creates a form to send in a POST request to TCEQ website
-
+    """
+    Create a form to send in a POST request to TCEQ website.
 
     Parameters
     ----------
@@ -30,7 +29,6 @@ def create_form(site, param, year):
         Can be sent in POST requests.
 
     """
-
     request = {
         'submitted': '1',
         'select_site': f'site|||{site}',
@@ -44,8 +42,8 @@ def create_form(site, param, year):
 
 
 def create_forms(sites):
-    """Creates multiple forms for the provided years, sites, and parameters
-
+    """
+    Create multiple forms for the provided years, sites, and parameters.
 
     Parameters
     ----------
@@ -58,7 +56,6 @@ def create_forms(sites):
         A list of dictionaries that can be sent in POST requests.
 
     """
-
     forms = []
     for site in sites:
         params = site['params']
@@ -72,7 +69,7 @@ def create_forms(sites):
 
 def extract_data(htmls):
     """
-    Locates and returns the datasets within the html source codes
+    Locate and return the datasets within the html source codes.
 
     Parameters
     ----------
@@ -91,8 +88,7 @@ def extract_data(htmls):
         data = soup.find('pre')
         if data is None:
             return None
-        else:
-            return data.text
+        return data.text
 
     datasets = [
         _extract_data(html) for html in htmls if _extract_data(html) is not None
@@ -102,8 +98,8 @@ def extract_data(htmls):
 
 
 def export(datasets, save_location=None):
-    '''
-    Saves the datasets to csv files
+    """
+    Save the datasets to csv files.
 
     Parameters
     ----------
@@ -116,9 +112,13 @@ def export(datasets, save_location=None):
     -------
     None.
 
-    '''
+    """
+    # For each csv...
     for dataset in datasets:
+        # Use first line as filename
         filename = dataset.partition("\n")[0] + '.csv'
+
+        # If save directory specified, append to beginning of filename
         if save_location is not None:
             filename = f'{save_location}/{filename}'
 
@@ -127,8 +127,8 @@ def export(datasets, save_location=None):
 
 
 def main(site, save_location=None):
-    """Entry point for this script
-
+    """
+    Entry point for this script.
 
     Parameters
     ----------
@@ -142,7 +142,6 @@ def main(site, save_location=None):
     None.
 
     """
-
     url = 'https://www.tceq.texas.gov/cgi-bin/compliance/monops/yearly_summary.pl'
 
     forms = create_forms(site)
@@ -153,18 +152,25 @@ def main(site, save_location=None):
 
 
 if __name__ == '__main__':
+    years = [2020, 2019, 2018]
+
+    # Webberville PM 2.5, Interstate PM2.5, Camp Mabry Temperature
     sites = [
-        {'cams': 171, 'params': [88101], 'years': [2020, 2019, 2018, 2017, 2016, 2015]},
         {
-            'cams': 1605,
-            'params': [44201],
-            'years': [2020, 2019, 2018, 2017, 2016, 2015],
+            'cams': 171,
+            'params': [88101],
+            'years': years
         },
         {
             'cams': 1068,
-            'params': [42601, 42602, 88101],
-            'years': [2020, 2019, 2018, 2017, 2016, 2015],
+            'params': [88101],
+            'years': years,
+        },
+        {
+            'cams': 5002,
+            'params': [62101, 62201],
+            'years': years,
         },
     ]
 
-    main(sites, save_location='data/raw/tceq/test')
+    main(sites, save_location='data/raw/tceq')
