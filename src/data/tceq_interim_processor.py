@@ -26,7 +26,5 @@ def main():
     PMfile2.to_feather('data/processed/CAMS 171_1068 PM-2.5.feather')
 
 
-
-
 if __name__ == '__main__':
     main()

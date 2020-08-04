@@ -9,6 +9,7 @@ import pandas as pd
 
 # TODO: improve outlier removal to replace value instead of deleting a row
 
+
 def list_files(path):
     '''
     Creates a list of files in the provided directory
@@ -167,7 +168,6 @@ def main(path, save_location=''):
         if save_location != '':
             save_location += '/'
         dataset.to_parquet(f'{save_location}{filename}.parquet')
-
 
 
 if __name__ == '__main__':
