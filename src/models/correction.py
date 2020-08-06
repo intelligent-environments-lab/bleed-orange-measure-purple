@@ -43,7 +43,63 @@ def list_files(path):
     ]
     return filepaths
 
-if __name__ == "__main__":
+
+def find_dewpoint(temperature, relative_humidity):
+    """
+    Calculate dewpoint from temperature and relative humidity.
+
+    Parameters
+    ----------
+    temperature : Series
+        Temperature in Farenheit.
+    relative_humidity : Series
+        Humidity as a percentage.
+
+    Returns
+    -------
+    dewpoint : Series
+        Dewpoint in Farenheit.
+
+    """
+    dewpoint = ((temperature - 32) * 5 / 9 + ((100 - relative_humidity) / 5)) * 9 / 5 + 32
+    return dewpoint
+
+
+def intersect(dataframes):
+    """
+    Perform a boolean intersect operation on dataframes based on index.
+
+    Parameters
+    ----------
+    dataframes : list
+        Dataframes to be intersected.
+
+    Returns
+    -------
+    index : DatetimeIndex
+        Index column shared by all dataframes.
+    dataframes : list
+        Dataframes with a common index.
+
+    """
+    # Got to start somewhere
+    index = dataframes[0].index
+
+    # Find common index
+    for df in dataframes[1:]:
+        index = index.intersection(df.index)
+
+    # Apply common index to dataframes
+    for num, df in enumerate(dataframes):
+        dataframes[num] = df.loc[index]
+
+    return index, dataframes
+
+
+def main():
+# =============================================================================
+#     Import data
+# =============================================================================
     # TODO: Replace with UT weather
     # %% Import data from csvs
     tceq_pm = pd.read_feather('data/processed/tceq/CAMS 171_1068 PM-2.5.feather')
@@ -53,25 +109,10 @@ if __name__ == "__main__":
     pa_avg = pd.read_feather('data/processed/purpleair/PA_combined_hourly_average.feather')
     pa_avg = pa_avg.set_index('Time')
 
-    # Find intersecting index
-    intersect = tceq_pm.index.intersection(tceq_t.index).intersection(tceq_rh.index)
-    intersect = intersect.intersection(pa_avg.index)
+    # Only keep indices that appear in all dataframes
+    _, dataframes = intersect([tceq_pm, tceq_rh, tceq_t, pa_avg])
+    tceq_pm, tceq_rh, tceq_t, pa_avg = dataframes
 
-    # Limit data to intersecting
-    tceq_pm = tceq_pm.loc[intersect]
-    tceq_t = tceq_t.loc[intersect]
-    pa_avg = pa_avg.loc[intersect]
-    tceq_rh = tceq_rh.loc[intersect]
-
-    # X = df[
-    #     ['PM2.5_ATM_ug/m3', 'Relative Humidity (%)', 'Temperature (F)']
-    # ]  ## X usually means our input variables (or independent variables)
-    # y = df['PM 2.5 (ug/m3)']  ## Y usually means our output/dependent variable
-    # X = sm.add_constant(X)  ## let's add an intercept (beta_0) to our model
-
-    # Note the difference in argument order
-    # model = sm.OLS(y, X).fit() ## sm.OLS(output, input)
-    # predictions = model.predict(X)
 
 # =============================================================================
 #     Quadratic Regression
@@ -83,8 +124,8 @@ if __name__ == "__main__":
         'tceq': tceq_pm['PM2.5 (ug/m3)'],
     }
 
-    dewpoint = ((data['temp'] - 32) * 5 / 9 + ((100 - data['r']) / 5)) * 9 / 5 + 32
-    data['dp'] = dewpoint
+    # Calulates and adds dewpoint as a predictor
+    data['dp'] = find_dewpoint(data['temp'], data['r'])
 
     # I() is used to get it to do quadratic regression properly
     model = smf.ols(
@@ -95,13 +136,18 @@ if __name__ == "__main__":
     # model = smf.ols(formula='tceq ~ temp + r + purple + dp', data=data).fit()
 
     data1 = {
-        'temp': tceq_t['Temperature (F)'],
+        'temp': tceq_t['Tempera ture (F)'],
         'r': tceq_rh['Relative Humidity (%)'],
         'purple': pa_avg['PM2.5 (ug/m3)'],
     }
     predictions = model.predict(data)
     # Print out the statistics
     print(model.summary())
+
+if __name__ == "__main__":
+    main()
+
+
 
 
     # r2_predict = np.corrcoef(predictions, y)[0, 1] ** 2
@@ -132,3 +178,4 @@ if __name__ == "__main__":
 
     # predictions.index = predictions.index.strftime('%Y-%m-%d %H:%M:%S %Z')
     # predictions.to_csv('2020 PurpleAir PM 2.5 corrected.csv')
+
