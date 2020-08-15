@@ -1,7 +1,8 @@
 name: Main Workflow
 on:
   schedule:
-    - cron:  '0 * * * *'
+    - cron:  '0 6 * * *'
+  issues:
 jobs:
   Ubuntu:
     name: Add labels to issues
