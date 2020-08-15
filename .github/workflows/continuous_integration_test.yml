@@ -1,0 +1,22 @@
+name: Test Code
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+
+jobs:
+  example-3:
+    name: Ex3 Linux
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          activate-environment: anaconda-client-env
+          environment-file: etc/example-environment.yml
+          python-version: 3.5
+          condarc-file: etc/example-condarc.yml
+          auto-activate-base: false
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
