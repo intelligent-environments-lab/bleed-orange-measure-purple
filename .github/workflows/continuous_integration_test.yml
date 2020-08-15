@@ -1,22 +1,53 @@
 name: Test Code
 # This workflow is triggered on pushes to the repository.
-on: [push]
+on: 
+  push:
+    paths:
+    - 'src/**'
+  workflow_dispatch:
 
 
 jobs:
-  example-3:
-    name: Ex3 Linux
-    runs-on: "ubuntu-latest"
+  caching-example:
+    name: Caching
+    runs-on: "windows-latest"
     steps:
       - uses: actions/checkout@v2
+      - name: Load conda package cache
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}-
+
       - uses: goanpeca/setup-miniconda@v1
         with:
-          mamba-version: "*"
-          activate-environment: bomp
-          environment-file: environment.yml
-          use-only-tar-bz2: true
+          miniconda-version: "latest"
+          mamba-version: "0.4.4"
+          channels: plotly,conda-forge,defaults
           auto-activate-base: false
-      - shell: bash -l {0}
+          environment-file: environment.yml
+          activate-environment: bomp
+          use-only-tar-bz2: true
+          auto-update-conda: false
+
+      - name: Display conda env
+        shell: bash -l {0}
         run: |
           conda info
           conda list
+
+      - name: Run tests and coverage
+        shell: bash -l {0}
+        run: |
+          pytest tests --cov=src --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          files: ./coverage1.xml,./coverage2.xml
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
