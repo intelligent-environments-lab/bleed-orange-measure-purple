@@ -3,7 +3,8 @@ name: Test Code
 on: 
   push:
     paths:
-    - 'src/**'
+    - 'src/**.py'
+    - 'tests/**.py'
   workflow_dispatch:
 
 
