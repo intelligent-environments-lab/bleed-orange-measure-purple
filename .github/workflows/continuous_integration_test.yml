@@ -5,6 +5,7 @@ on:
     paths:
     - 'src/**.py'
     - 'tests/**.py'
+    - '.github/workflows/continuous_integration_test.yml'
   workflow_dispatch:
 
 
