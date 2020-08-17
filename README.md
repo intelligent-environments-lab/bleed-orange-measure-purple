@@ -3,7 +3,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![GitHub top language](https://img.shields.io/github/languages/top/intelligent-environments-lab/bleed-orange-measure-purple)
-![Test Code](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/workflows/Test%20Code/badge.svg)
+[![Test Code](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/workflows/Test%20Code/badge.svg)](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/actions?query=workflow%3A%22Test+Code%22)
 [![codecov](https://codecov.io/gh/intelligent-environments-lab/bleed-orange-measure-purple/branch/dev/graph/badge.svg)](https://codecov.io/gh/intelligent-environments-lab/bleed-orange-measure-purple)
 
 
