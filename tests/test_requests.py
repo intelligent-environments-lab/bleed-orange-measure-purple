@@ -5,18 +5,17 @@ Created on Wed Jul  1 23:29:10 2020
 @author: CalvinL2
 """
 
-from src.data.helpers.web_requests import AsyncRequest as areq
-from src.data.helpers.web_requests import StandardRequest as req
+from src.data.async_requests import(AsyncRequest, StandardRequest)
 
 
 def test_async_requests():
     urls = ['https://google.com', 'https://youtube.com']
-    resp = areq.get_urls(urls)
+    resp = AsyncRequest.get_urls(urls)
 
 
 def test_standard_requests():
     urls = ['https://google.com', 'https://youtube.com']
-    resp = req.get_urls(urls)
+    resp = StandardRequest.get_urls(urls)
 
 
 def test_tceq_post_async():
@@ -29,7 +28,7 @@ def test_tceq_post_async():
         'time_format': '24hr',
         'report_format': 'comma',
     }
-    resp = areq.post_url(url, [request])
+    resp = AsyncRequest.post_url(url, [request])
     assert 'Summary Report for 2020' in resp[0]
 
 
@@ -43,5 +42,5 @@ def test_tceq_post():
         'time_format': '24hr',
         'report_format': 'comma',
     }
-    resp = req.post_url(url, [request])
+    resp = StandardRequest.post_url(url, [request])
     assert 'Summary Report for 2020' in resp[0]
