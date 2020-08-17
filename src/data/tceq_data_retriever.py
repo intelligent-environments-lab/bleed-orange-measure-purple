@@ -7,7 +7,7 @@ Created on Tue Jun 16 11:22:43 2020
 
 from bs4 import BeautifulSoup
 
-from src.data.helpers.web_requests import AsyncRequest
+from src.data.async_requests import AsyncRequest
 
 
 def create_form(site, param, year):

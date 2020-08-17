@@ -8,7 +8,8 @@ from collections import OrderedDict
 import json
 
 import requests
-import yaml
+
+PURPLEAIR_KEY_URL = 'https://www.purpleair.com/json?exclude=true&key=null&show=null&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452'
 
 def extract_key_info(pa_json):
     """
@@ -126,11 +127,8 @@ def main():
     None.
 
     """
-    # PurpleAir url is stored externally to avoid hardcoding
-    with open('src/config.yaml') as file:
-        config = yaml.full_load(file)
-    url = config['purple_json_url']
 
+    url = PURPLEAIR_KEY_URL
     # Send internet request and load response as json
     data = requests.get(url).text
     data_json = json.loads(data)['results']

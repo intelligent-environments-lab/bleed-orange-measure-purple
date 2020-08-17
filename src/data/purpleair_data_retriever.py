@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+# TODO: add autogeneration of folder directory, anticipate asyncio instability,
+#   handle secondary headers
+
+
 """
 Created on Sat Jun 13 01:56:30 2020
 
@@ -9,107 +14,7 @@ import json
 
 import pandas as pd
 
-from src.data.helpers.web_requests import AsyncRequest
-
-# TODO: add autogeneration of folder directory, anticipate asyncio instability,
-#   handle secondary headers
-
-# =============================================================================
-#  Thingspeak file import/read functions
-# =============================================================================
-
-def import_json(filename):
-    """
-    Load a json file.
-
-    Parameters
-    ----------
-    filename : str
-        Filename or relative path to file.
-
-    Returns
-    -------
-    filedata : dict
-        Data in json file.
-
-    """
-    with open(filename, 'r', encoding='utf8') as file:
-        filedata = json.load(file)
-    return filedata
-
-
-def get_key(sensor, mode='primaryA'):
-    """
-    Locates the correct channel_ID and api key for the given sensor.
-
-    Specifically, it traverses the dictionary provided in the variable keys.
-
-    Parameters
-    ----------
-    keys : dict
-        Data loaded from json file.
-    sensor : dict
-        Dictionary of metadata for one PurpleAir sensor.
-    mode : str, optional
-        Can specify primaryA, primaryB, secondaryA, or secondaryB.
-        The default is 'primaryA'.
-
-    Returns
-    -------
-    channel_ID : str
-        Thingspeak channel ID for the given sensor.
-    api_key : str
-        Thingspeak api key for the given sensor.
-
-    """
-    # Choose A or B
-    if 'A' in mode:
-        channel = sensor['A']
-    else:
-        channel = sensor['B']
-
-    # Choose primary or secondary
-    if 'primary' in mode:
-        channel_ID = channel['THINGSPEAK_PRIMARY_ID']
-        api_key = channel['THINGSPEAK_PRIMARY_ID_READ_KEY']
-    else:
-        channel_ID = channel['THINGSPEAK_SECONDARY_ID']
-        api_key = channel['THINGSPEAK_SECONDARY_ID_READ_KEY']
-
-    return channel_ID, api_key
-
-# =============================================================================
-# Code that actually handles downloading PurpleAir data
-# =============================================================================
-
-# TODO: function might not handle a none value correctly
-def build_url(channel, api_key, start=None, end=None):
-    """
-    Create a thingspeak.com url that can be used to access the target data.
-
-    Parameters
-    ----------
-    channel : str
-        Thingspeak channel ID.
-    api_key : str
-        Thingspeak api key.
-    start : Timestamp, optional
-        Starting date. The default is None.
-    end : Timestamp, optional
-        Ending date. The default is None.
-
-    Returns
-    -------
-    url : str
-        A request url with the included parameters.
-
-    """
-    # Timestamps to strings
-    start_date = start.strftime('%Y-%m-%d')
-    end_date = end.strftime('%Y-%m-%d')
-
-    url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
-    return url
+from src.data.async_requests import AsyncRequest
 
 
 def build_filename(sensor, start, end, mode):
@@ -156,6 +61,35 @@ def build_filename(sensor, start, end, mode):
     # Create filename
     filename = f'{name} ({location_type}) ({lat} {lon}) {datatype} {start} {end}.csv'
     return filename
+
+
+def build_url(channel, api_key, start=None, end=None):
+    """
+    Create a thingspeak.com url that can be used to access the target data.
+
+    Parameters
+    ----------
+    channel : str
+        Thingspeak channel ID.
+    api_key : str
+        Thingspeak api key.
+    start : Timestamp, optional
+        Starting date. The default is None.
+    end : Timestamp, optional
+        Ending date. The default is None.
+
+    Returns
+    -------
+    url : str
+        A request url with the included parameters.
+
+    """
+    # Timestamps to strings
+    start_date = start.strftime('%Y-%m-%d')
+    end_date = end.strftime('%Y-%m-%d')
+
+    url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
+    return url
 
 # TODO: Add secondary headers
 def create_dataframes(datasets):
@@ -204,7 +138,67 @@ def create_dataframes(datasets):
     return datasets
 
 
-def main(start, end, mode='primaryA', thingspeak='src/data/thingspeak_keys.json', save_location=None):
+def get_key(sensor, mode='primaryA'):
+    """
+    Locates the correct channel_ID and api key for the given sensor.
+
+    Specifically, it traverses the dictionary provided in the variable keys.
+
+    Parameters
+    ----------
+    keys : dict
+        Data loaded from json file.
+    sensor : dict
+        Dictionary of metadata for one PurpleAir sensor.
+    mode : str, optional
+        Can specify primaryA, primaryB, secondaryA, or secondaryB.
+        The default is 'primaryA'.
+
+    Returns
+    -------
+    channel_ID : str
+        Thingspeak channel ID for the given sensor.
+    api_key : str
+        Thingspeak api key for the given sensor.
+
+    """
+    # Choose A or B
+    if 'A' in mode:
+        channel = sensor['A']
+    else:
+        channel = sensor['B']
+
+    # Choose primary or secondary
+    if 'primary' in mode:
+        channel_ID = channel['THINGSPEAK_PRIMARY_ID']
+        api_key = channel['THINGSPEAK_PRIMARY_ID_READ_KEY']
+    else:
+        channel_ID = channel['THINGSPEAK_SECONDARY_ID']
+        api_key = channel['THINGSPEAK_SECONDARY_ID_READ_KEY']
+
+    return channel_ID, api_key
+
+def import_json(filename):
+    """
+    Load a json file.
+
+    Parameters
+    ----------
+    filename : str
+        Filename or relative path to file.
+
+    Returns
+    -------
+    filedata : dict
+        Data in json file.
+
+    """
+    with open(filename, 'r', encoding='utf8') as file:
+        filedata = json.load(file)
+    return filedata
+
+
+def main(start='2020-1-1', end='2020-7-1', mode='primaryA', thingspeak='src/data/thingspeak_keys.json', save_location='data/raw/purpleair'):
     """
     Download data from PurpleAir.
 
@@ -296,4 +290,4 @@ def main(start, end, mode='primaryA', thingspeak='src/data/thingspeak_keys.json'
 
 
 if __name__ == '__main__':
-    main('2020-1-1', '2020-7-1', save_location='data/raw/purpleair')
+    main()

@@ -6,6 +6,7 @@ Created on Mon Jun 22 17:22:14 2020
 """
 import os
 import pandas as pd
+import numpy as np
 
 # TODO: improve outlier removal to replace value instead of deleting a row
 
@@ -74,7 +75,7 @@ def remove_outlier(df, param):
 
     return df.loc[mask, :]
 
-
+# @profile
 def to_datetime(dataset):
     '''
     Converts the time column from strings to datetime objects.
@@ -106,7 +107,7 @@ def to_datetime(dataset):
     return dataset
 
 # TODO check if outlier removes a whole row or just a values
-def main(path, save_location=''):
+def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
     '''
     Entry point for script.
 
@@ -129,6 +130,7 @@ def main(path, save_location=''):
         print('Error: files not found')
         return
 
+    datasets = {}
     # Import and perform operations for each provided file
     for filepath in filepaths:
         # Import csv while excluding some columns
@@ -147,7 +149,13 @@ def main(path, save_location=''):
         if save_location != '':
             save_location += '/'
         dataset.to_parquet(f'{save_location}{filename}.parquet')
+        sensor_name = filename[0:filename.find('(')].strip()
+        dataset['sensor_name']=np.array(len(dataset)*[sensor_name])
+        datasets[filepath] = dataset
+    
+    return
+    
 
 
 if __name__ == '__main__':
-    main('data/raw/purpleair', save_location='data/interim/purpleair')
+    main()
