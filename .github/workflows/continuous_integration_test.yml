@@ -26,7 +26,6 @@ jobs:
 
       - uses: goanpeca/setup-miniconda@v1
         with:
-          miniconda-version: "latest"
           mamba-version: "0.4.4"
           channels: plotly,conda-forge,defaults
           auto-activate-base: false
