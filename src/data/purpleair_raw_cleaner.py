@@ -8,6 +8,8 @@ import os
 import pandas as pd
 import numpy as np
 
+import re
+
 # TODO: improve outlier removal to replace value instead of deleting a row
 
 
@@ -33,6 +35,9 @@ def list_files(path):
     ]
     return filepaths
 
+def parse_filename(filename):
+    pattern = r'(?P<sensor>[\w\s]+)\s\((?P<environment>[a-z]{6,9})\)\s\((?P<lat>\-?\d+\.\d+)\s(?P<lon>\-?\d+\.\d+)\)\s(?P<frequency>[a-zA-Z\s]+)\s(?P<start_date>[0-9\_]{8,10})\s(?P<end_date>[0-9\_]{8,10})'
+    return re.search(pattern,filename)
 
 def remove_outlier(df, param):
     '''
@@ -75,7 +80,7 @@ def remove_outlier(df, param):
 
     return df.loc[mask, :]
 
-# @profile
+
 def to_datetime(dataset):
     '''
     Converts the time column from strings to datetime objects.
@@ -92,21 +97,23 @@ def to_datetime(dataset):
 
     '''
     # Converts string time to datetime
-    dataset['Time'] = pd.to_datetime(
-        dataset.iloc[:, 0], format='%Y-%m-%d %H:%M:%S %Z'
+    dataset.loc[:, 'created_at'] = pd.to_datetime(
+        dataset.loc[:, 'created_at'], format='%Y-%m-%d %H:%M:%S %Z'
     ).dt.tz_convert('US/Central')
 
     # Replaces NaT value resulting from datetime savings change with the preceding time
     # value shifted forward by one hour
-    NaT_loc = dataset[pd.isnull(dataset['Time'])].index
+    NaT_loc = dataset[pd.isnull(dataset['created_at'])].index
     if len(NaT_loc) != 0:
         NaT_loc = NaT_loc[0]
-        dataset.loc[NaT_loc, 'Time'] = dataset['Time'].copy()[
+        dataset.loc[NaT_loc, 'created_at'] = dataset['created_at'].copy()[
             NaT_loc - 1
         ] + pd.Timedelta('1h')
     return dataset
 
+
 # TODO check if outlier removes a whole row or just a values
+# @profile
 def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
     '''
     Entry point for script.
@@ -130,31 +137,52 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
         print('Error: files not found')
         return
 
+    print('Importing csvs')
     datasets = {}
-    # Import and perform operations for each provided file
     for filepath in filepaths:
-        # Import csv while excluding some columns
-        dataset = pd.read_csv(filepath)
-        dataset = dataset.drop(columns=['entry_id', 'UptimeMinutes', 'RSSI_dbm'])
+        dataset = pd.read_csv(
+            filepath,
+            usecols=[
+                'created_at',
+                'PM1.0_CF1_ug/m3',
+                'PM2.5_CF1_ug/m3',
+                'PM10.0_CF1_ug/m3',
+                'Temperature_F',
+                'Humidity_%',
+                'PM2.5_ATM_ug/m3',
+            ],
+            dtype={
+                'created_at':'str',
+                'PM1.0_CF1_ug/m3':'float32',
+                'PM2.5_CF1_ug/m3':'float32',
+                'PM10.0_CF1_ug/m3': 'float32',
+                'Temperature_F':'uint32',
+                'Humidity_%':'uint32',
+                'PM2.5_ATM_ug/m3':'float32',
+            },
+        )
+        regex_match = parse_filename(filepath)
+        sensor_name = regex_match['sensor']
+        lat = regex_match['lat']
+        lon = regex_match['lon']
+        num_rows = len(dataset) 
+        dataset['sensor_name'] = np.repeat(sensor_name, num_rows)
+        dataset['lat'] = np.repeat(lat, num_rows).astype('float64')
+        dataset['lon'] = np.repeat(lat, num_rows).astype('float64')
+        datasets[sensor_name] = dataset
+        datasets[sensor_name] = dataset
 
-        # Function calls to modify dataframe
+    print('Processing data')
+    for sensor_name, dataset in datasets.items():
         dataset = to_datetime(dataset)
         dataset = remove_outlier(dataset, 'PM2.5_ATM_ug/m3')
-        dataset = dataset.set_index('Time').resample('H').mean()
+        dataset = dataset.set_index(
+            ['sensor_name', 'created_at']
+        )  # .resample('H').mean()
+        datasets[sensor_name] = dataset
 
-        # Create filename and export file
-        filename = filepath[filepath.rfind('/') + 1 : -4].replace(
-            'Real Time', 'Hourly Average'
-        )
-        if save_location != '':
-            save_location += '/'
-        dataset.to_parquet(f'{save_location}{filename}.parquet')
-        sensor_name = filename[0:filename.find('(')].strip()
-        dataset['sensor_name']=np.array(len(dataset)*[sensor_name])
-        datasets[filepath] = dataset
-    
-    return
-    
+    unified_dataset = pd.concat(list(datasets.values()))
+    unified_dataset.to_parquet(f'{save_location}\PurpleAir MASTER dataset.parquet', compression='brotli')
 
 
 if __name__ == '__main__':
