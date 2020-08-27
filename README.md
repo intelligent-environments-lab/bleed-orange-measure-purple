@@ -28,3 +28,20 @@ First, clone the repository.
 ```
 git clone https://github.com/intelligent-environments-lab/bleed-orange-measure-purple.git
 ```
+
+## Components
+
+### src.data.*
+**[async_requests.py](src/data/async_request.py):** importable module that allows for [asynchronous](https://realpython.com/async-io-python/) GET/POST requests to be made
+
+**[purpleair_data_retriever.py](src/data/purpleair_data_retriever.py):** Runner script, downloads raw realtime PurpleAir data from ThingSpeak and saves it to a csv file with the same headers and metadata as those from [PurpleAir's own website](https://www.purpleair.com/sensorlist?exclude=true&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452), uses async_requests.py and thingspeak_keys.json.
+
+**[purpleair_raw_cleaner.py](src/data/purpleair_raw_cleaner.py):** Runner script, serializes raw PurpleAir csv files into parquet files, removes outliers with IQR, merges multiple dataframes into one, converts string dates into datetime objects
+
+**[purpleair_interim_processor.py](src/data/purpleair_interim_processor.py):** Runner script, a mostly trivial conversion of purpleair parquet files to feather files for supposed performance benefits. Will most likely be removed in the future due to preference for a single dataframe with multiindex.
+
+**[tceq_data_retriever.py](src/data/tceq_data_retriever.py):** Runner script, downloads [yearly summary air quality data](https://www.tceq.texas.gov/cgi-bin/compliance/monops/yearly_summary.pl) from the TCEQ website and saves it to a csv file without modification, uses async_requests.py
+
+**[tceq_raw_cleaner.py](src/data/tceq_raw_cleaner.py):** Runner script, serializes raw TCEQ csv files into parquet file, changes data format from matrix to columns, replaces string values with nan, converts date strings to datetime objects, moves negative values to zero, merges dataframes that have the same site and parameter
+
+**[thingspeak_handler.py](src/data/thingspeak_handler.py):** Downloads and saves the [Thingspeak channel and api keys](https://www.purpleair.com/json?exclude=true&key=null&show=null&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452) needed for downloading PurpleAir data to a file named ```thingspeak_keys.json```. Relevant sensor metadata is also retained.
