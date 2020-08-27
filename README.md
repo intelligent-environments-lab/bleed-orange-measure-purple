@@ -32,7 +32,7 @@ git clone https://github.com/intelligent-environments-lab/bleed-orange-measure-p
 ## Components
 
 ### src.data.*
-**[async_requests.py](src/data/async_request.py):** importable module that allows for [asynchronous](https://realpython.com/async-io-python/) GET/POST requests to be made
+**[async_requests.py](src/data/async_request.py):** importable module that allows for [asynchronous](https://realpython.com/async-io-python#async-io-explained) [HTTP GET/POST requests](https://towardsdatascience.com/data-science-skills-web-scraping-javascript-using-python-97a29738353f#6f75) to be made
 
 **[purpleair_data_retriever.py](src/data/purpleair_data_retriever.py):** Runner script, downloads raw realtime PurpleAir data from ThingSpeak and saves it to a csv file with the same headers and metadata as those from [PurpleAir's own website](https://www.purpleair.com/sensorlist?exclude=true&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452), uses async_requests.py and thingspeak_keys.json.
 
