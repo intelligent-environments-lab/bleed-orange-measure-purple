@@ -151,15 +151,15 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
                 'Humidity_%',
                 'PM2.5_ATM_ug/m3',
             ],
-            dtype={
-                'created_at':'str',
-                'PM1.0_CF1_ug/m3':'float32',
-                'PM2.5_CF1_ug/m3':'float32',
-                'PM10.0_CF1_ug/m3': 'float32',
-                'Temperature_F':'uint32',
-                'Humidity_%':'uint32',
-                'PM2.5_ATM_ug/m3':'float32',
-            },
+            # dtype={
+            #     'created_at':'str',
+            #     'PM1.0_CF1_ug/m3':'float32',
+            #     'PM2.5_CF1_ug/m3':'float32',
+            #     'PM10.0_CF1_ug/m3': 'float32',
+            #     'Temperature_F':'uint32',
+            #     'Humidity_%':'uint32',
+            #     'PM2.5_ATM_ug/m3':'float32',
+            # },
         )
         regex_match = parse_filename(filepath)
         sensor_name = regex_match['sensor']
@@ -182,7 +182,8 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
         datasets[sensor_name] = dataset
 
     unified_dataset = pd.concat(list(datasets.values()))
-    unified_dataset.to_parquet(f'{save_location}\PurpleAir MASTER dataset.parquet', compression='brotli')
+    unified_dataset.to_parquet('data/processed/PurpleAir MASTER realtime individual.parquet', compression='brotli')
+    unified_dataset.resample('H', level='created_at').mean().drop(columns=['lat','lon']).to_parquet(f'data/processed/PurpleAir hourly resampled average of all.parquet', compression='brotli')
 
 
 if __name__ == '__main__':
