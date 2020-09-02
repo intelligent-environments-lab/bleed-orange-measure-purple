@@ -182,8 +182,8 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
         datasets[sensor_name] = dataset
 
     unified_dataset = pd.concat(list(datasets.values()))
-    unified_dataset.to_parquet('data/processed/PurpleAir MASTER realtime individual.parquet', compression='brotli')
-    unified_dataset.resample('H', level='created_at').mean().drop(columns=['lat','lon']).to_parquet(f'data/processed/PurpleAir hourly resampled average of all.parquet', compression='brotli')
+    unified_dataset.to_parquet('data/interim/PurpleAir MASTER realtime individual.parquet', compression='brotli')
+    unified_dataset.resample('H', level='created_at').mean().drop(columns=['lat','lon']).to_parquet(f'data/processed/PurpleAir combined hourly average.parquet', compression='brotli')
 
 
 if __name__ == '__main__':
