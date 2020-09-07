@@ -156,11 +156,7 @@ if __name__ == '__main__':
 
     # Webberville PM 2.5, Interstate PM2.5, Camp Mabry Temperature
     sites = [
-        {
-            'cams': 171,
-            'params': [88101],
-            'years': years
-        },
+        {'cams': 171, 'params': [88101], 'years': years},
         {
             'cams': 1068,
             'params': [88101],

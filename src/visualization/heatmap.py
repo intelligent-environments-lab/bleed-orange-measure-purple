@@ -63,6 +63,7 @@ def label_plot(fig, title, xtitle, ytitle):
         ],
     )
 
+
 def process_data(dataset, column):
     """ Clean, resample, and roll """
 
@@ -81,9 +82,10 @@ def process_data(dataset, column):
 
     return dataset, z
 
+
 def main():
     """ Plots averaged PM2.5 data from TCEQ Webberville and Interstate sensors"""
-    
+
     root = 'data/processed/purpleair'
     column = 'PM2.5 (ug/m3)'
 

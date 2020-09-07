@@ -37,6 +37,7 @@ def has_substring(dataset, substring):
             return True
     return False
 
+
 # TODO: don't hardcode this stuff
 def match_param_name(dataset):
     first_column = dataset[0].str
@@ -75,13 +76,11 @@ def per_dataset_clean(dataset):
 
 
 def format_time(dataset):
-    dataset['Time'] = (
-        pd.to_datetime(dataset.iloc[:, 0], format='%m/%d/%Y %H:%M')
-        .dt.tz_localize('US/Central', ambiguous='NaT', nonexistent='NaT')
-    )
+    dataset['Time'] = pd.to_datetime(
+        dataset.iloc[:, 0], format='%m/%d/%Y %H:%M'
+    ).dt.tz_localize('US/Central', ambiguous='NaT', nonexistent='NaT')
 
     dataset = dataset.drop(index=dataset[pd.isnull(dataset['Time'])].index)
-
 
     # if len(NaT_loc) != 0:
     #     dataset.drop()

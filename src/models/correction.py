@@ -1,4 +1,4 @@
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Tue May  5 14:52:18 2020
 
@@ -61,7 +61,9 @@ def find_dewpoint(temperature, relative_humidity):
         Dewpoint in Farenheit.
 
     """
-    dewpoint = ((temperature - 32) * 5 / 9 + ((100 - relative_humidity) / 5)) * 9 / 5 + 32
+    dewpoint = (
+        (temperature - 32) * 5 / 9 + ((100 - relative_humidity) / 5)
+    ) * 9 / 5 + 32
     return dewpoint
 
 
@@ -97,26 +99,27 @@ def intersect(dataframes):
 
 
 def main():
-# =============================================================================
-#     Import data
-# =============================================================================
+    # =============================================================================
+    #     Import data
+    # =============================================================================
     # TODO: Replace with UT weather
     # %% Import data from csvs
     tceq_pm = pd.read_feather('data/processed/tceq/CAMS 171_1068 PM-2.5.feather')
     tceq_pm = tceq_pm.set_index('Time')
     tceq_t = pd.read_parquet('data/interim/tceq/CAMS 5002 Outdoor Temperature.parquet')
     tceq_rh = pd.read_parquet('data/interim/tceq/CAMS 5002 Relative Humidity.parquet')
-    pa_avg = pd.read_feather('data/processed/purpleair/PA_combined_hourly_average.feather')
+    pa_avg = pd.read_feather(
+        'data/processed/purpleair/PA_combined_hourly_average.feather'
+    )
     pa_avg = pa_avg.set_index('Time')
 
     # Only keep indices that appear in all dataframes
     _, dataframes = intersect([tceq_pm, tceq_rh, tceq_t, pa_avg])
     tceq_pm, tceq_rh, tceq_t, pa_avg = dataframes
 
-
-# =============================================================================
-#     Quadratic Regression
-# =============================================================================
+    # =============================================================================
+    #     Quadratic Regression
+    # =============================================================================
     data = {
         'temp': tceq_t['Temperature (F)'],
         'r': tceq_rh['Relative Humidity (%)'],
@@ -144,11 +147,9 @@ def main():
     # Print out the statistics
     print(model.summary())
 
+
 if __name__ == "__main__":
     main()
-
-
-
 
     # r2_predict = np.corrcoef(predictions, y)[0, 1] ** 2
     # plt.figure()
@@ -168,7 +169,6 @@ if __name__ == "__main__":
     # plt.plot_date(df.index, predictions, '-')
     # plt.plot_date(df.index, pm_vector, '-')
 
-
     # fig = go.Figure()
     # ya = y
     # fig.add_trace(go.Scattergl(x=df.index, y=ya, mode='lines', name='TCEQ'))
@@ -178,4 +178,3 @@ if __name__ == "__main__":
 
     # predictions.index = predictions.index.strftime('%Y-%m-%d %H:%M:%S %Z')
     # predictions.to_csv('2020 PurpleAir PM 2.5 corrected.csv')
-

@@ -29,7 +29,7 @@ def geo_df2(datasets):
     def append_coords(dataset, filename):
         dataset = dataset.set_index('Time')
         column = dataset.resample('D').mean()['PM2.5 (ug/m3)']
-        filename = filename.replace('(','').replace(')', '').split()
+        filename = filename.replace('(', '').replace(')', '').split()
         lat = filename[2]
         long = filename[3]
         lat = pd.Series(lat, index=[i for i in range(column.size)]).astype(float)
@@ -43,12 +43,14 @@ def geo_df2(datasets):
         modified['Time'] = modified['Time'].dt.strftime('%b %d')
         return modified
 
-    datasets = [append_coords(dataset, filename) for filename, dataset in datasets.items()]
+    datasets = [
+        append_coords(dataset, filename) for filename, dataset in datasets.items()
+    ]
     return pd.concat(datasets)
 
 
 if __name__ == '__main__':
-    root ='data/processed/purpleair'
+    root = 'data/processed/purpleair'
 
     # Loads mapbox api key from secret .env file
     load_dotenv(find_dotenv())
@@ -57,7 +59,10 @@ if __name__ == '__main__':
     # Import the data
     filepaths = list_files(root)
     filepaths = [filepath for filepath in filepaths if 'combined' not in filepath]
-    pa_files = {filepath[filepath.rfind('/')+1:]:pd.read_feather(filepath) for filepath in filepaths}
+    pa_files = {
+        filepath[filepath.rfind('/') + 1 :]: pd.read_feather(filepath)
+        for filepath in filepaths
+    }
 
     # Transform the data
     df = geo_df2(pa_files)

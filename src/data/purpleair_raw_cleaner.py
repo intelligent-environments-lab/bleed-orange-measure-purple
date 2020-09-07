@@ -14,7 +14,7 @@ import re
 
 
 def list_files(path):
-    '''
+    """
     Creates a list of files in the provided directory
 
     Parameters
@@ -27,7 +27,7 @@ def list_files(path):
     filepaths : list
         a list of the relative path strings for the target files.
 
-    '''
+    """
     filepaths = [
         path + '/' + filename
         for filename in os.listdir(path)
@@ -35,12 +35,14 @@ def list_files(path):
     ]
     return filepaths
 
+
 def parse_filename(filename):
     pattern = r'(?P<sensor>[\w\s]+)\s\((?P<environment>[a-z]{6,9})\)\s\((?P<lat>\-?\d+\.\d+)\s(?P<lon>\-?\d+\.\d+)\)\s(?P<frequency>[a-zA-Z\s]+)\s(?P<start_date>[0-9\_]{8,10})\s(?P<end_date>[0-9\_]{8,10})'
-    return re.search(pattern,filename)
+    return re.search(pattern, filename)
+
 
 def remove_outlier(df, param):
-    '''
+    """
     Removes outlier using IQR twice.
 
     The first time it uses 5 * IQR to remove
@@ -59,7 +61,7 @@ def remove_outlier(df, param):
     dataframe
         Returns a dataframe with the outliers remove.
 
-    '''
+    """
     # https://stackoverflow.com/questions/34782063/how-to-use-pandas-filter-with-iqr
     # Broad outlier removal
     Q1 = df[param].quantile(0.25)
@@ -82,7 +84,7 @@ def remove_outlier(df, param):
 
 
 def to_datetime(dataset):
-    '''
+    """
     Converts the time column from strings to datetime objects.
 
     Parameters
@@ -95,7 +97,7 @@ def to_datetime(dataset):
     dataset : dataframe
         Pandas dataframe with time (Pandas datetimes) as the first column.
 
-    '''
+    """
     # Converts string time to datetime
     dataset.loc[:, 'created_at'] = pd.to_datetime(
         dataset.loc[:, 'created_at'], format='%Y-%m-%d %H:%M:%S %Z'
@@ -115,7 +117,7 @@ def to_datetime(dataset):
 # TODO check if outlier removes a whole row or just a values
 # @profile
 def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
-    '''
+    """
     Entry point for script.
 
     Parameters
@@ -129,7 +131,7 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
     -------
     None.
 
-    '''
+    """
     # Create a list of filepaths in the provided directory
     if os.path.isdir(path) and isinstance(path, str):
         filepaths = list_files(path)
@@ -165,7 +167,7 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
         sensor_name = regex_match['sensor']
         lat = regex_match['lat']
         lon = regex_match['lon']
-        num_rows = len(dataset) 
+        num_rows = len(dataset)
         dataset['sensor_name'] = np.repeat(sensor_name, num_rows)
         dataset['lat'] = np.repeat(lat, num_rows).astype('float64')
         dataset['lon'] = np.repeat(lat, num_rows).astype('float64')
@@ -182,8 +184,16 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
         datasets[sensor_name] = dataset
 
     unified_dataset = pd.concat(list(datasets.values()))
-    unified_dataset.to_parquet('data/interim/PurpleAir MASTER realtime individual.parquet', compression='brotli')
-    unified_dataset.resample('H', level='created_at').mean().drop(columns=['lat','lon']).to_parquet(f'data/processed/PurpleAir combined hourly average.parquet', compression='brotli')
+    unified_dataset.to_parquet(
+        'data/interim/PurpleAir MASTER realtime individual.parquet',
+        compression='brotli',
+    )
+    unified_dataset.resample('H', level='created_at').mean().drop(
+        columns=['lat', 'lon']
+    ).to_parquet(
+        f'data/processed/PurpleAir combined hourly average.parquet',
+        compression='brotli',
+    )
 
 
 if __name__ == '__main__':
