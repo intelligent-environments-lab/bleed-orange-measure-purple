@@ -4,17 +4,20 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python
-  - spyder-kernels
-  - aiohttp
-  - aiodns
-  - plotly
-  - python-kaleido
-  - pytest
-  - pytest-cov
   - nest-asyncio
-  - requests
-  - pandas
   - pyarrow
   - cchardet
-prefix: C:\Users\CalvinLin\anaconda3\envs\bomp
+  - aiodns
+  - aiohttp
+  - pytest-cov
+  - python-kaleido
+  - pandas
+  - plotly
+  - pytest
+  - requests
+  - spyder-kernels
+  - python
+  - jupyterlab
+  - ipywidgets
+  - bs4
+  - black
