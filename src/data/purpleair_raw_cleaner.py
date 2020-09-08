@@ -153,15 +153,6 @@ def main(path='data/raw/purpleair', save_location='data/interim/purpleair'):
                 'Humidity_%',
                 'PM2.5_ATM_ug/m3',
             ],
-            # dtype={
-            #     'created_at':'str',
-            #     'PM1.0_CF1_ug/m3':'float32',
-            #     'PM2.5_CF1_ug/m3':'float32',
-            #     'PM10.0_CF1_ug/m3': 'float32',
-            #     'Temperature_F':'uint32',
-            #     'Humidity_%':'uint32',
-            #     'PM2.5_ATM_ug/m3':'float32',
-            # },
         )
         regex_match = parse_filename(filepath)
         sensor_name = regex_match['sensor']
