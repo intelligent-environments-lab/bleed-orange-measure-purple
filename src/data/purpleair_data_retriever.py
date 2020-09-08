@@ -9,9 +9,9 @@ Created on Sat Jun 13 01:56:30 2020
 
 @author: CalvinL2
 """
+import collections
 
 import json
-
 import pandas as pd
 
 from src.data.async_requests import AsyncRequest
@@ -104,6 +104,11 @@ def build_url(channel, api_key, start='', end='', average=''):
     url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&offset=0&average={average}&round=2&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
     return url
 
+def chunks(lst,n):
+    """ Splits a list into n equally sized chunks"""
+    for i in range(0, len(lst), int(len(lst)/n)):
+        yield lst[i:i+int(len(lst)/n)]
+        
 
 # TODO: Add secondary headers
 def create_dataframes(datasets, channel=None):
@@ -322,12 +327,19 @@ def main(
     url_delta = pd.Timedelta('11d')
 
     # Load Thingspeak keys and metadata from file
-    thingkeys = import_json(thingspeak)
-
+    thingkeys_json = import_json(thingspeak)
+    
+    # Convert to dictionary with label as key
+    # thingkeys = {sensor['Label']:sensor for sensor in thingkeys}
+    
+    thingkeys = collections.OrderedDict()
+    for sensor in thingkeys_json:
+        thingkeys[sensor['Label']] = sensor
+        
     # Downloads and saves a csv file for each sensor
-    for sensor in thingkeys:
-        name = sensor['Label']
-        print(f'\nDownloading data for {name}')
+    for name, sensor in thingkeys.items():
+        # name = sensor['Label']
+        # print(f'\nDownloading data for {name}')
         
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
@@ -356,17 +368,40 @@ def main(
             # Exit this loop when all urls for this sensor are created
             if url_start >= end or url_start >= url_end:
                 break
-
-        # Asynchronously download the data using generated urls
-        responses = AsyncRequest.get_urls(urls)
-
+            
+        # Saves url to sensor dict
+        thingkeys[name]['urls'] = urls
+    
+    # Creates a flat list of urls for all sensor data and downloads the data asynchronously    
+    bulk_urls = [url for _, sensor in thingkeys.items() for url in sensor['urls']]
+    response_a = AsyncRequest.get_urls(bulk_urls)
+    
+    # Unflattens downloaded data, grouping data for each sensor
+    response_a = list(chunks(response_a, len(thingkeys)))
+    
+    # Inserts downloaded data into dict so that its in the same place as metadata
+    count = 0
+    for name, sensor in thingkeys.items():
+        thingkeys[name]['responses'] = response_a[count]
+        count += 1
+    
+    # Old download method
+    # for name, sensor in thingkeys.items():
+    #     print(f'\nDownloading data for {name}')
+    #     # Asynchronously download the data using generated urls
+    #     thingkeys[name]['responses'] = AsyncRequest.get_urls(sensor['urls'])
         
+    for name, sensor in thingkeys.items(): 
+        # Create filename using metadata and PurpleAir's format,
+        # remove one day from end to get back to original input end date
+        filename = build_filename(sensor, start, end-pd.Timedelta('1d'), channel, average=average)
+
         # If save path specified, append it to beginning of filename
         if save_location is not None:
             filename = save_location + '/' + filename
         
         # Store the data into dataframes and make modifications such as adding column headers
-        datasets = create_dataframes(responses, channel=channel)
+        datasets = create_dataframes(sensor['responses'], channel=channel)
 
         # Merge datasets for each sensor channel
         combined_dataset = pd.concat(datasets)
@@ -376,7 +411,7 @@ def main(
 
 
 if __name__ == '__main__':
-    main(channel='primaryA')
+    # main(channel='primaryA')
     # main(channel='secondaryA')
-    # main(channel='primaryB')
+    main(channel='primaryB',save_location='data/raw/purpleair/B')
     # main(channel='secondaryB')
