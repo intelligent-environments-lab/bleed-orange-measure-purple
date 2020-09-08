@@ -411,7 +411,7 @@ def main(
 
 
 if __name__ == '__main__':
-    # main(channel='primaryA')
+    main(channel='primaryA')
     # main(channel='secondaryA')
     main(channel='primaryB',save_location='data/raw/purpleair/B')
     # main(channel='secondaryB')
