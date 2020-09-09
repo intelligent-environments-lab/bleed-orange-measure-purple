@@ -4,6 +4,7 @@
 *.stats
 *.lnk
 *.tmp
+*.lprof
 .ipynb_checkpoints/
 testing_grounds.ipynb
 temp-*.html
