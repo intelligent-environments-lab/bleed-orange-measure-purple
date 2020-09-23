@@ -160,16 +160,21 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
         lat = regex_match['lat']
         lon = regex_match['lon']
         num_rows = len(dataset)
-        dataset['sensor_name'] = np.repeat(sensor_name, num_rows)
         dataset['lat'] = np.repeat(lat, num_rows).astype('float64')
-        dataset['lon'] = np.repeat(lat, num_rows).astype('float64')
+        dataset['lon'] = np.repeat(lon, num_rows).astype('float64')
         datasets[sensor_name] = dataset
 
     print('Processing data')
     for sensor_name, dataset in datasets.items():
         print(sensor_name)
         dataset = to_datetime(dataset)
+        
+        # Realign timestamp to 0 seconds for realtime data
+        if dataset.loc[1,'created_at']-dataset.loc[0,'created_at'] < pd.Timedelta('3min'):
+            dataset = dataset.resample('2min', on='created_at').mean().reset_index()
+            # print('Realigned timestamp')
         # dataset = remove_outlier(dataset, 'PM2.5_ATM_ug/m3')
+        dataset['sensor_name'] = np.repeat(sensor_name, len(dataset))
         dataset = dataset.set_index(
             ['sensor_name', 'created_at']
         )  # .resample('H').mean()

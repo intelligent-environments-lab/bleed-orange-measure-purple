@@ -279,7 +279,7 @@ def get_column_headers(channel):
 
 def main(
     start='2020-1-1',
-    end='2020-7-1',
+    end='2020-9-15',
     channel='primaryA',
     average=None,
     thingspeak='src/data/thingspeak_keys.json',
