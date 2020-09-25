@@ -21,3 +21,7 @@ dependencies:
   - ipywidgets
   - bs4
   - black
+  - line_profiler
+  - scikit-learn
+  - matplotlib
+  - seaborn

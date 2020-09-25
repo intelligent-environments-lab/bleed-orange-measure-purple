@@ -134,14 +134,12 @@ def create_dataframes(datasets, channel=None):
         # Convert string to dataframe
         dataset = pd.DataFrame([line.split(',') for line in dataset.split('\n')])
 
-        # dataset.columns = get_column_headers(channel)
-
         # Drop header row, set column names, set index column, drop nan rows
         dataset = dataset.drop(dataset.index[0])
         columns = get_column_headers(channel=channel)
         if len(columns) == (len(dataset.columns) + 1):
             columns.remove('entry_id')
-        dataset.columns = columns
+        dataset.columns = get_column_headers(channel)
         dataset = dataset.set_index('created_at')
         dataset = dataset.dropna(how='all')
 
