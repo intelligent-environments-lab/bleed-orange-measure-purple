@@ -139,7 +139,7 @@ def create_dataframes(datasets, channel=None):
         columns = get_column_headers(channel=channel)
         if len(columns) == (len(dataset.columns) + 1):
             columns.remove('entry_id')
-        dataset.columns = get_column_headers(channel)
+        dataset.columns = columns
         dataset = dataset.set_index('created_at')
         dataset = dataset.dropna(how='all')
 
