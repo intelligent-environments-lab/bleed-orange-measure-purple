@@ -49,6 +49,6 @@ def main():
     data_cleaned = remove_marked_outliers(data)
     scatter_facet_grid(data_cleaned)
     plt.show()
-    data_cleaned.drop(columns='outlier').to_parquet('data/processed/PurpleAir hourly individual.parquet')                                                         
+    data_cleaned.drop(columns='outlier').to_parquet('data/processed/PurpleAir daily individual.parquet')                                                         
 
 main()
