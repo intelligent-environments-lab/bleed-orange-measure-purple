@@ -51,4 +51,5 @@ def main():
     plt.show()
     data_cleaned.drop(columns='outlier').to_parquet('data/processed/PurpleAir daily individual.parquet')                                                         
 
-main()
+if __name__ == '__main__':
+    main()
