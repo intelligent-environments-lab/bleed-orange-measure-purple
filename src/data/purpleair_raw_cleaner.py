@@ -10,8 +10,6 @@ import numpy as np
 
 import re
 
-# TODO: improve outlier removal to replace value instead of deleting a row
-
 
 def list_files(path):
     """
@@ -31,7 +29,7 @@ def list_files(path):
     filepaths = [
         path + '/' + filename
         for filename in os.listdir(path)
-        if os.path.isfile(path + '/' + filename) and ~(filename =='.gitkeep')
+        if os.path.isfile(path + '/' + filename) and ~(filename == '.gitkeep')
     ]
     return filepaths
 
@@ -100,8 +98,8 @@ def to_datetime(dataset):
     """
     # Converts string time to datetime
     dataset.loc[:, 'created_at'] = pd.to_datetime(
-        dataset.loc[:, 'created_at'],# format='%Y-%m-%d %H:%M:%S %Z
-        infer_datetime_format=True
+        dataset.loc[:, 'created_at'],  # format='%Y-%m-%d %H:%M:%S %Z
+        infer_datetime_format=True,
     ).dt.tz_convert('US/Central')
 
     # Replaces NaT value resulting from datetime savings change with the preceding time
@@ -116,8 +114,10 @@ def to_datetime(dataset):
 
 
 # TODO check if outlier removes a whole row or just a values
-# @profile
-def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER realtime individual.parquet'):
+def main(
+    path='data/raw/purpleair',
+    save_location='data/interim/PurpleAir MASTER realtime individual.parquet',
+):
     """
     Entry point for script.
 
@@ -157,16 +157,16 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
     for sensor_name, dataset in datasets.items():
         print(sensor_name)
         dataset = to_datetime(dataset)
-        
+
         # Realign timestamp to 0 seconds for realtime data
-        if dataset.loc[1,'created_at']-dataset.loc[0,'created_at'] < pd.Timedelta('3min'):
+        if dataset.loc[1, 'created_at'] - dataset.loc[0, 'created_at'] < pd.Timedelta(
+            '3min'
+        ):
             dataset = dataset.resample('2min', on='created_at').mean().reset_index()
             # print('Realigned timestamp')
         # dataset = remove_outlier(dataset, 'PM2.5_ATM_ug/m3')
-        dataset['sensor_name'] = np.repeat(sensor_name.replace(' B',''), len(dataset))
-        dataset = dataset.set_index(
-            ['sensor_name', 'created_at']
-        )  # .resample('H').mean()
+        dataset['sensor_name'] = np.repeat(sensor_name.replace(' B', ''), len(dataset))
+        dataset = dataset.set_index(['sensor_name', 'created_at'])
         datasets[sensor_name] = dataset
 
     unified_dataset = pd.concat(list(datasets.values()))
@@ -175,6 +175,13 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
         compression='brotli',
     )
 
+
 if __name__ == '__main__':
-    main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER realtime individual.parquet')
-    main(path='data/raw/purpleair/B', save_location='data/interim/PurpleAir B MASTER realtime individual.parquet')
+    main(
+        path='data/raw/purpleair',
+        save_location='data/interim/PurpleAir MASTER realtime individual.parquet',
+    )
+    main(
+        path='data/raw/purpleair/B',
+        save_location='data/interim/PurpleAir B MASTER realtime individual.parquet',
+    )

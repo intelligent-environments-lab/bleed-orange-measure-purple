@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# TODO: add autogeneration of folder directory, anticipate asyncio instability,
-#   handle secondary headers
-
-
 """
 Created on Sat Jun 13 01:56:30 2020
 
@@ -33,7 +29,7 @@ def build_filename(sensor, start, end, channel, average=None):
         Can specify 'primaryA', 'primaryB', 'secondaryA', or 'secondaryB'.
     average : int, optional
         Averaging interval in minutes. The default is None.
-        
+
     Returns
     -------
     filename : str
@@ -56,11 +52,11 @@ def build_filename(sensor, start, end, channel, average=None):
         datatype = 'Primary Real Time'
     else:
         datatype = 'Secondary Real Time'
-    
+
     # If data is averaged, replace 'real time' with the averaging interval
     if average is not None and int(average) > 0:
-        datatype = datatype.replace('Real Time',f'{average}_minute_average')
-    
+        datatype = datatype.replace('Real Time', f'{average}_minute_average')
+
     # Timestamp to string
     start = start.strftime('%m_%d_%Y')
     end = end.strftime('%m_%d_%Y')
@@ -96,19 +92,20 @@ def build_url(channel, api_key, start='', end='', average=''):
     # Timestamps to strings
     start_date = start.strftime('%Y-%m-%d')
     end_date = end.strftime('%Y-%m-%d')
-    
+
     # If average is not specified or invalid, then clear the variable
     if average is None or ~int(average) > 0:
         average = ''
-        
+
     url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&offset=0&average={average}&round=2&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
     return url
 
-def chunks(lst,n):
+
+def chunks(lst, n):
     """ Splits a list into n equally sized chunks"""
-    for i in range(0, len(lst), int(len(lst)/n)):
-        yield lst[i:i+int(len(lst)/n)]
-        
+    for i in range(0, len(lst), int(len(lst) / n)):
+        yield lst[i : i + int(len(lst) / n)]
+
 
 # TODO: Add secondary headers
 def create_dataframes(datasets, channel=None):
@@ -214,7 +211,7 @@ def get_column_headers(channel):
     Parameters
     ----------
     channel : str
-        Can specify 'primaryA','primaryB','secondaryA', and 'secondaryB'. 
+        Can specify 'primaryA','primaryB','secondaryA', and 'secondaryB'.
 
     Returns
     -------
@@ -280,7 +277,7 @@ def main(
     end=None,
     channel='primaryA',
     average=None,
-    thingspeak='src/data/thingspeak_keys.json',
+    thingkeys='src/data/thingspeak_keys.json',
     save_location='data/raw',
 ):
     """
@@ -305,7 +302,7 @@ def main(
         The type and channel of data to be retrieve from the sensors. Valid values
         include 'primaryA', 'primaryB', 'secondaryA', and 'secondaryB'.
         The default is 'primaryA'.
-    thingspeak : str, optional
+    thingkeys : str, optional
         The name/path of the file with Thingspeak metadata, channel IDs, and api keys.
         The default is 'src/data/thingspeak_keys.json'.
     save_location : str, optional
@@ -318,7 +315,7 @@ def main(
     """
     if (start is None) or (end is None):
         raise ValueError('Start and end dates must be specified')
-    
+
     # Convert string dates to pandas datetimes. Add one day to end date to make inclusive.
     start = pd.to_datetime(start, format='%Y-%m-%d')
     end = pd.to_datetime(end, format='%Y-%m-%d') + pd.Timedelta('1d')
@@ -328,23 +325,25 @@ def main(
     url_delta = pd.Timedelta('11d')
 
     # Load Thingspeak keys and metadata from file
-    thingkeys_json = import_json(thingspeak)
-    
+    thingkeys_json = import_json(thingkeys)
+
     # Convert to dictionary with label as key
     # thingkeys = {sensor['Label']:sensor for sensor in thingkeys}
-    
+
     thingkeys = collections.OrderedDict()
     for sensor in thingkeys_json:
         thingkeys[sensor['Label']] = sensor
-        
+
     # Downloads and saves a csv file for each sensor
     for name, sensor in thingkeys.items():
         # name = sensor['Label']
         # print(f'\nDownloading data for {name}')
-        
+
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
-        filename = build_filename(sensor, start, end-pd.Timedelta('1d'), channel, average=average)
+        filename = build_filename(
+            sensor, start, end - pd.Timedelta('1d'), channel, average=average
+        )
 
         # Get Thingspeak ID and API key for current sensor
         channel_ID, api_key = get_api_key(sensor, channel=channel)
@@ -356,7 +355,9 @@ def main(
         # Creates urls representing each fragment of data for a sensor
         urls = []
         while True:
-            urls.append(build_url(channel_ID, api_key, url_start, url_end, average=average))
+            urls.append(
+                build_url(channel_ID, api_key, url_start, url_end, average=average)
+            )
 
             # Move time window forward
             url_start = url_end
@@ -369,38 +370,40 @@ def main(
             # Exit this loop when all urls for this sensor are created
             if url_start >= end or url_start >= url_end:
                 break
-            
+
         # Saves url to sensor dict
         thingkeys[name]['urls'] = urls
-    
-    # Creates a flat list of urls for all sensor data and downloads the data asynchronously    
+
+    # Creates a flat list of urls for all sensor data and downloads the data asynchronously
     bulk_urls = [url for _, sensor in thingkeys.items() for url in sensor['urls']]
     response_a = AsyncRequest.get_urls(bulk_urls)
-    
+
     # Unflattens downloaded data, grouping data for each sensor
     response_a = list(chunks(response_a, len(thingkeys)))
-    
+
     # Inserts downloaded data into dict so that its in the same place as metadata
     count = 0
     for name, sensor in thingkeys.items():
         thingkeys[name]['responses'] = response_a[count]
         count += 1
-    
+
     # Old download method
     # for name, sensor in thingkeys.items():
     #     print(f'\nDownloading data for {name}')
     #     # Asynchronously download the data using generated urls
     #     thingkeys[name]['responses'] = AsyncRequest.get_urls(sensor['urls'])
-        
-    for name, sensor in thingkeys.items(): 
+
+    for name, sensor in thingkeys.items():
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
-        filename = build_filename(sensor, start, end-pd.Timedelta('1d'), channel, average=average)
+        filename = build_filename(
+            sensor, start, end - pd.Timedelta('1d'), channel, average=average
+        )
 
         # If save path specified, append it to beginning of filename
         if save_location is not None:
             filename = save_location + '/' + filename
-        
+
         # Store the data into dataframes and make modifications such as adding column headers
         datasets = create_dataframes(sensor['responses'], channel=channel)
 
@@ -412,7 +415,15 @@ def main(
 
 
 if __name__ == '__main__':
-    main(start='2020-1-1', end='2020-9-15', channel='primaryA', save_location='data/raw/purpleair')
-    # main(channel='secondaryA')
-    main(start='2020-1-1', end='2020-9-15', channel='primaryB', save_location='data/raw/purpleair/B')
-    # main(channel='secondaryB')
+    main(
+        start='2020-1-1',
+        end='2020-9-15',
+        channel='primaryA',
+        save_location='data/raw/purpleair',
+    )
+    main(
+        start='2020-1-1',
+        end='2020-9-15',
+        channel='primaryB',
+        save_location='data/raw/purpleair/B',
+    )
