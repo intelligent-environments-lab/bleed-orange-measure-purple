@@ -33,7 +33,7 @@ def scatter_facet_grid(data,x_col='Channel B PM2.5 (ug/m3)',y_col='Channel A PM2
     g = sns.FacetGrid(data.reset_index().set_index('created_at'), col="sensor_name", hue=hue, palette=['blue','red'], col_wrap=5)
     g.map(sns.scatterplot,x_col,y_col)
     
-def main():
+def main(A_file=None, B_file=None):
     # Import the data
     data_A = pd.read_parquet('data/interim/PurpleAir MASTER realtime individual.parquet').drop(columns=['entry_id'])
     print('Primary_A imported')

@@ -176,5 +176,5 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
     )
 
 if __name__ == '__main__':
-    main()
+    main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER realtime individual.parquet')
     main(path='data/raw/purpleair/B', save_location='data/interim/PurpleAir B MASTER realtime individual.parquet')

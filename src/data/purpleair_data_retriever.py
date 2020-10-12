@@ -276,12 +276,12 @@ def get_column_headers(channel):
 
 
 def main(
-    start='2020-1-1',
-    end='2020-9-15',
+    start=None,
+    end=None,
     channel='primaryA',
     average=None,
     thingspeak='src/data/thingspeak_keys.json',
-    save_location='data/raw/purpleair',
+    save_location='data/raw',
 ):
     """
     Download data from PurpleAir.
@@ -316,6 +316,9 @@ def main(
     None.
 
     """
+    if (start is None) or (end is None):
+        raise ValueError('Start and end dates must be specified')
+    
     # Convert string dates to pandas datetimes. Add one day to end date to make inclusive.
     start = pd.to_datetime(start, format='%Y-%m-%d')
     end = pd.to_datetime(end, format='%Y-%m-%d') + pd.Timedelta('1d')
@@ -409,7 +412,7 @@ def main(
 
 
 if __name__ == '__main__':
-    main(channel='primaryA')
+    main(start='2020-1-1', end='2020-9-15', channel='primaryA', save_location='data/raw/purpleair')
     # main(channel='secondaryA')
-    main(channel='primaryB',save_location='data/raw/purpleair/B')
+    main(start='2020-1-1', end='2020-9-15', channel='primaryB', save_location='data/raw/purpleair/B')
     # main(channel='secondaryB')
