@@ -143,18 +143,7 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
     print('Importing csvs')
     datasets = {}
     for filepath in filepaths:
-        dataset = pd.read_csv(
-            filepath,
-            # usecols=[
-            #     'created_at',
-            #     'PM1.0_CF1_ug/m3',
-            #     'PM2.5_CF1_ug/m3',
-            #     'PM10.0_CF1_ug/m3',
-            #     'Temperature_F',
-            #     'Humidity_%',
-            #     'PM2.5_ATM_ug/m3',
-            # ],
-        )
+        dataset = pd.read_csv(filepath)
         regex_match = parse_filename(filepath)
         sensor_name = regex_match['sensor']
         lat = regex_match['lat']
@@ -174,7 +163,7 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
             dataset = dataset.resample('2min', on='created_at').mean().reset_index()
             # print('Realigned timestamp')
         # dataset = remove_outlier(dataset, 'PM2.5_ATM_ug/m3')
-        dataset['sensor_name'] = np.repeat(sensor_name, len(dataset))
+        dataset['sensor_name'] = np.repeat(sensor_name.replace(' B',''), len(dataset))
         dataset = dataset.set_index(
             ['sensor_name', 'created_at']
         )  # .resample('H').mean()
@@ -185,14 +174,7 @@ def main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER
         save_location,
         compression='brotli',
     )
-    # unified_dataset.resample('H', level='created_at').mean().drop(
-    #     columns=['lat', 'lon']
-    # ).to_parquet(
-    #     f'data/processed/PurpleAir combined hourly average.parquet',
-    #     compression='brotli',
-    # )
-
 
 if __name__ == '__main__':
-    main()
+    main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER realtime individual.parquet')
     main(path='data/raw/purpleair/B', save_location='data/interim/PurpleAir B MASTER realtime individual.parquet')
