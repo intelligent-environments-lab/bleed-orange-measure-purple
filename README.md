@@ -6,7 +6,7 @@
 [![Test Code](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/workflows/Test%20Code/badge.svg)](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/actions?query=workflow%3A%22Test+Code%22)
 [![codecov](https://codecov.io/gh/intelligent-environments-lab/bleed-orange-measure-purple/branch/dev/graph/badge.svg)](https://codecov.io/gh/intelligent-environments-lab/bleed-orange-measure-purple)
 
-### ***Warning: everything that is written below is tentative and may change drastically.***
+### *** Note: under construction ***
 
 Bleed Orange Measure Purple project explores the potential uses and benefits of the PurpleAir air quality sensors located on the UT Austin campus through data processing, analysis, and visualization. This repo features a data pipeline with various scripts that handle everything from downloading to visualizing the data. Data from TCEQ sensors is also included in this project to provide regulatory grade reference data. For a more detailed explaination of this project, please refer to the [wiki](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/wiki).
 
