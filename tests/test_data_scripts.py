@@ -9,7 +9,7 @@ Created on Tue Jul  7 01:19:43 2020
 
 import src.data.purpleair_data_retriever
 import src.data.purpleair_raw_cleaner
-import src.data.thingspeak_handler
+import src.data.purpleair_thingspeak
 #from src.data.tceq_dataset_generator import main as main4
 #from src.data.tceq_interim_processor import main as main5
 #from src.data.tceq_raw_cleaner import main as main6
@@ -24,7 +24,7 @@ import src.data.thingspeak_handler
 
 
 def test_thingspeak_handler():
-    src.data.thingspeak_handler.main()
+    src.data.purpleair_thingspeak.main()
 
 def test_purpleair_raw_cleaner():
     src.data.purpleair_raw_cleaner.main()
