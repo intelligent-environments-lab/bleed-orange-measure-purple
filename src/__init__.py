@@ -1,3 +1,3 @@
-__all__ = 'data'
+__all__ = ['data']
 
 import src.data as data
