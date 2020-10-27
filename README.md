@@ -46,7 +46,7 @@ activate bomp && jupyter lab
 ```
 Jupyter Lab should start in your browser, and then you can start using it. The ```main.ipynb``` is a good starting point to run the program since it downloads PurpleAir data in csv format. 
 
-Spyder can be used to view and run the ```.py``` files individually, but the setup is trickier (involves changing the python interpreter to ```...anaconda3\envs\bomp\python.exe```, and the file must be run from the top-level ```bleed-orange-measure-purple``` directory). It is easier just to import the ```.py``` scripts into ```main.ipynb``` and run it using Jupyter.
+Spyder can be used to view and run the ```.py``` files individually, but the setup is trickier (involves changing the python interpreter to ```...anaconda3\envs\bomp\python.exe```, and the file must be run from the top-level ```bleed-orange-measure-purple``` directory). For non-technical users, it is easier just to import the ```.py``` scripts into ```main.ipynb``` and run it using Jupyter.
 
 ## Components
 
