@@ -12,13 +12,13 @@ def test_build():
     
     import src.data.purpleair_raw_cleaner as pc
 
-    pc.main(path='data/raw/purpleair', save_location='data/interim/PurpleAir MASTER realtime individual.parquet')
-    pc.main(path='data/raw/purpleair/B', save_location='data/interim/PurpleAir B MASTER realtime individual.parquet')
+    pc.main(path='data/raw/purpleair', save_location='data/interim/PurpleAir_realtime.parquet')
+    pc.main(path='data/raw/purpleair/B', save_location='data/interim/PurpleAir_B_realtime.parquet')
     
     import src.data.purpleair_outlier_remover as por
     
-    por.main(A_file='data/interim/PurpleAir MASTER realtime individual.parquet',
-             B_file='data/interim/PurpleAir B MASTER realtime individual.parquet',
-             save_file='data/processed/PurpleAir daily individual.parquet',
+    por.main(A_file='data/interim/PurpleAir_realtime.parquet',
+             B_file='data/interim/PurpleAir_B_realtime.parquet',
+             save_file='data/processed/PurpleAir_daily.parquet',
              freq='D')
 
