@@ -11,7 +11,7 @@ import json
 import pandas as pd
 
 from src.data.async_requests import AsyncRequest
-
+import src.pathname_index as pni
 
 def build_filename(sensor, start, end, channel, average=None):
     """
@@ -419,11 +419,11 @@ if __name__ == '__main__':
         start='2020-1-1',
         end='2020-9-15',
         channel='primaryA',
-        save_location='data/raw/purpleair',
+        save_location=pni.pa_raw,
     )
     main(
         start='2020-1-1',
         end='2020-9-15',
         channel='primaryB',
-        save_location='data/raw/purpleair/B',
+        save_location=pni.pa_rawB,
     )

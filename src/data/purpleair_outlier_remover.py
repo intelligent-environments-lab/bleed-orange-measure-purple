@@ -8,6 +8,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import src.pathname_index as pni
 
 def mark_outliers(df):
     """
@@ -133,9 +134,7 @@ def main(A_file=None, B_file=None, save_file=None, freq='H'):
     # Import the data
     print('Importing data...')
     data_A = pd.read_parquet(A_file).drop(columns=['entry_id'])
-    data_B = pd.read_parquet(
-        'data/interim/PurpleAir B MASTER realtime individual.parquet'
-    )[['PM2.5_ATM_ug/m3']]
+    data_B = pd.read_parquet(B_file)[['PM2.5_ATM_ug/m3']]
 
     print('Resampling...')
     data_A = resample_by_sensor(data_A, freq=freq).rename(
@@ -160,8 +159,8 @@ def main(A_file=None, B_file=None, save_file=None, freq='H'):
 
 if __name__ == '__main__':
     main(
-        A_file='data/interim/PurpleAir MASTER realtime individual.parquet',
-        B_file='data/interim/PurpleAir B MASTER realtime individual.parquet',
-        save_file='data/processed/PurpleAir daily individual.parquet',
+        A_file=pni.pa_int_real,
+        B_file=pni.pa_intB_real,
+        save_file=pni.pa_pro_daily,
         freq='D',
     )
