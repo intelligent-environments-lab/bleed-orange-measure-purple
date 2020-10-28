@@ -10,6 +10,7 @@ import numpy as np
 
 import re
 
+import src.pathname_index as pni
 
 def list_files(path):
     """
@@ -115,8 +116,8 @@ def to_datetime(dataset):
 
 # TODO check if outlier removes a whole row or just a values
 def main(
-    path='data/raw/purpleair',
-    save_location='data/interim/PurpleAir MASTER realtime individual.parquet',
+    path='',
+    save_location='',
 ):
     """
     Entry point for script.
@@ -177,10 +178,10 @@ def main(
 
 if __name__ == '__main__':
     main(
-        path='data/raw/purpleair',
-        save_location='data/interim/PurpleAir_realtime.parquet',
+        path=pni.pa_raw,
+        save_location=pni.pa_int_real,
     )
     main(
-        path='data/raw/purpleair/B',
-        save_location='data/interim/PurpleAir_B_realtime.parquet',
+        path=pni.pa_rawB,
+        save_location=pni.pa_intB_real,
     )

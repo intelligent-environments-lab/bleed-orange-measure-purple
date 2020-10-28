@@ -8,6 +8,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import src.pathname_index as pni
 
 def mark_outliers(df):
     """
@@ -158,8 +159,8 @@ def main(A_file=None, B_file=None, save_file=None, freq='H'):
 
 if __name__ == '__main__':
     main(
-        A_file='data/interim/PurpleAir_realtime.parquet',
-        B_file='data/interim/PurpleAir_B_realtime.parquet',
-        save_file='data/processed/PurpleAir_daily.parquet',
+        A_file=pni.pa_int_real,
+        B_file=pni.pa_intB_real,
+        save_file=pni.pa_pro_daily,
         freq='D',
     )

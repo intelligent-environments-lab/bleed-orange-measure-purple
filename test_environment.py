@@ -10,15 +10,16 @@ def test_build():
     # pdr.main(start='2020-1-1', end='2020-9-15', channel='primaryA', save_location='data/raw/purpleair')
     # pdr.main(start='2020-1-1', end='2020-9-15', channel='primaryB', save_location='data/raw/purpleair/B')
     
+    import src.pathname_index as pni
     import src.data.purpleair_raw_cleaner as pc
 
-    pc.main(path='data/raw/purpleair', save_location='data/interim/PurpleAir_realtime.parquet')
-    pc.main(path='data/raw/purpleair/B', save_location='data/interim/PurpleAir_B_realtime.parquet')
+    pc.main(path=pni.pa_raw, save_location=pni.pa_int_real)
+    pc.main(path=pni.pa_rawB, save_location=pni.pa_intB_real)
     
     import src.data.purpleair_outlier_remover as por
     
-    por.main(A_file='data/interim/PurpleAir_realtime.parquet',
-             B_file='data/interim/PurpleAir_B_realtime.parquet',
-             save_file='data/processed/PurpleAir_daily.parquet',
+    por.main(A_file=pni.pa_int_real,
+             B_file=pni.pa_intB_real,
+             save_file=pni.pa_pro_daily,
              freq='D')
 
