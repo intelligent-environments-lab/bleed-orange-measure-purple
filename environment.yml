@@ -4,24 +4,17 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - nest-asyncio
-  - pyarrow
-  - cchardet
-  - aiodns
-  - aiohttp
-  - pytest-cov
-  - python-kaleido
-  - pandas
-  - plotly
-  - pytest
-  - requests
-  - spyder-kernels
-  - python
+  - spyder
+  - ipywidgets=7.5
   - jupyterlab
-  - ipywidgets
-  - bs4
-  - black
-  - line_profiler
-  - scikit-learn
-  - matplotlib
+  - pandas
+  - pyarrow
+  - plotly
+  - python-kaleido
+  - nodejs
   - seaborn
+  - aiohttp
+  - aiodns
+  - cchardet
+  - pytest
+  - pytest-cov

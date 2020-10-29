@@ -1,0 +1,691 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.data package &#8212; Bleed Orange Measure Purple 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.models package" href="src.models.html" />
+    <link rel="prev" title="src package" href="src.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="src-data-package">
+<h1>src.data package<a class="headerlink" href="#src-data-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.data.async_requests">
+<span id="src-data-async-requests-module"></span><h2>src.data.async_requests module<a class="headerlink" href="#module-src.data.async_requests" title="Permalink to this headline">¶</a></h2>
+<p>Spyder Editor</p>
+<p>This is a temporary script file.</p>
+<dl class="py class">
+<dt id="src.data.async_requests.AsyncRequest">
+<em class="property">class </em><code class="sig-prename descclassname">src.data.async_requests.</code><code class="sig-name descname">AsyncRequest</code><a class="headerlink" href="#src.data.async_requests.AsyncRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="src.data.async_requests.AsyncRequest.get_urls">
+<em class="property">static </em><code class="sig-name descname">get_urls</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urls</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.async_requests.AsyncRequest.get_urls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves urls faster by making asynchronous requests (GET).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>urls</strong> (<em>list</em>) – A list of urls (strings) to be accessed asynchronously.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>responses</strong> – A list of html responses (strings).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="src.data.async_requests.AsyncRequest.post_url">
+<em class="property">static </em><code class="sig-name descname">post_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">forms</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.async_requests.AsyncRequest.post_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes multiple POST requests to the provided url.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – Url that contains a form on its page.</p></li>
+<li><p><strong>forms</strong> (<em>list</em>) – A list of dictionaries where each dictionary is a set of data values
+that gets POSTed to the website.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>responses</strong> – A list of the html responses (strings) for each form.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="src.data.async_requests.StandardRequest">
+<em class="property">class </em><code class="sig-prename descclassname">src.data.async_requests.</code><code class="sig-name descname">StandardRequest</code><a class="headerlink" href="#src.data.async_requests.StandardRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A fallback class that can be utilized in the event the async version is
+broken by unexpected deprecation</p>
+<dl class="py method">
+<dt id="src.data.async_requests.StandardRequest.get_urls">
+<em class="property">static </em><code class="sig-name descname">get_urls</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urls</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.async_requests.StandardRequest.get_urls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="src.data.async_requests.StandardRequest.post_url">
+<em class="property">static </em><code class="sig-name descname">post_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">forms</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.async_requests.StandardRequest.post_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.data.purpleair_data_retriever">
+<span id="src-data-purpleair-data-retriever-module"></span><h2>src.data.purpleair_data_retriever module<a class="headerlink" href="#module-src.data.purpleair_data_retriever" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sat Jun 13 01:56:30 2020</p>
+<p>&#64;author: CalvinL2</p>
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.build_filename">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">build_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sensor</span></em>, <em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em>, <em class="sig-param"><span class="n">channel</span></em>, <em class="sig-param"><span class="n">average</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.build_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a filename (string) based on sensor and data parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensor</strong> (<em>dict</em>) – Dict of metadata for one sensor.</p></li>
+<li><p><strong>start</strong> (<em>Timestamp</em>) – Start date of data.</p></li>
+<li><p><strong>end</strong> (<em>Timestamp</em>) – End date of data.</p></li>
+<li><p><strong>channel</strong> (<em>str</em>) – Can specify ‘primaryA’, ‘primaryB’, ‘secondaryA’, or ‘secondaryB’.</p></li>
+<li><p><strong>average</strong> (<em>int</em><em>, </em><em>optional</em>) – Averaging interval in minutes. The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>filename</strong> – A filename for the given datafile.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.build_url">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">build_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel</span></em>, <em class="sig-param"><span class="n">api_key</span></em>, <em class="sig-param"><span class="n">start</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">average</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.build_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a thingspeak.com url that can be used to access the target data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<em>str</em>) – Thingspeak channel ID.</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – Thingspeak api key.</p></li>
+<li><p><strong>start</strong> (<em>Timestamp</em><em>, </em><em>optional</em>) – Starting date. The default is None.</p></li>
+<li><p><strong>end</strong> (<em>Timestamp</em><em>, </em><em>optional</em>) – Ending date. The default is None.</p></li>
+<li><p><strong>average</strong> (<em>int</em><em>, </em><em>optional</em>) – Averaging interval in minutes. The default is ‘’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>url</strong> – A request url with the included parameters.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.chunks">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">chunks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lst</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a list into n equally sized chunks</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.create_dataframes">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">create_dataframes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datasets</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.create_dataframes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert strings to dataframes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets</strong> (<em>list</em>) – A list of data strings for each sensor.</p></li>
+<li><p><strong>channel</strong> (<em>str</em>) – Can specify ‘primaryA’, ‘primaryB’, ‘secondaryA’, or ‘secondaryB’.
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>datasets</strong> – A list of dataframes for each sensor.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.get_api_key">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">get_api_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sensor</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">'primaryA'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.get_api_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locates the correct channel_ID and api key for the given sensor.</p>
+<p>Specifically, it traverses the dictionary provided in the variable keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensor</strong> (<em>dict</em>) – Dictionary of metadata for one PurpleAir sensor.</p></li>
+<li><p><strong>channel</strong> (<em>str</em><em>, </em><em>optional</em>) – Can specify primaryA, primaryB, secondaryA, or secondaryB.
+The default is ‘primaryA’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>channel_ID</strong> (<em>str</em>) – Thingspeak channel ID for the given sensor.</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – Thingspeak api key for the given sensor.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.get_column_headers">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">get_column_headers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.get_column_headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of headers for the specified PurpleAir data channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>channel</strong> (<em>str</em>) – Can specify ‘primaryA’,’primaryB’,’secondaryA’, and ‘secondaryB’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of column names (strings).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.import_json">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">import_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.import_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a json file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename or relative path to file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>filedata</strong> – Data in json file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_data_retriever.main">
+<code class="sig-prename descclassname">src.data.purpleair_data_retriever.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">'primaryA'</span></em>, <em class="sig-param"><span class="n">average</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thingkeys</span><span class="o">=</span><span class="default_value">'src/data/thingspeak_keys.json'</span></em>, <em class="sig-param"><span class="n">save_location</span><span class="o">=</span><span class="default_value">'data/raw'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_data_retriever.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download data from PurpleAir.</p>
+<p>This script downloads raw data from PurpleAir with the same output file as
+using their website. However, it is much faster since it retrieves more data
+of each url GET request, and it uses asyncio to download files simultaneously.</p>
+<p>This function can only access one ‘channel’ of the available data from UT’s
+sensors at a time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>str</em>) – Start date of data formatted as is %Y-%m-%d (inclusive).</p></li>
+<li><p><strong>end</strong> (<em>str</em>) – End date of data formatted as %Y-%m-%d (inclusive).</p></li>
+<li><p><strong>average</strong> (<em>int</em><em>, </em><em>optional</em>) – Averaging interval in minutes. The default is None.</p></li>
+<li><p><strong>channel</strong> (<em>str</em><em>, </em><em>optional</em>) – The type and channel of data to be retrieve from the sensors. Valid values
+include ‘primaryA’, ‘primaryB’, ‘secondaryA’, and ‘secondaryB’.
+The default is ‘primaryA’.</p></li>
+<li><p><strong>thingkeys</strong> (<em>str</em><em>, </em><em>optional</em>) – The name/path of the file with Thingspeak metadata, channel IDs, and api keys.
+The default is ‘src/data/thingspeak_keys.json’.</p></li>
+<li><p><strong>save_location</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where the output data files should be saved. The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.data.purpleair_outlier_remover">
+<span id="src-data-purpleair-outlier-remover-module"></span><h2>src.data.purpleair_outlier_remover module<a class="headerlink" href="#module-src.data.purpleair_outlier_remover" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Oct  6 00:14:12 2020</p>
+<p>&#64;author: Calvin J Lin</p>
+<dl class="py function">
+<dt id="src.data.purpleair_outlier_remover.main">
+<code class="sig-prename descclassname">src.data.purpleair_outlier_remover.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">B_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">save_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">'H'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_outlier_remover.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses A and B channel data to identify and remove outliers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A_file</strong> (<em>str</em>) – Parquet file with data from the A channel of the PurpleAir sensor.</p></li>
+<li><p><strong>B_file</strong> (<em>str</em>) – Parquet file with data from the A channel of the PurpleAir sensor.</p></li>
+<li><p><strong>save_file</strong> (<em>str</em>) – Location to save parquet file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_outlier_remover.mark_outliers">
+<code class="sig-prename descclassname">src.data.purpleair_outlier_remover.</code><code class="sig-name descname">mark_outliers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_outlier_remover.mark_outliers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares A and B channel data to determine outliers and adds column indicating results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – DataFrame with both A and B data present as columns.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong> – Same dataframe, but with a new ‘outlier’ column with True/False values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_outlier_remover.remove_marked_outliers">
+<code class="sig-prename descclassname">src.data.purpleair_outlier_remover.</code><code class="sig-name descname">remove_marked_outliers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_outlier_remover.remove_marked_outliers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes rows of dataframe that have the value True for the ‘outlier’ column.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_outlier_remover.resample_by_sensor">
+<code class="sig-prename descclassname">src.data.purpleair_outlier_remover.</code><code class="sig-name descname">resample_by_sensor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">'H'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_outlier_remover.resample_by_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Groupby sensor, then resample</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – Original realtime dataframe with multiindex.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data_averaged</strong> – Dataframe with new time frequency, retains multiindex.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_outlier_remover.scatter_facet_grid">
+<code class="sig-prename descclassname">src.data.purpleair_outlier_remover.</code><code class="sig-name descname">scatter_facet_grid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">x_col</span><span class="o">=</span><span class="default_value">'Channel B PM2.5 (ug/m3)'</span></em>, <em class="sig-param"><span class="n">y_col</span><span class="o">=</span><span class="default_value">'Channel A PM2.5 (ug/m3)'</span></em>, <em class="sig-param"><span class="n">hue</span><span class="o">=</span><span class="default_value">'outlier'</span></em>, <em class="sig-param"><span class="n">bound</span><span class="o">=</span><span class="default_value">150</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_outlier_remover.scatter_facet_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a grid of A/B correlation plots for each sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – Multi-index dataframe with data for all sensors, including A/B data.</p></li>
+<li><p><strong>x_col</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of column with x-axis data. The default is ‘Channel B PM2.5 (ug/m3)’.</p></li>
+<li><p><strong>y_col</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of column with y-axis data. The default is ‘Channel A PM2.5 (ug/m3)’.</p></li>
+<li><p><strong>hue</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of column with values to determine dat point colors. The default is ‘outlier’.</p></li>
+<li><p><strong>bound</strong> (<em>int</em><em>, </em><em>optional</em>) – View limit for x and y axes. The default is 150.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.data.purpleair_raw_cleaner">
+<span id="src-data-purpleair-raw-cleaner-module"></span><h2>src.data.purpleair_raw_cleaner module<a class="headerlink" href="#module-src.data.purpleair_raw_cleaner" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Jun 22 17:22:14 2020</p>
+<p>&#64;author: CalvinL2</p>
+<dl class="py function">
+<dt id="src.data.purpleair_raw_cleaner.list_files">
+<code class="sig-prename descclassname">src.data.purpleair_raw_cleaner.</code><code class="sig-name descname">list_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_raw_cleaner.list_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of files in the provided directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – the relative path (from repo root) to the directory containing the target files.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>filepaths</strong> – a list of the relative path strings for the target files.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_raw_cleaner.main">
+<code class="sig-prename descclassname">src.data.purpleair_raw_cleaner.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'data/raw/purpleair'</span></em>, <em class="sig-param"><span class="n">save_location</span><span class="o">=</span><span class="default_value">'data/interim/PurpleAir MASTER realtime individual.parquet'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_raw_cleaner.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Folder path (relative) containing the input files.</p></li>
+<li><p><strong>save_location</strong> (<em>str</em><em>, </em><em>optional</em>) – Folder path (relative) for the output files. The default is ‘’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_raw_cleaner.parse_filename">
+<code class="sig-prename descclassname">src.data.purpleair_raw_cleaner.</code><code class="sig-name descname">parse_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_raw_cleaner.parse_filename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_raw_cleaner.remove_outlier">
+<code class="sig-prename descclassname">src.data.purpleair_raw_cleaner.</code><code class="sig-name descname">remove_outlier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_raw_cleaner.remove_outlier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes outlier using IQR twice.</p>
+<p>The first time it uses 5 * IQR to remove
+outliers that are way out of range of the dataset. Then it uses 1.5 IQR to
+remove outliers that are more local to a timeframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>dataframe</em>) – Original dataset.</p></li>
+<li><p><strong>param</strong> (<em>str</em>) – Column name to perform outlier removal on.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns a dataframe with the outliers remove.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_raw_cleaner.to_datetime">
+<code class="sig-prename descclassname">src.data.purpleair_raw_cleaner.</code><code class="sig-name descname">to_datetime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_raw_cleaner.to_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the time column from strings to datetime objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>dataframe</em>) – Pandas dataframe with time (strings)  as the first column.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>dataset</strong> – Pandas dataframe with time (Pandas datetimes) as the first column.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.data.purpleair_thingspeak">
+<span id="src-data-purpleair-thingspeak-module"></span><h2>src.data.purpleair_thingspeak module<a class="headerlink" href="#module-src.data.purpleair_thingspeak" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sun Aug  2 23:44:24 2020</p>
+<p>&#64;author: Calvin Lin</p>
+<dl class="py function">
+<dt id="src.data.purpleair_thingspeak.export_json">
+<code class="sig-prename descclassname">src.data.purpleair_thingspeak.</code><code class="sig-name descname">export_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pa_json</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'src/data/thingspeak_keys.json'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_thingspeak.export_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write json data to json file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_thingspeak.extract_key_info">
+<code class="sig-prename descclassname">src.data.purpleair_thingspeak.</code><code class="sig-name descname">extract_key_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pa_json</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_thingspeak.extract_key_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract key-value pairs of interest and puts them in a new dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pa_json</strong> (<em>dict</em>) – The ‘results’ section of the json file retrieved from PurpleAir.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data_json</strong> – A dict with only the values of interest.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_thingspeak.main">
+<code class="sig-prename descclassname">src.data.purpleair_thingspeak.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_thingspeak.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and save Thingspeak IDs, keys, and metadata to file.</p>
+<p>This script creates a thingspeak json file, which contains values needed in
+order to download PurpleAir data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.data.purpleair_thingspeak.sort_ab_channels">
+<code class="sig-prename descclassname">src.data.purpleair_thingspeak.</code><code class="sig-name descname">sort_ab_channels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pa_json</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.purpleair_thingspeak.sort_ab_channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts key-value pairs into A/B channel and associated them with the sample sensor name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pa_json</strong> (<em>list</em>) – A list of dictionaries for each sensor.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sensors</strong> – A list of dictionaries for each sensor (after reorganizing/rearranging).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="src-data-tceq-data-retriever-module">
+<h2>src.data.tceq_data_retriever module<a class="headerlink" href="#src-data-tceq-data-retriever-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.data.tceq_interim_processor">
+<span id="src-data-tceq-interim-processor-module"></span><h2>src.data.tceq_interim_processor module<a class="headerlink" href="#module-src.data.tceq_interim_processor" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Jun 29 12:26:32 2020</p>
+<p>&#64;author: CalvinL2</p>
+<dl class="py function">
+<dt id="src.data.tceq_interim_processor.main">
+<code class="sig-prename descclassname">src.data.tceq_interim_processor.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_interim_processor.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_interim_processor.parquet_to_feather">
+<code class="sig-prename descclassname">src.data.tceq_interim_processor.</code><code class="sig-name descname">parquet_to_feather</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_file</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_interim_processor.parquet_to_feather" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.data.tceq_raw_cleaner">
+<span id="src-data-tceq-raw-cleaner-module"></span><h2>src.data.tceq_raw_cleaner module<a class="headerlink" href="#module-src.data.tceq_raw_cleaner" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Jun 22 17:22:28 2020</p>
+<p>&#64;author: CalvinL2</p>
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.clean_invalid_measurements">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">clean_invalid_measurements</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.clean_invalid_measurements" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.export_datasets">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">export_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datasets</span></em>, <em class="sig-param"><span class="n">save_location</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">file_format</span><span class="o">=</span><span class="default_value">'.csv'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.export_datasets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.flatten">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix_df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.flatten" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.format_time">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">format_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.format_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.get_col_names">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">get_col_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.get_col_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.has_substring">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">has_substring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">substring</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.has_substring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.list_files">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">list_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.list_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.main">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">save_location</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.match_param_name">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">match_param_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.match_param_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.merge_years_file">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">merge_years_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datasets</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.merge_years_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.negative_to_zero">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">negative_to_zero</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.negative_to_zero" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.tceq_raw_cleaner.per_dataset_clean">
+<code class="sig-prename descclassname">src.data.tceq_raw_cleaner.</code><code class="sig-name descname">per_dataset_clean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.tceq_raw_cleaner.per_dataset_clean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.data.ut_weather_raw_cleaner">
+<span id="src-data-ut-weather-raw-cleaner-module"></span><h2>src.data.ut_weather_raw_cleaner module<a class="headerlink" href="#module-src.data.ut_weather_raw_cleaner" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Jul  7 10:01:59 2020</p>
+<p>&#64;author: CalvinL2</p>
+<dl class="py function">
+<dt id="src.data.ut_weather_raw_cleaner.format_time">
+<code class="sig-prename descclassname">src.data.ut_weather_raw_cleaner.</code><code class="sig-name descname">format_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data.ut_weather_raw_cleaner.format_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="src.data.ut_weather_raw_cleaner.main">
+<code class="sig-prename descclassname">src.data.ut_weather_raw_cleaner.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data.ut_weather_raw_cleaner.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.data">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.data" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Bleed Orange Measure Purple</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="src.html">src package</a><ul>
+      <li>Previous: <a href="src.html" title="previous chapter">src package</a></li>
+      <li>Next: <a href="src.models.html" title="next chapter">src.models package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Calvin J Lin.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/src.data.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
