@@ -22,8 +22,8 @@ def main():
     PMfile.append(pd.read_parquet(f'{root}/CAMS 1068 PM-2.5.parquet'))
 
     PMfile2 = pd.concat(PMfile)
-    PMfile2 = PMfile2.groupby(PMfile2.index).mean().reset_index()
-    PMfile2.to_feather('data/processed/tceq/CAMS 171_1068 PM-2.5.feather')
+    PMfile2 = PMfile2.groupby(PMfile2.index).mean()
+    PMfile2.to_parquet('data/processed/CAMS_171_1068_PM_2_5.parquet')
 
 
 if __name__ == '__main__':
