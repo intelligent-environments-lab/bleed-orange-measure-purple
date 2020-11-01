@@ -3,7 +3,7 @@
 index = {
     'purpleair': {
         'raw':'data/raw/purpleair',
-        'rawB':'data/raw/purpleair',
+        'rawB':'data/raw/purpleair/B',
         'interim':'data/interim/PurpleAir_realtime.parquet',
         'interimB':'data/interim/PurpleAir_B_realtime.parquet',
         'processed_daily':'data/processed/PurpleAir_daily.parquet'
