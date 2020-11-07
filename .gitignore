@@ -23,6 +23,4 @@ Untitled.ipynb
 *.bat
 tests/output
 *.DS_Store
-data/interim/*.parquet
-data/processed/*.parquet
 .git_old/
