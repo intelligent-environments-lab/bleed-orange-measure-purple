@@ -19,6 +19,39 @@ Plotly is plotting engine used in this project. Their setup instructions can be 
 
 [Anaconda](https://www.anaconda.com/products/individual) is highly recommended for use with this repo. It comes bundled with the Spyder and Jupyter IDEs which are used to run the Python scripts and IPython notebooks in this repo, and it also includes the conda package manager which makes it easier to install the necessary packages and dependencies for this repo.
 
+## Dependencies
+
+These are the Python packages that you may or may not need depending on your needs, and they can be install using conda or pip.
+
+### IDEs
+
+- ```spyder``` for python files
+- ```jupyterlab``` for ipython notebooks
+  - ```ipywidgets=7.5``` for plotly rendering in jupyter
+
+### Data Handling
+
+- ```pandas``` fundamental library for data analysis
+  - ```pyarrow``` for parquet file export
+  
+### Plotting Libraries
+
+- ```seaborn``` adds a few bells and whistles on top of the time-honored matplotlib
+- ```plotly``` newer alternative plotting library, makes beautiful modern-looking interactive html plots
+  - ```python-kaleido``` makes it possible to export plotly figures as static formats like png or svg
+  - ```nodejs``` does the javascript stuff that makes the interactive plots work
+
+### Network
+
+- ```aiohttp``` "I can't believe its not multiprocessing", allows "simultaneous" downloads of data
+  - ```aiodns``` recommended speedup for aiohttp
+  - ```cchardet``` another speedup, replaces chardet
+  
+### Testing & Debugging
+
+- ```pytest``` Runs tests
+  - ```pytest-cov``` Reports how much of the source code is covered by tests
+
 ## Installation
 First, clone the repository by downloading the repo as zip, using [GitHub Desktop](https://desktop.github.com/) (green button at top of this page) or the following git command:
 ```
