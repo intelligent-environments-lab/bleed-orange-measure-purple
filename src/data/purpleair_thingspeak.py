@@ -9,7 +9,7 @@ import json
 
 import requests
 
-PURPLEAIR_KEY_URL = 'https://www.purpleair.com/json?exclude=true&key=null&show=null&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452'
+PURPLEAIR_KEY_URL = 'https://www.purpleair.com/json?exclude=true&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452'
 
 
 def extract_key_info(pa_json):
