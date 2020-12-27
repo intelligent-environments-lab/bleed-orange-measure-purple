@@ -33,6 +33,6 @@ For more details see [GitHub Flavored Markdown](https://guides.github.com/featur
 Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 {# include "PurpleAir YTD Daily.html"}
 ### Support or Contact
-<iframe src="https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/blob/gh-pages/PurpleAir%20YTD%20Daily.html"></iframe>
+[]("https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/blob/gh-pages/PurpleAir%20YTD%20Daily.html")
 
 Having trouble with Pfages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
