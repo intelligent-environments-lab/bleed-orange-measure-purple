@@ -25,7 +25,7 @@ jobs:
           key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}-
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v1.7.0
+        uses: conda-incubator/setup-miniconda@v2.0.1
         with:
           channels: plotly,conda-forge,defaults
           auto-activate-base: false
