@@ -6,9 +6,18 @@ This is a temporary script file.
 """
 import aiohttp
 import asyncio
-import nest_asyncio
 
 import requests
+
+try:
+    __IPYTHON__
+except NameError:
+    NESTED = False
+else:
+    NESTED = True
+
+if NESTED:
+    import nest_asyncio
 
 
 class AsyncRequest:
@@ -46,7 +55,8 @@ class AsyncRequest:
 
         """
         # Nest_asyncio is needed for running asyncio in an existing IPython event loop
-        nest_asyncio.apply()
+        if NESTED:
+            nest_asyncio.apply()
         loop = asyncio.get_event_loop()
 
         async def _get_url(urls):
@@ -83,7 +93,8 @@ class AsyncRequest:
             A list of the html responses (strings) for each form.
 
         """
-        nest_asyncio.apply()
+        if NESTED:
+            nest_asyncio.apply()
         loop = asyncio.get_event_loop()
 
         async def _post_url(url, forms):
