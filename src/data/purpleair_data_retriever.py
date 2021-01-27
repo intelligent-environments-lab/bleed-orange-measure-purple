@@ -9,6 +9,7 @@ import collections
 
 import json
 import pandas as pd
+import requests
 
 from src.data.async_requests import AsyncRequest
 import src.pathname_index as pni
@@ -66,7 +67,7 @@ def build_filename(sensor, start, end, channel, average=None):
     return filename
 
 
-def build_url(channel, api_key, start='', end='', average=''):
+def build_url(channel, api_key, start='', end='', average='', last=False):
     """
     Create a thingspeak.com url that can be used to access the target data.
 
@@ -82,6 +83,8 @@ def build_url(channel, api_key, start='', end='', average=''):
         Ending date. The default is None.
     average : int, optional
         Averaging interval in minutes. The default is ''.
+    last : bool, optional
+        If true, retrieves the last entry. Overrides start and end dates. The default is false.
 
     Returns
     -------
@@ -89,15 +92,20 @@ def build_url(channel, api_key, start='', end='', average=''):
         A request url with the included parameters.
 
     """
-    # Timestamps to strings
-    start_date = start.strftime('%Y-%m-%d')
-    end_date = end.strftime('%Y-%m-%d')
+    if not last:
+        # Timestamps to strings
+        start_date = start.strftime('%Y-%m-%d')
+        end_date = end.strftime('%Y-%m-%d')
 
-    # If average is not specified or invalid, then clear the variable
-    if average is None or ~int(average) > 0:
-        average = ''
+        # If average is not specified or invalid, then clear the variable
+        if average is None or ~int(average) > 0:
+            average = ''
 
-    url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&offset=0&average={average}&round=2&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
+    if last:
+        url = f'https://api.thingspeak.com/channels/{channel}/feeds/last.json?api_key={api_key}&timezone=America/Chicago'
+    else:
+        url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&offset=0&average={average}&round=2&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
+    
     return url
 
 
@@ -271,6 +279,31 @@ def get_column_headers(channel):
     }
     return channel_columns[channel]
 
+def live_data():
+    thingkeys_json = import_json('src/data/thingspeak_keys.json')
+
+    thingkeys = collections.OrderedDict()
+    for sensor in thingkeys_json:
+        thingkeys[sensor['Label']] = sensor
+
+    urls = {}
+    for name, sensor in thingkeys.items():
+        channel_ID, api_key = get_api_key(sensor, channel='primaryA')
+        url = build_url(channel=channel_ID, api_key=api_key, last=True)
+        urls[name]=url
+    
+    for name, url in urls.items():
+        row = pd.DataFrame(json.loads(requests.get(url).content), index=[0])
+        row['Lat'] = thingkeys[name]['Lat']
+        row['Lon'] = thingkeys[name]['Lon']
+        urls[name] = row
+
+    df = pd.concat(list(urls.values())).reset_index(drop=True)
+    df.columns = get_column_headers('primaryA')+['Lat','Lon']
+    df['created_at'] = pd.to_datetime(df['created_at'])
+    df['sensor'] = list(urls.keys())
+    df = df[['sensor']+[col for col in df.columns if col not in ['sensor']]]
+    return df
 
 def main(
     start=None,
@@ -415,6 +448,7 @@ def main(
 
 
 if __name__ == '__main__':
+    live_data()
     main(
         start='2020-1-1',
         end='2020-9-15',
