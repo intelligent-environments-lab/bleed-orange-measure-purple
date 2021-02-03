@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
 import aiohttp
 import asyncio
 
@@ -23,19 +18,13 @@ if NESTED:
 class AsyncRequest:
     @staticmethod
     async def __fetch_url(session, url, payload=None):
-        ''' This method is intended to be called by get_urls(urls) or post_url()'''
-
-        # print('One')
         if payload is not None:
-            # print('Posting')
             async with await session.post(url, data=payload) as resp:
                 result = await resp.text()
         else:
-            # print('Getting')
             async with await session.get(url) as resp:
                 result = await resp.text()
 
-        # print('Two')
         return result
 
     @staticmethod
@@ -115,23 +104,23 @@ class AsyncRequest:
         return responses
 
 
-class StandardRequest:
-    """A fallback class that can be utilized in the event the async version is
-    broken by unexpected deprecation"""
+# class StandardRequest:
+#     """A fallback class that can be utilized in the event the async version is
+#     broken by unexpected deprecation"""
 
-    @staticmethod
-    def get_urls(urls):
-        responses = [requests.get(url) for url in urls]
-        responses = [r.text for r in responses if r.ok]
-        return responses
+#     @staticmethod
+#     def get_urls(urls):
+#         responses = [requests.get(url) for url in urls]
+#         responses = [r.text for r in responses if r.ok]
+#         return responses
 
-    @staticmethod
-    def post_url(url, forms):
-        responses = [requests.post(url, data=form) for form in forms]
-        responses = [r.text for r in responses if r.ok]
-        return responses
+#     @staticmethod
+#     def post_url(url, forms):
+#         responses = [requests.post(url, data=form) for form in forms]
+#         responses = [r.text for r in responses if r.ok]
+#         return responses
 
 
-if __name__ == '__main__':
-    urls = ['https://example.com', 'https://google.com']
-    responses = AsyncRequest.get_urls(urls)
+# if __name__ == '__main__':
+#     urls = ['https://example.com', 'https://google.com']
+#     responses = AsyncRequest.get_urls(urls)
