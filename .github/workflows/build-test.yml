@@ -32,7 +32,7 @@ jobs:
           environment-file: environment.yml
           activate-environment: bomp
           use-only-tar-bz2: true
-          auto-update-conda: true
+          auto-update-conda: false
           
       - name: Display conda env
         shell: bash -l {0}
