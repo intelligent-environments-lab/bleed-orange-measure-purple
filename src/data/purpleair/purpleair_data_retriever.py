@@ -11,8 +11,10 @@ import json
 import pandas as pd
 import requests
 
-from src.data.async_requests import AsyncRequest
-import src.pathname_index as pni
+from async_requests import AsyncRequest
+
+RAW_FOLDER = '../../../data/raw/purpleair'
+RAW_B_FOLDER = '../../../data/raw/purpleair/B'
 
 def build_filename(sensor, start, end, channel, average=None):
     """
@@ -280,7 +282,7 @@ def get_column_headers(channel):
     return channel_columns[channel]
 
 def live_data():
-    thingkeys_json = import_json('src/data/thingspeak_keys.json')
+    thingkeys_json = import_json('thingspeak_keys.json')
 
     thingkeys = collections.OrderedDict()
     for sensor in thingkeys_json:
@@ -310,7 +312,7 @@ def main(
     end=None,
     channel='primaryA',
     average=None,
-    thingkeys='src/data/thingspeak_keys.json',
+    thingkeys='thingspeak_keys.json',
     save_location='data/raw',
 ):
     """
@@ -453,11 +455,11 @@ if __name__ == '__main__':
         start='2020-1-1',
         end='2020-9-15',
         channel='primaryA',
-        save_location=pni.pa_raw,
+        save_location=RAW_FOLDER,
     )
     main(
         start='2020-1-1',
         end='2020-9-15',
         channel='primaryB',
-        save_location=pni.pa_rawB,
+        save_location=RAW_B_FOLDER,
     )
