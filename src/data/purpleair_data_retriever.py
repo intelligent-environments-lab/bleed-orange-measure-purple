@@ -11,7 +11,7 @@ import json
 import pandas as pd
 import requests
 
-from async_requests import AsyncRequest
+from src.data.async_requests import AsyncRequest
 
 RAW_FOLDER = '../../../data/raw/purpleair'
 RAW_B_FOLDER = '../../../data/raw/purpleair/B'
@@ -312,7 +312,7 @@ def main(
     end=None,
     channel='primaryA',
     average=None,
-    thingkeys='thingspeak_keys.json',
+    thingkeys='src/data/thingspeak_keys.json',
     save_location='data/raw',
 ):
     """
@@ -450,7 +450,7 @@ def main(
 
 
 if __name__ == '__main__':
-    live_data()
+    #live_data()
     main(
         start='2020-1-1',
         end='2020-9-15',
