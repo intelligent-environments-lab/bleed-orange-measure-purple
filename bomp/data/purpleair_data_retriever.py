@@ -11,7 +11,7 @@ import json
 import pandas as pd
 import requests
 
-from src.data.async_requests import AsyncRequest
+from bomp.data.async_requests import AsyncRequest
 
 RAW_FOLDER = '../../../data/raw/purpleair'
 RAW_B_FOLDER = '../../../data/raw/purpleair/B'

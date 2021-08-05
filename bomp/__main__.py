@@ -1,6 +1,7 @@
 import sys
 import argparse
-import src.data.purpleair_data_retriever as data_retriever
+
+import bomp.data.purpleair_data_retriever as data_retriever
 
 
 def download(start=None, end=None, **kwargs):
