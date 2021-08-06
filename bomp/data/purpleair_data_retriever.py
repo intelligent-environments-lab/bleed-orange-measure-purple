@@ -312,7 +312,7 @@ def main(
     end=None,
     channel='primaryA',
     average=None,
-    thingkeys='src/data/thingspeak_keys.json',
+    thingkeys='bomp/data/thingspeak_keys.json',
     save_location='data/raw',
 ):
     """

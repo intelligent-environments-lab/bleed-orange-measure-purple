@@ -2,8 +2,9 @@
 import aiohttp
 import asyncio
 
-import requests
+# import requests
 
+# Use nest_asyncio if iPython is detected in order to work with the existing event loop.
 try:
     __IPYTHON__
 except NameError:
@@ -16,6 +17,8 @@ if NESTED:
 
 
 class AsyncRequest:
+
+    # This is the method that actually retrieves the data.
     @staticmethod
     async def __fetch_url(session, url, payload=None):
         if payload is not None:
