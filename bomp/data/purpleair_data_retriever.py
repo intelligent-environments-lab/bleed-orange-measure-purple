@@ -6,11 +6,11 @@ Created on Sat Jun 13 01:56:30 2020
 @author: CalvinL2
 """
 import collections
-
+import os
 import json
 import pandas as pd
 import requests
-
+from pathlib import Path
 from bomp.data.async_requests import AsyncRequest
 
 RAW_FOLDER = '../../../data/raw/purpleair'
@@ -312,7 +312,7 @@ def main(
     end=None,
     channel='primaryA',
     average=None,
-    thingkeys='bomp/data/thingspeak_keys.json',
+    thingkeys=os.path.join(Path(__file__).parent,'thingspeak_keys.json'),
     save_location='data/raw',
 ):
     """

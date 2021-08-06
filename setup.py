@@ -6,6 +6,7 @@ setup(
     author='Calvin J Lin',
     author_email='calvin.lin@utexas.edu',
     packages=['bomp'],
+    package_data={'bomp':['data/thingspeak_keys.json']},
     entry_points = {'console_scripts':['bomp=bomp.__main__:main']},
     description='Package that can download data from UT\'s PurpleAir netork'
 )
