@@ -313,7 +313,7 @@ def main(
     channel='primaryA',
     average=None,
     thingkeys=os.path.join(Path(__file__).parent,'thingspeak_keys.json'),
-    save_location='data/raw',
+    save_location=f'data{os.sep}raw',
 ):
     """
     Download data from PurpleAir.
@@ -435,18 +435,29 @@ def main(
             sensor, start, end - pd.Timedelta('1d'), channel, average=average
         )
 
-        # If save path specified, append it to beginning of filename
-        if save_location is not None:
-            filename = save_location + '/' + filename
-
         # Store the data into dataframes and make modifications such as adding column headers
         datasets = create_dataframes(sensor['responses'], channel=channel)
 
         # Merge datasets for each sensor channel
         combined_dataset = pd.concat(datasets)
 
+        # If save path specified, append it to beginning of filename
+        if save_location is not None:
+            fn = save_location + os.sep + filename
+
         # Export to csv
-        combined_dataset.to_csv(filename)
+        try:
+            combined_dataset.to_csv(fn)
+        except FileNotFoundError:   # If user is trying to save files to a non-default location, save to new folder
+            path=os.path.join(os.getcwd(),'bomp_purpleair_download')
+            if not os.path.exists(path):
+                os.mkdir(path)
+            save_location = path
+            fn = save_location + os.sep + filename
+            combined_dataset.to_csv(fn)
+
+    
+    print(f'Data saved to {os.path.join(os.getcwd(),save_location)}')
 
 
 if __name__ == '__main__':
