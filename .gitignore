@@ -161,3 +161,4 @@ Untitled.ipynb
 tests/output
 *.DS_Store
 .git_old/
+/data/*
