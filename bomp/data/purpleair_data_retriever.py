@@ -436,6 +436,7 @@ def main(
         )
 
         # Store the data into dataframes and make modifications such as adding column headers
+        print(f'The following sensor is {name}')
         datasets = create_dataframes(sensor['responses'], channel=channel)
 
         # Merge datasets for each sensor channel
@@ -464,13 +465,13 @@ if __name__ == '__main__':
     #live_data()
     main(
         start='2020-1-1',
-        end='2020-9-15',
+        end='2021-7-1',
         channel='primaryA',
         save_location=RAW_FOLDER,
     )
-    main(
-        start='2020-1-1',
-        end='2020-9-15',
-        channel='primaryB',
-        save_location=RAW_B_FOLDER,
-    )
+    # main(
+    #     start='2020-1-1',
+    #     end='2020-9-15',
+    #     channel='primaryB',
+    #     save_location=RAW_B_FOLDER,
+    # )
