@@ -118,7 +118,7 @@ def chunks(lst, n):
 
 
 # TODO: Add secondary headers
-def create_dataframes(datasets, channel=None):
+def create_dataframes(datasets, channel=None, sensor_name=''):
     """
     Convert strings to dataframes.
 
@@ -146,11 +146,14 @@ def create_dataframes(datasets, channel=None):
         columns = get_column_headers(channel=channel)
         if len(columns) == (len(dataset.columns) + 1):
             columns.remove('entry_id')
-        dataset.columns = columns
-        dataset = dataset.set_index('created_at')
-        dataset = dataset.dropna(how='all')
-
-        datasets[num] = dataset
+        try:
+            dataset.columns = columns
+            dataset = dataset.set_index('created_at')
+            dataset = dataset.dropna(how='all')
+            datasets[num] = dataset
+        except:
+            print(f'Warning: an unexpected error occurred while processing fragment {num} of {len(datasets)}. Skipping...', flush=True)
+            del datasets[num]
 
     return datasets
 
@@ -427,7 +430,7 @@ def main(
     #     print(f'\nDownloading data for {name}')
     #     # Asynchronously download the data using generated urls
     #     thingkeys[name]['responses'] = AsyncRequest.get_urls(sensor['urls'])
-
+    print('Download complete...',flush=True)
     for name, sensor in thingkeys.items():
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
@@ -436,8 +439,8 @@ def main(
         )
 
         # Store the data into dataframes and make modifications such as adding column headers
-        print(f'The following sensor is {name}')
-        datasets = create_dataframes(sensor['responses'], channel=channel)
+        print(f'Processing {name}...',flush=True)
+        datasets = create_dataframes(sensor['responses'], channel=channel, sensor_name=name)
 
         # Merge datasets for each sensor channel
         combined_dataset = pd.concat(datasets)
@@ -458,7 +461,7 @@ def main(
             combined_dataset.to_csv(fn)
 
     
-    print(f'Data saved to {os.path.join(os.getcwd(),save_location)}')
+    print(f'Data saved to {os.path.join(os.getcwd(),save_location)}',flush=True)
 
 
 if __name__ == '__main__':

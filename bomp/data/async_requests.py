@@ -60,7 +60,7 @@ class AsyncRequest:
                 responses = await asyncio.gather(*asyncio_tasks)
             return responses
 
-        print(f'Accessing {len(urls)} urls with async...', end='')
+        print(f'Accessing {len(urls)} urls with async...', end='',flush=True)
         future = asyncio.ensure_future(_get_url(urls))
         responses = loop.run_until_complete(future)
         print('Done')
@@ -100,10 +100,10 @@ class AsyncRequest:
                 responses = await asyncio.gather(*asyncio_tasks)
             return responses
 
-        print(f'Posting {len(forms)} forms with async...', end='')
+        print(f'Posting {len(forms)} forms with async...', end='',flush=True)
         future = asyncio.ensure_future(_post_url(url, forms))
         responses = loop.run_until_complete(future)
-        print('Done')
+        print('Done',flush=True)
         return responses
 
 
