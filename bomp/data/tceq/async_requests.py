@@ -14,6 +14,7 @@ else:
 if NESTED:
     import nest_asyncio
 
+TIMEOUT = 3600 # Override the default aiohttp session timeout of 300 seconds
 
 class AsyncRequest:
     @staticmethod
@@ -50,7 +51,7 @@ class AsyncRequest:
 
         async def _get_url(urls):
             asyncio_tasks = []
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(timeout=TIMEOUT) as session:
                 for url in urls:
                     task = asyncio.create_task(AsyncRequest.__fetch_url(session, url))
                     asyncio_tasks.append(task)
@@ -88,7 +89,7 @@ class AsyncRequest:
 
         async def _post_url(url, forms):
             asyncio_tasks = []
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(timeout=TIMEOUT) as session:
                 for form in forms:
                     task = asyncio.create_task(
                         AsyncRequest.__fetch_url(session, url, payload=form)
