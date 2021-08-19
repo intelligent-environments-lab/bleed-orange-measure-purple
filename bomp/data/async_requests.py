@@ -17,8 +17,8 @@ else:
 if NESTED:
     import nest_asyncio
 
-MAX_CONNECTIONS = 10
-TIMEOUT = 3600 # Override the default aiohttp session timeout of 300 seconds
+MAX_CONNECTIONS = 100
+TIMEOUT = 3600  # Override the default aiohttp session timeout of 300 seconds
 
 
 class AsyncRequest:
@@ -32,6 +32,19 @@ class AsyncRequest:
         else:
             async with await session.get(url) as resp:
                 result = await resp.text()
+
+            # Retry PurpleAir download if dataset not downloaded, data string must
+            # contain "created_at" column name to be considered valid
+            retry_count = 0
+            while "created_at" not in result and retry_count < 6:
+                print(f"\nFailed to find data...retrying (attempt {retry_count}): {url}")
+                async with await session.get(url) as resp:
+                    result = await resp.text()
+                retry_count += 1
+            if retry_count >= 6:
+                print("Unable to find data...skipping")
+            elif retry_count > 0:
+                print(f"\nSuccess!: {url}")
 
         return result
 
@@ -66,10 +79,10 @@ class AsyncRequest:
                 responses = await asyncio.gather(*asyncio_tasks)
             return responses
 
-        print(f'Accessing {len(urls)} urls with async...', end='',flush=True)
+        print(f"Accessing {len(urls)} urls with async...", end="", flush=True)
         future = asyncio.ensure_future(_get_url(urls))
         responses = loop.run_until_complete(future)
-        print('Done')
+        print("Done")
         return responses
 
     @staticmethod
@@ -100,17 +113,15 @@ class AsyncRequest:
             connector = aiohttp.TCPConnector(limit_per_host=MAX_CONNECTIONS)
             async with aiohttp.ClientSession(connector=connector) as session:
                 for form in forms:
-                    task = asyncio.create_task(
-                        AsyncRequest.__fetch_url(session, url, payload=form)
-                    )
+                    task = asyncio.create_task(AsyncRequest.__fetch_url(session, url, payload=form))
                     asyncio_tasks.append(task)
                 responses = await asyncio.gather(*asyncio_tasks)
             return responses
 
-        print(f'Posting {len(forms)} forms with async...', end='',flush=True)
+        print(f"Posting {len(forms)} forms with async...", end="", flush=True)
         future = asyncio.ensure_future(_post_url(url, forms))
         responses = loop.run_until_complete(future)
-        print('Done',flush=True)
+        print("Done", flush=True)
         return responses
 
 
