@@ -6,17 +6,200 @@ Created on Sat Jun 13 01:56:30 2020
 @author: CalvinL2
 """
 import collections
-
+import os
+from io import StringIO
 import json
 import pandas as pd
 import requests
-
-from src.data.async_requests import AsyncRequest
+from pathlib import Path
+from bomp.data.async_requests import AsyncRequest
 
 RAW_FOLDER = '../../../data/raw/purpleair'
 RAW_B_FOLDER = '../../../data/raw/purpleair/B'
 
-def build_filename(sensor, start, end, channel, average=None):
+DATA_HEADERS = {
+        'primaryA': [
+            'created_at',
+            'entry_id',
+            'PM1.0_CF1_ug/m3',
+            'PM2.5_CF1_ug/m3',
+            'PM10.0_CF1_ug/m3',
+            'UptimeMinutes',
+            'RSSI_dbm',
+            'Temperature_F',
+            'Humidity_%',
+            'PM2.5_ATM_ug/m3',
+        ],
+        'secondaryA': [
+            'created_at',
+            'entry_id',
+            '>=0.3um/dl',
+            '>=0.5um/dl',
+            '>1.0um/dl',
+            '>=2.5um/dl',
+            '>=5.0um/dl',
+            '>=10.0um/dl',
+            'PM1.0_ATM_ug/m3',
+            'PM10_ATM_ug/m3',
+        ],
+        'primaryB': [
+            'created_at',
+            'entry_id',
+            'PM1.0_CF1_ug/m3',
+            'PM2.5_CF1_ug/m3',
+            'PM10.0_CF1_ug/m3',
+            'UptimeMinutes',
+            'ADC',
+            'Pressure_hpa',
+            'IAQ',
+            'PM2.5_ATM_ug/m3',
+        ],
+        'secondaryB': [
+            'created_at',
+            'entry_id',
+            '>=0.3um/dl',
+            '>=0.5um/dl',
+            '>1.0um/dl',
+            '>=2.5um/dl',
+            '>=5.0um/dl',
+            '>=10.0um/dl',
+            'PM1.0_ATM_ug/m3',
+            'PM10_ATM_ug/m3',
+        ],
+    }
+
+
+def get_api_key(sensor, channel='primaryA'):
+    """
+    Locates the correct channel_ID and api key for the given sensor.
+
+    Specifically, it traverses the dictionary provided in the variable keys.
+
+    Parameters
+    ----------
+    sensor : dict
+        Dictionary of metadata for one PurpleAir sensor.
+    channel : str, optional
+        Can specify primaryA, primaryB, secondaryA, or secondaryB.
+        The default is 'primaryA'.
+
+    Returns
+    -------
+    channel_ID : str
+        Thingspeak channel ID for the given sensor.
+    api_key : str
+        Thingspeak api key for the given sensor.
+
+    """
+    # Choose A or B
+    if 'A' in channel:
+        channel_data = sensor['A']
+    else:
+        channel_data = sensor['B']
+
+    # Choose primary or secondary
+    if 'primary' in channel:
+        channel_ID = channel_data['THINGSPEAK_PRIMARY_ID']
+        api_key = channel_data['THINGSPEAK_PRIMARY_ID_READ_KEY']
+    else:
+        channel_ID = channel_data['THINGSPEAK_SECONDARY_ID']
+        api_key = channel_data['THINGSPEAK_SECONDARY_ID_READ_KEY']
+
+    return channel_ID, api_key
+
+
+def generate_url(channel, api_key, start='', end='', average='', last=False):
+    """
+    Create a thingspeak.com url that can be used to access the target data.
+
+    Parameters
+    ----------
+    channel : str
+        Thingspeak channel ID.
+    api_key : str
+        Thingspeak api key.
+    start : Timestamp, optional
+        Starting date. The default is None.
+    end : Timestamp, optional
+        Ending date. The default is None.
+    average : int, optional
+        Averaging interval in minutes. The default is ''.
+    last : bool, optional
+        If true, retrieves the last entry. Overrides start and end dates. The default is false.
+
+    Returns
+    -------
+    url : str
+        A request url with the included parameters.
+
+    """
+    if not last:
+        # Timestamps to strings
+        start_date = start.strftime('%Y-%m-%d')
+        end_date = end.strftime('%Y-%m-%d')
+
+        # If average is not specified or invalid, then clear the variable
+        if average is None or ~int(average) > 0:
+            average = ''
+
+    if last:
+        url = f'https://api.thingspeak.com/channels/{channel}/feeds/last.json?api_key={api_key}&timezone=America/Chicago'
+    else:
+        url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&offset=0&average={average}&round=2&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
+    
+    return url
+
+
+def chunks(lst, n):
+    """ Splits a list into n equally sized chunks"""
+    for i in range(0, len(lst), int(len(lst) / n)):
+        yield lst[i : i + int(len(lst) / n)]
+
+
+# TODO: Add secondary headers
+def create_dataframes(datasets, channel=None, sensor_name=''):
+    """
+    Convert strings to dataframes.
+
+    Parameters
+    ----------
+    datasets : list
+        A list of data strings for each sensor.
+    channel : str
+        Can specify 'primaryA', 'primaryB', 'secondaryA', or 'secondaryB'.
+        The default is None.
+
+    Returns
+    -------
+    datasets : list
+        A list of dataframes for each sensor.
+
+    """
+    # Clean up each data fragment
+    for num, dataset in enumerate(datasets):
+        # Convert string to dataframe
+        #dataset = pd.DataFrame([line.split(',') for line in dataset.split('\n')])
+        dataset = pd.read_csv(StringIO(dataset))
+
+        # Drop header row catch exception if dataframe empty
+        try:
+            dataset = dataset.drop(dataset.index[0])
+        except:
+            pass
+        
+        # set column names, set index column, drop nan rows
+        columns = DATA_HEADERS[channel]
+        if len(columns) == (len(dataset.columns) + 1):
+            columns.remove('entry_id')
+        dataset.columns = columns
+        dataset = dataset.set_index('created_at')
+        dataset = dataset.dropna(how='all')
+        datasets[num] = dataset
+
+    return datasets
+
+
+def generate_filename(sensor, start, end, channel, average=None):
     """
     Create a filename (string) based on sensor and data parameters.
 
@@ -69,220 +252,9 @@ def build_filename(sensor, start, end, channel, average=None):
     return filename
 
 
-def build_url(channel, api_key, start='', end='', average='', last=False):
-    """
-    Create a thingspeak.com url that can be used to access the target data.
-
-    Parameters
-    ----------
-    channel : str
-        Thingspeak channel ID.
-    api_key : str
-        Thingspeak api key.
-    start : Timestamp, optional
-        Starting date. The default is None.
-    end : Timestamp, optional
-        Ending date. The default is None.
-    average : int, optional
-        Averaging interval in minutes. The default is ''.
-    last : bool, optional
-        If true, retrieves the last entry. Overrides start and end dates. The default is false.
-
-    Returns
-    -------
-    url : str
-        A request url with the included parameters.
-
-    """
-    if not last:
-        # Timestamps to strings
-        start_date = start.strftime('%Y-%m-%d')
-        end_date = end.strftime('%Y-%m-%d')
-
-        # If average is not specified or invalid, then clear the variable
-        if average is None or ~int(average) > 0:
-            average = ''
-
-    if last:
-        url = f'https://api.thingspeak.com/channels/{channel}/feeds/last.json?api_key={api_key}&timezone=America/Chicago'
-    else:
-        url = f'https://api.thingspeak.com/channels/{channel}/feeds.csv?api_key={api_key}&offset=0&average={average}&round=2&start={start_date}%2000:00:00&end={end_date}%2000:00:00'
-    
-    return url
-
-
-def chunks(lst, n):
-    """ Splits a list into n equally sized chunks"""
-    for i in range(0, len(lst), int(len(lst) / n)):
-        yield lst[i : i + int(len(lst) / n)]
-
-
-# TODO: Add secondary headers
-def create_dataframes(datasets, channel=None):
-    """
-    Convert strings to dataframes.
-
-    Parameters
-    ----------
-    datasets : list
-        A list of data strings for each sensor.
-    channel : str
-        Can specify 'primaryA', 'primaryB', 'secondaryA', or 'secondaryB'.
-        The default is None.
-
-    Returns
-    -------
-    datasets : list
-        A list of dataframes for each sensor.
-
-    """
-    # Clean up each data fragment
-    for num, dataset in enumerate(datasets):
-        # Convert string to dataframe
-        dataset = pd.DataFrame([line.split(',') for line in dataset.split('\n')])
-
-        # Drop header row, set column names, set index column, drop nan rows
-        dataset = dataset.drop(dataset.index[0])
-        columns = get_column_headers(channel=channel)
-        if len(columns) == (len(dataset.columns) + 1):
-            columns.remove('entry_id')
-        dataset.columns = columns
-        dataset = dataset.set_index('created_at')
-        dataset = dataset.dropna(how='all')
-
-        datasets[num] = dataset
-
-    return datasets
-
-
-def get_api_key(sensor, channel='primaryA'):
-    """
-    Locates the correct channel_ID and api key for the given sensor.
-
-    Specifically, it traverses the dictionary provided in the variable keys.
-
-    Parameters
-    ----------
-    sensor : dict
-        Dictionary of metadata for one PurpleAir sensor.
-    channel : str, optional
-        Can specify primaryA, primaryB, secondaryA, or secondaryB.
-        The default is 'primaryA'.
-
-    Returns
-    -------
-    channel_ID : str
-        Thingspeak channel ID for the given sensor.
-    api_key : str
-        Thingspeak api key for the given sensor.
-
-    """
-    # Choose A or B
-    if 'A' in channel:
-        channel_data = sensor['A']
-    else:
-        channel_data = sensor['B']
-
-    # Choose primary or secondary
-    if 'primary' in channel:
-        channel_ID = channel_data['THINGSPEAK_PRIMARY_ID']
-        api_key = channel_data['THINGSPEAK_PRIMARY_ID_READ_KEY']
-    else:
-        channel_ID = channel_data['THINGSPEAK_SECONDARY_ID']
-        api_key = channel_data['THINGSPEAK_SECONDARY_ID_READ_KEY']
-
-    return channel_ID, api_key
-
-
-def import_json(filename):
-    """
-    Load a json file.
-
-    Parameters
-    ----------
-    filename : str
-        Filename or relative path to file.
-
-    Returns
-    -------
-    filedata : dict
-        Data in json file.
-
-    """
-    with open(filename, 'r', encoding='utf8') as file:
-        filedata = json.load(file)
-    return filedata
-
-
-def get_column_headers(channel):
-    """
-    Return a list of headers for the specified PurpleAir data channel.
-
-    Parameters
-    ----------
-    channel : str
-        Can specify 'primaryA','primaryB','secondaryA', and 'secondaryB'.
-
-    Returns
-    -------
-    list
-        A list of column names (strings).
-
-    """
-    channel_columns = {
-        'primaryA': [
-            'created_at',
-            'entry_id',
-            'PM1.0_CF1_ug/m3',
-            'PM2.5_CF1_ug/m3',
-            'PM10.0_CF1_ug/m3',
-            'UptimeMinutes',
-            'RSSI_dbm',
-            'Temperature_F',
-            'Humidity_%',
-            'PM2.5_ATM_ug/m3',
-        ],
-        'secondaryA': [
-            'created_at',
-            'entry_id',
-            '>=0.3um/dl',
-            '>=0.5um/dl',
-            '>1.0um/dl',
-            '>=2.5um/dl',
-            '>=5.0um/dl',
-            '>=10.0um/dl',
-            'PM1.0_ATM_ug/m3',
-            'PM10_ATM_ug/m3',
-        ],
-        'primaryB': [
-            'created_at',
-            'entry_id',
-            'PM1.0_CF1_ug/m3',
-            'PM2.5_CF1_ug/m3',
-            'PM10.0_CF1_ug/m3',
-            'UptimeMinutes',
-            'ADC',
-            'Pressure_hpa',
-            'IAQ',
-            'PM2.5_ATM_ug/m3',
-        ],
-        'secondaryB': [
-            'created_at',
-            'entry_id',
-            '>=0.3um/dl',
-            '>=0.5um/dl',
-            '>1.0um/dl',
-            '>=2.5um/dl',
-            '>=5.0um/dl',
-            '>=10.0um/dl',
-            'PM1.0_ATM_ug/m3',
-            'PM10_ATM_ug/m3',
-        ],
-    }
-    return channel_columns[channel]
-
 def live_data():
-    thingkeys_json = import_json('thingspeak_keys.json')
+    with open('thingspeak_keys.json', 'r', encoding='utf8') as file:
+        thingkeys_json = json.load(file)
 
     thingkeys = collections.OrderedDict()
     for sensor in thingkeys_json:
@@ -291,7 +263,7 @@ def live_data():
     urls = {}
     for name, sensor in thingkeys.items():
         channel_ID, api_key = get_api_key(sensor, channel='primaryA')
-        url = build_url(channel=channel_ID, api_key=api_key, last=True)
+        url = generate_url(channel=channel_ID, api_key=api_key, last=True)
         urls[name]=url
     
     for name, url in urls.items():
@@ -301,19 +273,20 @@ def live_data():
         urls[name] = row
 
     df = pd.concat(list(urls.values())).reset_index(drop=True)
-    df.columns = get_column_headers('primaryA')+['Lat','Lon']
+    df.columns = DATA_HEADERS['primaryA']+['Lat','Lon']
     df['created_at'] = pd.to_datetime(df['created_at'])
     df['sensor'] = list(urls.keys())
     df = df[['sensor']+[col for col in df.columns if col not in ['sensor']]]
     return df
+
 
 def main(
     start=None,
     end=None,
     channel='primaryA',
     average=None,
-    thingkeys='src/data/thingspeak_keys.json',
-    save_location='data/raw',
+    thingkeys=os.path.join(Path(__file__).parent,'thingspeak_keys.json'),
+    save_location=f'data{os.sep}raw',
 ):
     """
     Download data from PurpleAir.
@@ -360,7 +333,8 @@ def main(
     url_delta = pd.Timedelta('11d')
 
     # Load Thingspeak keys and metadata from file
-    thingkeys_json = import_json(thingkeys)
+    with open(thingkeys, 'r', encoding='utf8') as file:
+        thingkeys_json = json.load(file)
 
     # Convert to dictionary with label as key
     # thingkeys = {sensor['Label']:sensor for sensor in thingkeys}
@@ -369,14 +343,14 @@ def main(
     for sensor in thingkeys_json:
         thingkeys[sensor['Label']] = sensor
 
-    # Downloads and saves a csv file for each sensor
+    # Compiles the urls for all data fragments
     for name, sensor in thingkeys.items():
         # name = sensor['Label']
         # print(f'\nDownloading data for {name}')
 
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
-        filename = build_filename(
+        filename = generate_filename(
             sensor, start, end - pd.Timedelta('1d'), channel, average=average
         )
 
@@ -391,7 +365,7 @@ def main(
         urls = []
         while True:
             urls.append(
-                build_url(channel_ID, api_key, url_start, url_end, average=average)
+                generate_url(channel_ID, api_key, url_start, url_end, average=average)
             )
 
             # Move time window forward
@@ -427,39 +401,51 @@ def main(
     #     print(f'\nDownloading data for {name}')
     #     # Asynchronously download the data using generated urls
     #     thingkeys[name]['responses'] = AsyncRequest.get_urls(sensor['urls'])
-
+    print('Download complete...',flush=True)
     for name, sensor in thingkeys.items():
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
-        filename = build_filename(
+        filename = generate_filename(
             sensor, start, end - pd.Timedelta('1d'), channel, average=average
         )
 
-        # If save path specified, append it to beginning of filename
-        if save_location is not None:
-            filename = save_location + '/' + filename
-
         # Store the data into dataframes and make modifications such as adding column headers
-        datasets = create_dataframes(sensor['responses'], channel=channel)
+        print(f'Processing {name}...',flush=True)
+        datasets = create_dataframes(sensor['responses'], channel=channel, sensor_name=name)
 
         # Merge datasets for each sensor channel
         combined_dataset = pd.concat(datasets)
 
+        # If save path specified, append it to beginning of filename
+        if save_location is not None:
+            fn = save_location + os.sep + filename
+
         # Export to csv
-        combined_dataset.to_csv(filename)
+        try:
+            combined_dataset.to_csv(fn)
+        except FileNotFoundError:   # If user is trying to save files to a non-default location, save to new folder
+            path=os.path.join(os.getcwd(),'bomp_purpleair_download')
+            if not os.path.exists(path):
+                os.mkdir(path)
+            save_location = path
+            fn = save_location + os.sep + filename
+            combined_dataset.to_csv(fn)
+
+    
+    print(f'Data saved to {os.path.join(os.getcwd(),save_location)}',flush=True)
 
 
 if __name__ == '__main__':
     #live_data()
     main(
-        start='2020-1-1',
-        end='2020-9-15',
+        start='2019-1-1',
+        end='2020-7-1',
         channel='primaryA',
         save_location=RAW_FOLDER,
     )
-    main(
-        start='2020-1-1',
-        end='2020-9-15',
-        channel='primaryB',
-        save_location=RAW_B_FOLDER,
-    )
+    # main(
+    #     start='2020-1-1',
+    #     end='2020-9-15',
+    #     channel='primaryB',
+    #     save_location=RAW_B_FOLDER,
+    # )

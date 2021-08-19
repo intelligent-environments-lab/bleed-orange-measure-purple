@@ -8,7 +8,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-import src.pathname_index as pni
+import bomp.pathname_index as pni
 
 def mark_outliers(df):
     """

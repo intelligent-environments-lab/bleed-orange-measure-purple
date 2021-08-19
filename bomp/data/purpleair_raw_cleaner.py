@@ -10,7 +10,7 @@ import numpy as np
 
 import re
 
-import src.pathname_index as pni
+import bomp.pathname_index as pni
 
 def list_files(path):
     """
