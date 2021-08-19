@@ -7,6 +7,7 @@ Created on Sat Jun 13 01:56:30 2020
 """
 import collections
 import os
+from io import StringIO
 import json
 import pandas as pd
 import requests
@@ -177,7 +178,8 @@ def create_dataframes(datasets, channel=None, sensor_name=''):
     # Clean up each data fragment
     for num, dataset in enumerate(datasets):
         # Convert string to dataframe
-        dataset = pd.DataFrame([line.split(',') for line in dataset.split('\n')])
+        #dataset = pd.DataFrame([line.split(',') for line in dataset.split('\n')])
+        dataset = pd.read_csv(StringIO(dataset))
 
         # Drop header row, set column names, set index column, drop nan rows
         dataset = dataset.drop(dataset.index[0])
