@@ -16,60 +16,98 @@ from bomp.data.async_requests import AsyncRequest
 RAW_FOLDER = '../../../data/raw/purpleair'
 RAW_B_FOLDER = '../../../data/raw/purpleair/B'
 
-def build_filename(sensor, start, end, channel, average=None):
+DATA_HEADERS = {
+        'primaryA': [
+            'created_at',
+            'entry_id',
+            'PM1.0_CF1_ug/m3',
+            'PM2.5_CF1_ug/m3',
+            'PM10.0_CF1_ug/m3',
+            'UptimeMinutes',
+            'RSSI_dbm',
+            'Temperature_F',
+            'Humidity_%',
+            'PM2.5_ATM_ug/m3',
+        ],
+        'secondaryA': [
+            'created_at',
+            'entry_id',
+            '>=0.3um/dl',
+            '>=0.5um/dl',
+            '>1.0um/dl',
+            '>=2.5um/dl',
+            '>=5.0um/dl',
+            '>=10.0um/dl',
+            'PM1.0_ATM_ug/m3',
+            'PM10_ATM_ug/m3',
+        ],
+        'primaryB': [
+            'created_at',
+            'entry_id',
+            'PM1.0_CF1_ug/m3',
+            'PM2.5_CF1_ug/m3',
+            'PM10.0_CF1_ug/m3',
+            'UptimeMinutes',
+            'ADC',
+            'Pressure_hpa',
+            'IAQ',
+            'PM2.5_ATM_ug/m3',
+        ],
+        'secondaryB': [
+            'created_at',
+            'entry_id',
+            '>=0.3um/dl',
+            '>=0.5um/dl',
+            '>1.0um/dl',
+            '>=2.5um/dl',
+            '>=5.0um/dl',
+            '>=10.0um/dl',
+            'PM1.0_ATM_ug/m3',
+            'PM10_ATM_ug/m3',
+        ],
+    }
+
+
+def get_api_key(sensor, channel='primaryA'):
     """
-    Create a filename (string) based on sensor and data parameters.
+    Locates the correct channel_ID and api key for the given sensor.
+
+    Specifically, it traverses the dictionary provided in the variable keys.
 
     Parameters
     ----------
     sensor : dict
-        Dict of metadata for one sensor.
-    start : Timestamp
-        Start date of data.
-    end : Timestamp
-        End date of data.
-    channel : str
-        Can specify 'primaryA', 'primaryB', 'secondaryA', or 'secondaryB'.
-    average : int, optional
-        Averaging interval in minutes. The default is None.
+        Dictionary of metadata for one PurpleAir sensor.
+    channel : str, optional
+        Can specify primaryA, primaryB, secondaryA, or secondaryB.
+        The default is 'primaryA'.
 
     Returns
     -------
-    filename : str
-        A filename for the given datafile.
+    channel_ID : str
+        Thingspeak channel ID for the given sensor.
+    api_key : str
+        Thingspeak api key for the given sensor.
 
     """
-    # More convenient local variables
-    name = sensor['Label']
-    location_type = sensor['DEVICE_LOCATIONTYPE']
-    lat = sensor['Lat']
-    lon = sensor['Lon']
-
-    # Append 'B' to filename for B sensor, location is 'undefined'
-    if 'B' in channel:
-        name = name + ' B'
-        location_type = 'undefined'
+    # Choose A or B
+    if 'A' in channel:
+        channel_data = sensor['A']
+    else:
+        channel_data = sensor['B']
 
     # Choose primary or secondary
     if 'primary' in channel:
-        datatype = 'Primary Real Time'
+        channel_ID = channel_data['THINGSPEAK_PRIMARY_ID']
+        api_key = channel_data['THINGSPEAK_PRIMARY_ID_READ_KEY']
     else:
-        datatype = 'Secondary Real Time'
+        channel_ID = channel_data['THINGSPEAK_SECONDARY_ID']
+        api_key = channel_data['THINGSPEAK_SECONDARY_ID_READ_KEY']
 
-    # If data is averaged, replace 'real time' with the averaging interval
-    if average is not None and int(average) > 0:
-        datatype = datatype.replace('Real Time', f'{average}_minute_average')
-
-    # Timestamp to string
-    start = start.strftime('%m_%d_%Y')
-    end = end.strftime('%m_%d_%Y')
-
-    # Create filename
-    filename = f'{name} ({location_type}) ({lat} {lon}) {datatype} {start} {end}.csv'
-    return filename
+    return channel_ID, api_key
 
 
-def build_url(channel, api_key, start='', end='', average='', last=False):
+def generate_url(channel, api_key, start='', end='', average='', last=False):
     """
     Create a thingspeak.com url that can be used to access the target data.
 
@@ -143,7 +181,7 @@ def create_dataframes(datasets, channel=None, sensor_name=''):
 
         # Drop header row, set column names, set index column, drop nan rows
         dataset = dataset.drop(dataset.index[0])
-        columns = get_column_headers(channel=channel)
+        columns = DATA_HEADERS[channel]
         if len(columns) == (len(dataset.columns) + 1):
             columns.remove('entry_id')
         try:
@@ -158,134 +196,62 @@ def create_dataframes(datasets, channel=None, sensor_name=''):
     return datasets
 
 
-def get_api_key(sensor, channel='primaryA'):
+def generate_filename(sensor, start, end, channel, average=None):
     """
-    Locates the correct channel_ID and api key for the given sensor.
-
-    Specifically, it traverses the dictionary provided in the variable keys.
+    Create a filename (string) based on sensor and data parameters.
 
     Parameters
     ----------
     sensor : dict
-        Dictionary of metadata for one PurpleAir sensor.
-    channel : str, optional
-        Can specify primaryA, primaryB, secondaryA, or secondaryB.
-        The default is 'primaryA'.
+        Dict of metadata for one sensor.
+    start : Timestamp
+        Start date of data.
+    end : Timestamp
+        End date of data.
+    channel : str
+        Can specify 'primaryA', 'primaryB', 'secondaryA', or 'secondaryB'.
+    average : int, optional
+        Averaging interval in minutes. The default is None.
 
     Returns
     -------
-    channel_ID : str
-        Thingspeak channel ID for the given sensor.
-    api_key : str
-        Thingspeak api key for the given sensor.
+    filename : str
+        A filename for the given datafile.
 
     """
-    # Choose A or B
-    if 'A' in channel:
-        channel_data = sensor['A']
-    else:
-        channel_data = sensor['B']
+    # More convenient local variables
+    name = sensor['Label']
+    location_type = sensor['DEVICE_LOCATIONTYPE']
+    lat = sensor['Lat']
+    lon = sensor['Lon']
+
+    # Append 'B' to filename for B sensor, location is 'undefined'
+    if 'B' in channel:
+        name = name + ' B'
+        location_type = 'undefined'
 
     # Choose primary or secondary
     if 'primary' in channel:
-        channel_ID = channel_data['THINGSPEAK_PRIMARY_ID']
-        api_key = channel_data['THINGSPEAK_PRIMARY_ID_READ_KEY']
+        datatype = 'Primary Real Time'
     else:
-        channel_ID = channel_data['THINGSPEAK_SECONDARY_ID']
-        api_key = channel_data['THINGSPEAK_SECONDARY_ID_READ_KEY']
+        datatype = 'Secondary Real Time'
 
-    return channel_ID, api_key
+    # If data is averaged, replace 'real time' with the averaging interval
+    if average is not None and int(average) > 0:
+        datatype = datatype.replace('Real Time', f'{average}_minute_average')
 
+    # Timestamp to string
+    start = start.strftime('%m_%d_%Y')
+    end = end.strftime('%m_%d_%Y')
 
-def import_json(filename):
-    """
-    Load a json file.
+    # Create filename
+    filename = f'{name} ({location_type}) ({lat} {lon}) {datatype} {start} {end}.csv'
+    return filename
 
-    Parameters
-    ----------
-    filename : str
-        Filename or relative path to file.
-
-    Returns
-    -------
-    filedata : dict
-        Data in json file.
-
-    """
-    with open(filename, 'r', encoding='utf8') as file:
-        filedata = json.load(file)
-    return filedata
-
-
-def get_column_headers(channel):
-    """
-    Return a list of headers for the specified PurpleAir data channel.
-
-    Parameters
-    ----------
-    channel : str
-        Can specify 'primaryA','primaryB','secondaryA', and 'secondaryB'.
-
-    Returns
-    -------
-    list
-        A list of column names (strings).
-
-    """
-    channel_columns = {
-        'primaryA': [
-            'created_at',
-            'entry_id',
-            'PM1.0_CF1_ug/m3',
-            'PM2.5_CF1_ug/m3',
-            'PM10.0_CF1_ug/m3',
-            'UptimeMinutes',
-            'RSSI_dbm',
-            'Temperature_F',
-            'Humidity_%',
-            'PM2.5_ATM_ug/m3',
-        ],
-        'secondaryA': [
-            'created_at',
-            'entry_id',
-            '>=0.3um/dl',
-            '>=0.5um/dl',
-            '>1.0um/dl',
-            '>=2.5um/dl',
-            '>=5.0um/dl',
-            '>=10.0um/dl',
-            'PM1.0_ATM_ug/m3',
-            'PM10_ATM_ug/m3',
-        ],
-        'primaryB': [
-            'created_at',
-            'entry_id',
-            'PM1.0_CF1_ug/m3',
-            'PM2.5_CF1_ug/m3',
-            'PM10.0_CF1_ug/m3',
-            'UptimeMinutes',
-            'ADC',
-            'Pressure_hpa',
-            'IAQ',
-            'PM2.5_ATM_ug/m3',
-        ],
-        'secondaryB': [
-            'created_at',
-            'entry_id',
-            '>=0.3um/dl',
-            '>=0.5um/dl',
-            '>1.0um/dl',
-            '>=2.5um/dl',
-            '>=5.0um/dl',
-            '>=10.0um/dl',
-            'PM1.0_ATM_ug/m3',
-            'PM10_ATM_ug/m3',
-        ],
-    }
-    return channel_columns[channel]
 
 def live_data():
-    thingkeys_json = import_json('thingspeak_keys.json')
+    with open('thingspeak_keys.json', 'r', encoding='utf8') as file:
+        thingkeys_json = json.load(file)
 
     thingkeys = collections.OrderedDict()
     for sensor in thingkeys_json:
@@ -294,7 +260,7 @@ def live_data():
     urls = {}
     for name, sensor in thingkeys.items():
         channel_ID, api_key = get_api_key(sensor, channel='primaryA')
-        url = build_url(channel=channel_ID, api_key=api_key, last=True)
+        url = generate_url(channel=channel_ID, api_key=api_key, last=True)
         urls[name]=url
     
     for name, url in urls.items():
@@ -304,11 +270,12 @@ def live_data():
         urls[name] = row
 
     df = pd.concat(list(urls.values())).reset_index(drop=True)
-    df.columns = get_column_headers('primaryA')+['Lat','Lon']
+    df.columns = DATA_HEADERS['primaryA']+['Lat','Lon']
     df['created_at'] = pd.to_datetime(df['created_at'])
     df['sensor'] = list(urls.keys())
     df = df[['sensor']+[col for col in df.columns if col not in ['sensor']]]
     return df
+
 
 def main(
     start=None,
@@ -363,7 +330,8 @@ def main(
     url_delta = pd.Timedelta('11d')
 
     # Load Thingspeak keys and metadata from file
-    thingkeys_json = import_json(thingkeys)
+    with open(thingkeys, 'r', encoding='utf8') as file:
+        thingkeys_json = json.load(file)
 
     # Convert to dictionary with label as key
     # thingkeys = {sensor['Label']:sensor for sensor in thingkeys}
@@ -372,14 +340,14 @@ def main(
     for sensor in thingkeys_json:
         thingkeys[sensor['Label']] = sensor
 
-    # Downloads and saves a csv file for each sensor
+    # Compiles the urls for all data fragments
     for name, sensor in thingkeys.items():
         # name = sensor['Label']
         # print(f'\nDownloading data for {name}')
 
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
-        filename = build_filename(
+        filename = generate_filename(
             sensor, start, end - pd.Timedelta('1d'), channel, average=average
         )
 
@@ -394,7 +362,7 @@ def main(
         urls = []
         while True:
             urls.append(
-                build_url(channel_ID, api_key, url_start, url_end, average=average)
+                generate_url(channel_ID, api_key, url_start, url_end, average=average)
             )
 
             # Move time window forward
@@ -434,7 +402,7 @@ def main(
     for name, sensor in thingkeys.items():
         # Create filename using metadata and PurpleAir's format,
         # remove one day from end to get back to original input end date
-        filename = build_filename(
+        filename = generate_filename(
             sensor, start, end - pd.Timedelta('1d'), channel, average=average
         )
 
