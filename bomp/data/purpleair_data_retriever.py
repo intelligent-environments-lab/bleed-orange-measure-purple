@@ -181,19 +181,20 @@ def create_dataframes(datasets, channel=None, sensor_name=''):
         #dataset = pd.DataFrame([line.split(',') for line in dataset.split('\n')])
         dataset = pd.read_csv(StringIO(dataset))
 
-        # Drop header row, set column names, set index column, drop nan rows
-        dataset = dataset.drop(dataset.index[0])
+        # Drop header row catch exception if dataframe empty
+        try:
+            dataset = dataset.drop(dataset.index[0])
+        except:
+            pass
+        
+        # set column names, set index column, drop nan rows
         columns = DATA_HEADERS[channel]
         if len(columns) == (len(dataset.columns) + 1):
             columns.remove('entry_id')
-        try:
-            dataset.columns = columns
-            dataset = dataset.set_index('created_at')
-            dataset = dataset.dropna(how='all')
-            datasets[num] = dataset
-        except:
-            print(f'Warning: an unexpected error occurred while processing fragment {num} of {len(datasets)}. Skipping...', flush=True)
-            del datasets[num]
+        dataset.columns = columns
+        dataset = dataset.set_index('created_at')
+        dataset = dataset.dropna(how='all')
+        datasets[num] = dataset
 
     return datasets
 
@@ -437,8 +438,8 @@ def main(
 if __name__ == '__main__':
     #live_data()
     main(
-        start='2020-1-1',
-        end='2021-7-1',
+        start='2019-1-1',
+        end='2020-7-1',
         channel='primaryA',
         save_location=RAW_FOLDER,
     )
