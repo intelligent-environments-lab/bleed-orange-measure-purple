@@ -2,6 +2,8 @@
 import aiohttp
 import asyncio
 
+from aiohttp import connector
+
 # import requests
 
 # Use nest_asyncio if iPython is detected in order to work with the existing event loop.
@@ -14,6 +16,9 @@ else:
 
 if NESTED:
     import nest_asyncio
+
+MAX_CONNECTIONS = 10
+TIMEOUT = 3600 # Override the default aiohttp session timeout of 300 seconds
 
 
 class AsyncRequest:
@@ -53,7 +58,8 @@ class AsyncRequest:
 
         async def _get_url(urls):
             asyncio_tasks = []
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(limit_per_host=MAX_CONNECTIONS)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 for url in urls:
                     task = asyncio.create_task(AsyncRequest.__fetch_url(session, url))
                     asyncio_tasks.append(task)
@@ -91,7 +97,8 @@ class AsyncRequest:
 
         async def _post_url(url, forms):
             asyncio_tasks = []
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(limit_per_host=MAX_CONNECTIONS)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 for form in forms:
                     task = asyncio.create_task(
                         AsyncRequest.__fetch_url(session, url, payload=form)
