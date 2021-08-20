@@ -10,16 +10,17 @@ Bleed Orange Measure Purple project explores the potential uses and benefits of 
 
 ## Prerequisites
 
-<!--
-### Plotly
+- The following python packages are required: `pandas`, `pyarrow`, `aiohttp`, `aiodns`, `cchardet`
+
+<!-- ### Plotly
 
 Plotly is plotting engine used in this project. Their setup instructions can be found [here](https://plotly.com/python/getting-started/). Plotly can be installed via pip/conda and is included in the ```environment.yml``` file for this repository. However, there may be additional dependencies that need be installed separately. For instance, node might be required for JupyterLab support.
--->
-### Anaconda (Python Distribution)
+ -->
+<!-- ### Anaconda (Python Distribution)
 
-[Anaconda](https://www.anaconda.com/products/individual) is highly recommended for use with this repo. It comes bundled with the Spyder and Jupyter IDEs which are used to run the Python scripts and IPython notebooks in this repo, and it also includes the conda package manager which makes it easier to install the necessary packages and dependencies for this repo.
+[Anaconda](https://www.anaconda.com/products/individual) is highly recommended for use with this repo. It comes bundled with the Spyder and Jupyter IDEs which are used to run the Python scripts and IPython notebooks in this repo, and it also includes the conda package manager which makes it easier to install the necessary packages and dependencies for this repo. -->
 
-## Dependencies
+<!-- ## Dependencies
 
 These are the Python packages that you may or may not need depending on your needs, and they can be install using conda or pip.
 
@@ -50,9 +51,9 @@ These are the Python packages that you may or may not need depending on your nee
 ### Testing & Debugging
 
 - ```pytest``` Runs tests
-  - ```pytest-cov``` Reports how much of the source code is covered by tests
+  - ```pytest-cov``` Reports how much of the source code is covered by tests -->
 
-## Installation
+<!-- ## Installation
 First, clone the repository by downloading the repo as zip, using [GitHub Desktop](https://desktop.github.com/) (green button at top of this page) or the following git command:
 ```
 git clone https://github.com/intelligent-environments-lab/bleed-orange-measure-purple.git
@@ -72,6 +73,34 @@ Check that the repository's root directory is in both ```os.getcwd()``` and ```s
 Also when you hit run on any of the scripts below, you wil need to make sure that the configuration is set to run in the current working directory.
 -->
 
+## Features
+
+- Download data from PurpleAir sensors on the UT Austin main campus.
+
+## Installation
+
+Download the latest wheel file from the [releases](https://github.com/intelligent-environments-lab/bleed-orange-measure-purple/releases) page.
+
+Install the wheel using pip:
+```console
+pip install iel_bomp-0.2.0-py3-none-any.whl
+```
+
+## Usage
+
+The following command can be used to download data:
+
+```console
+bomp download -s <start-date> -e <end-date>
+bomp download --start-date <start-date> --end-date <end-date>
+```
+
+For example:
+```console
+bomp download -s 2021-8-1 -e 2021-8-2
+```
+
+<!-- 
 ## Usage
 To start the Jupyter IDE, open Anaconda Prompt, and type the following command:
 ```
@@ -79,11 +108,11 @@ activate bomp && jupyter lab
 ```
 Jupyter Lab should start in your browser, and then you can start using it. The ```main.ipynb``` is a good starting point to run the program since it downloads PurpleAir data in csv format. 
 
-Spyder can be used to view and run the ```.py``` files individually, but the setup is trickier (involves changing the python interpreter to ```...anaconda3\envs\bomp\python.exe```, and the file must be run from the top-level ```bleed-orange-measure-purple``` directory). For non-technical users, it is easier just to import the ```.py``` scripts into ```main.ipynb``` and run it using Jupyter.
+Spyder can be used to view and run the ```.py``` files individually, but the setup is trickier (involves changing the python interpreter to ```...anaconda3\envs\bomp\python.exe```, and the file must be run from the top-level ```bleed-orange-measure-purple``` directory). For non-technical users, it is easier just to import the ```.py``` scripts into ```main.ipynb``` and run it using Jupyter. -->
+<!-- 
+## Components -->
 
-## Components
-
-### src.data.*
+<!-- ### src.data.*
 **[async_requests.py](src/data/async_requests.py):** importable module that allows for [asynchronous](https://realpython.com/async-io-python#async-io-explained) [HTTP GET/POST requests](https://towardsdatascience.com/data-science-skills-web-scraping-javascript-using-python-97a29738353f#6f75) to be made, significantly reduces time needed to download the data for this project
 
 **[purpleair_data_retriever.py](src/data/purpleair_data_retriever.py):** Downloads raw realtime PurpleAir data from ThingSpeak and saves it to a csv file with the same headers and metadata as those from [PurpleAir's own website](https://www.purpleair.com/sensorlist?exclude=true&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452), uses async_requests.py and thingspeak_keys.json.
@@ -98,4 +127,4 @@ Spyder can be used to view and run the ```.py``` files individually, but the set
 
 **[tceq_interim_processor](src/data/tceq_interim_processor.py):** Runner script, another somewhat pointless parquet to feather converter
 
-**[thingspeak_handler.py](src/data/thingspeak_handler.py):** Runner script, downloads and saves the [Thingspeak channel and api keys](https://www.purpleair.com/json?exclude=true&key=null&show=null&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452) needed for downloading PurpleAir data to a file named ```thingspeak_keys.json```. Relevant sensor metadata is also retained.
+**[thingspeak_handler.py](src/data/thingspeak_handler.py):** Runner script, downloads and saves the [Thingspeak channel and api keys](https://www.purpleair.com/json?exclude=true&key=null&show=null&nwlat=30.291268505204116&selat=30.272526603783206&nwlng=-97.7717631299262&selng=-97.72423886855452) needed for downloading PurpleAir data to a file named ```thingspeak_keys.json```. Relevant sensor metadata is also retained. -->
